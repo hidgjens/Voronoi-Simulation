@@ -1,14 +1,22 @@
 #include "RandomWalkers.h"
 
 RandomWalkers::RandomWalkers(){
+  setLegacy(false);
   buildScenario(11, 11, 200, 105.0, 68.0, "1HExchange");
 }
 
 RandomWalkers::RandomWalkers(std::string fn){
+  setLegacy(false);
   buildScenario(11, 11, 200, 105.0, 68.0, fn);
 }
 
 RandomWalkers::RandomWalkers(int frms, std::string fn){
+  setLegacy(false);
+  buildScenario(11, 11, frms, 105.0, 68.0, fn);
+}
+
+RandomWalkers::RandomWalkers(int frms, std::string fn, bool leg){
+  setLegacy(leg);
   buildScenario(11, 11, frms, 105.0, 68.0, fn);
 }
 

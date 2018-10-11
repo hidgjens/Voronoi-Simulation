@@ -17,9 +17,10 @@ public:
   UnitPolygon(int, int, std::string); // away players, frames, filename
   UnitPolygon(int, int, double, double); // away players, frames, pitchX, pitchY
   UnitPolygon(int, int, double, double, std::string); // away players, frames, pitchX, pitchY, filename
-
-  void start(int);
-  void start(int, int);
+  UnitPolygon(int, int, double, double, std::string, bool); // away players, frames, pitchX, pitchY, filename
+  // 
+  // void start(int);
+  // void start(int, int);
 
   void buildScenario(int, int, double, double, std::string);
   Match buildMatch();

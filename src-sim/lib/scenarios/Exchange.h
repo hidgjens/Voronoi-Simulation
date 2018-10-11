@@ -17,6 +17,7 @@ public:
   Exchange();
   Exchange(std::string);
   Exchange(int, std::string);
+  Exchange(int, std::string, bool);
 
   void buildScenario(int, int, int, int, double, double, std::string);
 };

@@ -208,12 +208,21 @@ double Match::avgAwayCtrl() const{
   return awayCtrl / ((double) currentframe + 1);
 }
 
-void Match::saveMatchToFile(std::string file_name) const {
+void Match::saveMatchToFile(std::string file_name, bool legacy) const {
   std::cout << "\nSaving Match " << matchID << " to data_files/csvs/" + file_name + ".csv\n\n";
   // open file
   std::ofstream datafile;
-  datafile.open("data_files/csvs/" + file_name + ".csv");
-  datafile << "idx\tPID\tTime\tFID\tTeam\tNum\tX\tY\tCtrl\tdCtrl\tSmart\n"; // header
+  if (legacy){
+    datafile.open("data_files/legacy_csvs/" + file_name + ".csv");
+  } else {
+    datafile.open("data_files/csvs/" + file_name + ".csv");
+  }
+  datafile << "idx\tPID\tTime\tFID\tTeam\tNum\tX\tY";
+  if (legacy) {
+    datafile << "\n";
+  } else {
+    datafile << "\tCtrl\tdCtrl\tSmart\n"; // header
+  }
   int index{0}; // index counter must increment with every row
   Cart temp_pos;
   int PID;
@@ -241,10 +250,18 @@ void Match::saveMatchToFile(std::string file_name) const {
       << "Ball\t"
       << 0 << "\t"
       << temp_pos.xComp() << "\t"
-      << temp_pos.yComp() << "\t"
+      << temp_pos.yComp();
+      // check whether compatibility with Summer-2018 preprocessors is required
+    if (legacy){
+      // need legacy format, stop here
+      datafile << "\n";
+    } else {
+      // legacy not required, add extra information
+      datafile << "\t"
       << 0.0 << "\t"
       << 0.0 << "\t"
       << "False" << "\n";
+    }
 
     index++; // increment index
 
@@ -262,10 +279,15 @@ void Match::saveMatchToFile(std::string file_name) const {
         << "Home\t"
         << i + 1 << "\t"
         << temp_pos.xComp() << "\t"
-        << temp_pos.yComp() << "\t"
-        << pitches[frame_].getHomePlyrCtrl(i + 1) << "\t"
-        << pitches[frame_].getHomePlyrCtrl(i + 1) - pitches[last_frame].getHomePlyrCtrl(i + 1) << "\t"
-        << pl.getSmartStr() << "\n";
+        << temp_pos.yComp();
+      if (legacy) {
+        datafile << "\n";
+      } else {
+        datafile << "\t"
+          << pitches[frame_].getHomePlyrCtrl(i + 1) << "\t"
+          << pitches[frame_].getHomePlyrCtrl(i + 1) - pitches[last_frame].getHomePlyrCtrl(i + 1) << "\t"
+          << pl.getSmartStr() << "\n";
+      }
 
       index++; // increment index
     }
@@ -281,14 +303,31 @@ void Match::saveMatchToFile(std::string file_name) const {
         << "Away\t"
         << i + 1 << "\t"
         << temp_pos.xComp() << "\t"
-        << temp_pos.yComp() << "\t"
+        << temp_pos.yComp();
+      if (legacy) {
+        datafile << "\n";
+      } else {
+        datafile << "\t"
         << pitches[frame_].getAwayPlyrCtrl(i + 1) << "\t"
         << pitches[frame_].getAwayPlyrCtrl(i + 1) - pitches[last_frame].getAwayPlyrCtrl(i + 1) << "\t"
         << pl.getSmartStr() << "\n";
+      }
 
       index++;
     }
   }
   datafile.close();
+  // if legacy is required, a corresponding mdata file must also be produced
+  if (legacy) {
+    std::ofstream mdata;
+    mdata.open("data_files/legacy_csvs/" + file_name + ".mdata");
+    // mdata has frames, pitch X, pitchY, homeID, awayID
+    mdata << frames << "\t"
+      << pitchX << "\t"
+      << pitchY << "\t"
+      << 1 << "\t" // arbitrary home and away ID
+      << 2 << "\n";
+
+  }
 
 }

@@ -15,6 +15,7 @@ public:
   RandomWalkers();
   RandomWalkers(std::string);
   RandomWalkers(int, std::string);
+  RandomWalkers(int, std::string, bool);
 
   void buildScenario(int, int, int, double, double, std::string);
 };

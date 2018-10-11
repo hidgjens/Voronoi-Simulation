@@ -5,10 +5,13 @@ from os import makedirs
 from os.path import exists
 import sys
 
-def main(run_type, samples, filename, processes):
+def main(run_type, samples, frames, filename, legacy, processes):
     # check output folder exists
     if not exists('data_files/csvs'):
         makedirs('data_files/csvs')
+    if legacy == 'yes':
+        if not exists('data_files/legacy_csvs'):
+            makedirs('data_files/legacy_csvs')
 
     # work out a list of samples and start num for each thread
     std_smps = samples // processes # samples per thread
@@ -29,9 +32,9 @@ def main(run_type, samples, filename, processes):
     # create worker function
     def worker(samples_, start_num):
         if run_type == 'UnitSquare':
-            cmdlist = ['bin/sim', filename, str(samples_), str(start_num), 'UnitPolygon', '4']
+            cmdlist = ['bin/sim', filename, str(samples_), str(frames), str(start_num), legacy, 'UnitPolygon', '4']
         else:
-            cmdlist = ['bin/sim', filename, str(samples_), str(start_num), run_type]
+            cmdlist = ['bin/sim', filename, str(samples_), str(frames), str(start_num), legacy, run_type]
         s.call(cmdlist)
 
     # start threads
@@ -42,15 +45,19 @@ def main(run_type, samples, filename, processes):
 
 if __name__ == '__main__':
     # process sys args
-    if len(sys.argv) == 5:
+    if len(sys.argv) == 7:
         run_type = sys.argv[1]
         samples = int(sys.argv[2])
-        filename = sys.argv[3]
-        processes = int(sys.argv[4])
+        frames = int(sys.argv[3])
+        filename = sys.argv[4]
+        legacy = sys.argv[5]
+        processes = int(sys.argv[6])
     elif len(sys.argv) == 2:
         run_type = sys.argv[1]
         samples = 400
+        frames = 15000
         filename = sys.argv[1]
+        legacy = sys.argv[5]
         processes = 8
     else:
         print('''
@@ -58,9 +65,11 @@ if __name__ == '__main__':
         args:
         [1] - Run Type (RandomWalk/1HRandomWalk/1HExchange/UnitSquare)
         [2] - Samples [default: 400]
-        [3] - Filename [default: (Run Type)]
-        [4] - Processes [default: 8]
+        [3] - Frames per sample [default: 15000]
+        [4] - Filename [default: (Run Type)]
+        [5] - Legacy file (yes/no) [default: (no)]
+        [6] - Processes [default: 8]
         ''' % sys.argv[0])
         exit()
     # args complete, run main function
-    main(run_type, samples, filename, processes)
+    main(run_type, samples, frames, filename, legacy, processes)

@@ -84,7 +84,7 @@ public:
   double avgAwayCtrl() const;
 
   // store match
-  void saveMatchToFile(std::string) const; // file name
+  void saveMatchToFile(std::string, bool) const; // file name
 
 };
 

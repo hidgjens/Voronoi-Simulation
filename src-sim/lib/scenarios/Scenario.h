@@ -24,6 +24,8 @@ private:
   RandomWalk hSmartAI; // home smart
   AI aAI; // away AI
 
+  bool legacy;
+
 protected:
   void setFilename(std::string);
   std::string getFilename() const;
@@ -45,15 +47,20 @@ protected:
   void setAwayTeam(Team);
   Team& getAwayTeam();
 
+  void setLegacy(bool);
+  bool getLegacy() const;
+
   virtual Match buildMatch();
+
 
 public:
   Scenario();
   Scenario(std::string);
   Scenario(int, std::string);
+  Scenario(int, std::string, bool);
 
-  virtual void start(int); // num frames, start num = 0
-  virtual void start(int, int); // num frames, start num
+  virtual void start(int, bool); // num frames, start num = 0
+  virtual void start(int, int, bool); // num frames, start num, legacy
 };
 
 #endif

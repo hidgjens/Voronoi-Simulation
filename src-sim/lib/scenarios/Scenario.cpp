@@ -11,12 +11,21 @@ Scenario::Scenario(std::string fn) : filename(fn), homeCnt(11), awayCnt(11), fra
 
   homeTeam = Team("Home", 11, hNormAI, 1, hSmartAI);
   awayTeam= Team("Away", 11, aAI);
+  setLegacy(false);
 
 }
 Scenario::Scenario(int frms, std::string fn) : filename(fn), homeCnt(11), awayCnt(11), frames(frms), pitchX(105.0), pitchY(68.0), hNormAI(), hSmartAI(), aAI() {
 
   homeTeam = Team("Home", 11, hNormAI, 1, hSmartAI);
   awayTeam= Team("Away", 11, aAI);
+  setLegacy(false);
+
+}
+Scenario::Scenario(int frms, std::string fn, bool leg) : filename(fn), homeCnt(11), awayCnt(11), frames(frms), pitchX(105.0), pitchY(68.0), hNormAI(), hSmartAI(), aAI() {
+
+  homeTeam = Team("Home", 11, hNormAI, 1, hSmartAI);
+  awayTeam= Team("Away", 11, aAI);
+  setLegacy(leg);
 
 }
 
@@ -70,29 +79,37 @@ void Scenario::setAwayTeam(Team awtm) {
 Team& Scenario::getAwayTeam() {
   return awayTeam;
 }
+void Scenario::setLegacy(bool leg){
+  legacy = leg;
+}
+bool Scenario::getLegacy() const {
+  return legacy;
+}
 
 Match Scenario::buildMatch() {
   Match match = Match(frames, homeTeam, awayTeam, pitchX, pitchY);
+  std::cout << "here";
   match.initRandObjPos();
   return match;
 }
 
-void Scenario::start(int samples) {
-  start(samples, 0);
+void Scenario::start(int samples, bool leg) {
+  start(samples, 0, leg);
 }
 
-void Scenario::start(int samples, int init_num) {
+void Scenario::start(int samples, int init_num, bool leg) {
   // get starting time
   auto t_start = std::chrono::high_resolution_clock::now();
   // run samples
   for (int i{init_num}; i < samples + init_num; i++){
     std::cout << "Sample " << i << "\n\n";
-    //
     // start match
     Match match = buildMatch();
+    std::cout << "build\n";
     match.printPlayers();
-    match.startSimulation(true);
-    match.saveMatchToFile(getFilename() + "_" + std::to_string(i));
+    std::cout << "print\n";
+    match.startSimulation(!leg);
+    match.saveMatchToFile(getFilename() + "_" + std::to_string(i), leg);
   }
   // finish time
   auto t_fin = std::chrono::high_resolution_clock::now();
