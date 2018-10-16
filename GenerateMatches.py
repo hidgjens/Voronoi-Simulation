@@ -9,6 +9,7 @@ def main(run_type, samples, frames, filename, legacy, processes):
     # check output folder exists
     if not exists('data_files/csvs'):
         makedirs('data_files/csvs')
+
     if legacy == 'yes':
         if not exists('data_files/legacy_csvs'):
             makedirs('data_files/legacy_csvs')
@@ -31,6 +32,7 @@ def main(run_type, samples, frames, filename, legacy, processes):
 
     # create worker function
     def worker(samples_, start_num):
+        print(start_num)
         if run_type == 'UnitSquare':
             cmdlist = ['bin/sim', filename, str(samples_), str(frames), str(start_num), legacy, 'UnitPolygon', '4']
         else:
