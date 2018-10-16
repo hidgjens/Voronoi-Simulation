@@ -24,7 +24,7 @@ def CreateVid(name, **kwargs):
     vplot.PlotVoronois(name, **kwargs)
 
     # create vid from pngs
-    s.call(['ffmpeg','-framerate','5','-i','plots/voronoi_plots_%s/voronoi-%%04d.png' % name,'videos/vor_plot_%s.mp4' % name,'-vcodec','mpeg4'])
+    s.call(['ffmpeg','-framerate','5','-i','plots/voronoi_plots_%s/voronoi-%%04d.png' % name,'videos/vor_plot_%s.mp4' % name,'-vcodec','mpeg4','-y'])
 
 # allows us to run directly in the terminal using system arguments
 def main(name, init_frame, frame_num):

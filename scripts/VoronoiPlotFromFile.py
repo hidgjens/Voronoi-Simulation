@@ -144,8 +144,8 @@ def PlotVoronois(name, **kwargs):
     # plot Voronoi diagram for each frame
     for i in range(Frames):
 
-        # create list of elements (X, Y, Team, Ctrl) corresponding to each player
-        team_frame = df.loc[df['FID'] == FrameNum + i, ['FID', 'X', 'Y', 'Team', 'Ctrl']]
+        # create team dataframe
+        team_frame = df.loc[df['FID'] == FrameNum + i, ['FID', 'X', 'Y', 'Team', 'Ctrl', 'Smart']]
         # reset index so we can iterate through team_frame easily
         team_frame = team_frame.reset_index()
         pos_frame = team_frame.loc[team_frame['Team'] != 'Ball']
