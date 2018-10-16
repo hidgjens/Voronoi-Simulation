@@ -36,6 +36,10 @@ public:
 
   double getCtrl(Match&) const;
 
+  void setIPos(Cart);
+  void setIdPos(Cart);
+
+
 };
 
 #endif

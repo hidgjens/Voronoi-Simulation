@@ -1,5 +1,6 @@
 #include "ExchangeAI.h"
 #include "../Match.h"
+#include<cmath>
 
 ExchangeAI::ExchangeAI() {
   setDesc("Find nearest opponent with larger area and approach them in attempt to swap positions");
@@ -15,8 +16,7 @@ void ExchangeAI::updateFrame(Player& plyr, Match& match){
   // find opponent team
   Team eteam;
   Cart targetPos;
-  Cart move;
-  double dist2trgt = -1.0;
+  double met = 0.0;
 
   if (plyrteam == "Home"){
     eteam = match.getAwayTeam();
@@ -31,37 +31,60 @@ void ExchangeAI::updateFrame(Player& plyr, Match& match){
     // looping through players
     if (eteam.getPlyrCtrl(i + 1, match) > plyrctrl) {
       // current enemy player has larger control than player
-      if (eteam.getPos(i + 1).dist2(plyrpos) < dist2trgt || dist2trgt < 0) {
+      auto eplyr = eteam.getPlayer(i + 1);
+      auto new_met = metricD(plyr, eplyr, match);
+
+      if (new_met > met) {
         // current enemy player is closer than previously stored enemy player
+        met = new_met;
         targetPos = eteam.getPos(i + 1);
-        dist2trgt = eteam.getPos(i + 1).dist2(plyrpos);
       }
     }
   }
 
-  // now make move based on result
-  if (dist2trgt < 0) {
-    // no better area was found
-    // do nothing
-    move = Cart(0.0 , 0.0);
-  } else {
-    // better target was found, move towards it
-    if (sqrt(dist2trgt) - 1.0 < plyr.getMaxStep()) {
-      // player can reach the target, and will move 1 metre passed him
-      //std::cout << sqrt(dist2trgt) + 1.0 << "\n";
-      move = plyrpos.unitVect2(targetPos) * (sqrt(dist2trgt) + 1.0);
-    } else {
-      // move as much as possible in the direction of the target
-      move = plyrpos.unitVect2(targetPos) * (plyr.getMaxStep());
-      // if (move.mod() != 5){
-      //   std::cout << move.mod() << "\n";
-      // }
-    }
+  if (met > 0){
+    // make move
+    plyr.setIPos(targetPos);
+    plyr.checkSmartLegalPosition(match);
   }
-  // make move
-  plyr.setdPos(move);
-  plyr.checkSmartLegalPosition(match);
 
 
+}
 
+Cart ExchangeAI::metricV(Player& test_plyr, Player& far_plyr, Match& match) {
+  auto A_j = far_plyr.getCtrl(match);
+  auto testplyr_pos = test_plyr.getPos();
+  auto farplyr_pos = far_plyr.getPos();
+  auto d_ij = testplyr_pos.dist(farplyr_pos);
+  auto d_0 = sqrt(match.getPitchX() * match.getPitchY());
+  double gamma;
+
+  if (test_plyr.getTeam() == far_plyr.getTeam()){
+    if (test_plyr.getShirtNum() == far_plyr.getShirtNum()){
+      // players are the same person
+      gamma = 0.0;
+    } else {
+      // both same team
+      gamma = -0.1;
+    }
+
+  } else {
+    // opposite teams
+    gamma = 1.0;
+  }
+  auto scalar = A_j * exp(-1.0 * d_ij / d_0) * gamma;
+  auto unitVector = testplyr_pos.unitVect2(farplyr_pos);
+  //std::cout << A_j << "\t" << d_ij << "\t" << d_0 << "\n";
+  //std::cout << scalar << "\n";
+
+  if (gamma == 0.0){
+    return Cart(0.0, 0.0);
+  } else
+  {
+    return unitVector * scalar;
+  }
+}
+
+double ExchangeAI::metricD(Player& test_plyr, Player& far_plyr, Match& match) {
+  return metricV(test_plyr, far_plyr, match).mod();
 }

@@ -78,9 +78,28 @@ void Player::setSmart(bool smrt) {
 
 double Player::getCtrl(Match& match) const {
   if (team == "Home") {
+    //std::cout << "I am a HOME player\n";
     return match.getCurrentPitch().getHomePlyrCtrl(shirtNum);
   } else
   if (team == "Away") {
+    //std::cout << "I am a AWAY player\n";
     return match.getCurrentPitch().getAwayPlyrCtrl(shirtNum);
+  }
+}
+
+void Player::setIPos(Cart idealpos){
+  // set ideal position, player will move in direction of this position at max step unless the position is reached
+  if (getPos().dist(idealpos) > maxStep){
+    setdPos(getPos().unitVect2(idealpos) * maxStep);
+  } else {
+    setdPos(idealpos - getPos());
+  }
+}
+void Player::setIdPos(Cart idealpos){
+  // set ideal dPosition, player will move in direction of this position at max step unless the position is reached
+  if (idealpos.mod() > maxStep){
+    setdPos(idealpos.unitVect() * maxStep);
+  } else {
+    setdPos(idealpos);
   }
 }
