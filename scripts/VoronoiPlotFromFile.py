@@ -33,7 +33,7 @@ def PullFrames(name, FrameNum, Frames, Balls):
 
 # from stackoverflow: https://stackoverflow.com/questions/20515554/colorize-voronoi-diagram
 # makes Voronoi plot able to be coloured
-def voronoi_finite_polygons_2d(vor, radius=0):
+def voronoi_finite_polygons_2d(vor, radius=1000):
     """
     Reconstruct infinite voronoi regions in a 2D diagram to finite
     regions.
@@ -154,10 +154,10 @@ def PlotVoronois(name, **kwargs):
 
         # get numbers of home and away players in frame
         HomePlayers = len(team_frame.loc[team_frame['Team'] == 'Home'].index)
-        print(HomePlayers)
+#        print(HomePlayers)
 
         AwayPlayers = len(team_frame.loc[team_frame['Team'] == 'Away'].index)
-        print(AwayPlayers)
+#        print(AwayPlayers)
 
         # and number of balls
         if Balls:
@@ -184,8 +184,14 @@ def PlotVoronois(name, **kwargs):
         for j in range(AllPlayers):
             if  team_frame.at[j, 'Team'] == 'Home':
                 TeamColour = 'r'
+                # colour smart players differently so we can identify them more easily
+                if team_frame.at[j, 'Smart']:
+                    TeamColour = 'm'
+
             elif team_frame.at[j, 'Team'] == 'Away':
                 TeamColour = 'b'
+                if team_frame.at[j, 'Smart']:
+                    TeamColour = 'c'
 
             plt.plot(pos_array[j,0], pos_array[j,1], 'o', color = TeamColour)
 
