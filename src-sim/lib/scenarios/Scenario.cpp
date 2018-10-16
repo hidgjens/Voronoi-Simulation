@@ -105,9 +105,7 @@ void Scenario::start(int samples, int init_num, bool leg) {
     std::cout << "Sample " << i << "\n\n";
     // start match
     Match match = buildMatch();
-    std::cout << "build\n";
     match.printPlayers();
-    std::cout << "print\n";
     match.startSimulation(!leg);
     match.saveMatchToFile(getFilename() + "_" + std::to_string(i), leg);
   }

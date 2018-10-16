@@ -22,7 +22,6 @@ Exchange::Exchange(int frms, std::string fn, bool leg){
 
 void Exchange::buildScenario(int hm, int hSmrtCnt, int aw, int frms, double pitchX, double pitchY, std::string fn) {
   // set member variables
-  std::cout << "building\n";
   setFilename(fn);
   setHomeCnt(hm);
   setAwayCnt(aw);
