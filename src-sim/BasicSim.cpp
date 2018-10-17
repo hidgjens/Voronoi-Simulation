@@ -6,6 +6,7 @@
 #include "lib/scenarios/Exchange.h"
 #include "lib/scenarios/ExchangeMetric.h"
 #include "lib/scenarios/RandomWalkers.h"
+#include "lib/scenarios/TestingScenario.h"
 
 using namespace std;
 
@@ -18,10 +19,10 @@ int main(int argc, char *argv[]){
       << "\t[2] - Samples\n"
       << "\t[3] - Frames\n"
       << "\t[4] - Starting number (for filename [use 0 if not threading])\n"
-      << "\t[5] - Legacy CSVs? [yes/no]"
-      << "\t[6] - Mode (RandomWalk/1HRandomWalk/1HExchange/1HMetExch/UnitPolygon)\n"
+      << "\t[5] - Legacy CSVs? [yes/no]\n"
+      << "\t[6] - Mode (RandomWalk/1HRandomWalk/1HExchange/1HMetExch/UnitPolygon/test)\n"
       << "\t[7] - Number of players/sides (for UnitPolygon)\n";
-    return 1;
+    return 0;
   }
   // parse arugments
   string filename{argv[1]};
@@ -71,6 +72,10 @@ int main(int argc, char *argv[]){
   if (mode == "1HMetExch"){
     ExchangeMetric exch(frames, filename);
     exch.start(samples, start_num, legacy);
+  } else
+  if (mode == "test"){
+    TestingScenario testscen(frames, filename);
+    testscen.start(samples, start_num, legacy);
   } else {
     cout << "Unrecognised mode '" << mode << "'\n";
     return 1;
