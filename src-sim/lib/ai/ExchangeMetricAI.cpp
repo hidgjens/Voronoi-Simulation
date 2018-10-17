@@ -8,7 +8,6 @@ ExchangeMetricAI::ExchangeMetricAI() {
 }
 
 void ExchangeMetricAI::updateFrame(Player& plyr, Match& match){
-  std::cout << "play pos" << plyr.getPos().xComp() << " " << plyr.getPos().yComp() << std::endl;
   // get player position
   auto plyrpos = plyr.getPos();
 
@@ -18,7 +17,6 @@ void ExchangeMetricAI::updateFrame(Player& plyr, Match& match){
 
   // F vector
   Cart F(0.0, 0.0);
-  F.print();
   Player curplyr;
 
   // // open F file
@@ -42,7 +40,6 @@ void ExchangeMetricAI::updateFrame(Player& plyr, Match& match){
     }
 
     F += metricV(plyr, curplyr, match);
-    F.print();
     // check if curplyr is the player
     // if (curplyr.getShirtNum() == plyr.getShirtNum() && curplyr.getTeam() == plyr.getTeam()) {
     //   // must be the same player
@@ -105,7 +102,6 @@ void ExchangeMetricAI::updateFrame(Player& plyr, Match& match){
   // }
   // Ffile.close();
   // make move
-  F.print();
   //std::cout << F.mod() << std::endl;
   plyr.setIdPos(F.unitVect() * plyr.getMaxStep());
   plyr.checkSmartLegalPosition(match);
