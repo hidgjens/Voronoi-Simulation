@@ -16,9 +16,10 @@ def CreateVid(name):
     s.call(['ffmpeg','-framerate','5','-i','plots/voronoi_plots_%s/voronoi-%%04d.png' % name,'videos/vor_plot_%s.mp4' % name,'-vcodec','mpeg4','-y'])
 
 def main(name, vid_num):
-    for j in range(vid_num):
-        filename = '%s_%i' % (name, j)
-        CreateVid(filename)
+    if not vid_num = 0:
+        for j in range(vid_num):
+            filename = '%s_%i' % (name, j)
+            CreateVid(filename)
 
 if __name__ == '__main__':
     name = sys.argv[1]
