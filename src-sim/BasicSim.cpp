@@ -47,14 +47,14 @@ int main(int argc, char *argv[]){
   // random seed for generating player positions
   srand (time(NULL));
   cout << mode << "\n";
-  if (mode == "RandomWalk"){
+  if (mode == "1HRandomWalk"){
     // randomwalk
-    cout << "All players have a random walk\n\n";
+    cout << "1H has random walk, everyone else is stationary\n\n";
     Scenario scen(frames, filename);
     scen.start(samples, start_num, legacy);
   } else
-  if (mode == "1HRandomWalk"){
-    cout << "1H player has a random walk and everyone else is stationary";
+  if (mode == "RandomWalk"){
+    cout << "All random walkers";
     RandomWalkers rndm(frames, filename);
     rndm.start(samples, start_num, legacy);
   } else
