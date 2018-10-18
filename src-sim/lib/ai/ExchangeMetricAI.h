@@ -1,14 +1,15 @@
-#ifndef EXCHANGEAI_H
-#define EXCHANGEAI_H
+#ifndef EXCHANGEMETRICAI_H
+#define EXCHANGEMETRICAI_H
 
 #include "AI.h"
+#include "ExchangeAI.h"
 #include "../Player.h"
 
-class ExchangeAI: public AI {
+class ExchangeMetricAI: public AI {
 
 public:
   // constructors
-  ExchangeAI();
+  ExchangeMetricAI();
 
   void updateFrame(Player&, Match&);
 

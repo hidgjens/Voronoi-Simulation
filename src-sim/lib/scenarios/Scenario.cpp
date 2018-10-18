@@ -88,7 +88,6 @@ bool Scenario::getLegacy() const {
 
 Match Scenario::buildMatch() {
   Match match = Match(frames, homeTeam, awayTeam, pitchX, pitchY);
-  std::cout << "here";
   match.initRandObjPos();
   return match;
 }
