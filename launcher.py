@@ -1,7 +1,5 @@
 from getpass import getpass
 from datetime import datetime
-import paramiko
-import pysftp
 import subprocess
 import os
 ###########################################################
@@ -22,28 +20,32 @@ generate_1HMetExch = {
     'task-name' : 'Generate 1HMetExch'
 }
 histogram_1HMetExch = {
-    'cmd' : ['python3', 'scripts/FilterSimData.py', '%s.1HMetExch' % date_str, '30', '%s.1HMetExch' % date_str]
+    'cmd' : ['python3', 'scripts/FilterSimData.py', '%s.1HMetExch' % date_str, '30', '%s.1HMetExch' % date_str],
+    'task-name' : 'Plot 1HMetExch'
 }
 generate_1HRandomWalk = {
     'cmd' : ['python3', 'GenerateMatches.py', '1HRandomWalk', '5000', '100', '%s.1HRandomWalk' % date_str, 'no', '8'],
     'task-name' : 'Generate 1HRandomWalk'
 }
 histogram_1HRandomWalk = {
-    'cmd' : ['python3', 'scripts/FilterSimData.py', '%s.1HRandomWalk' % date_str, '30', '%s.1HRandomWalk' % date_str]
+    'cmd' : ['python3', 'scripts/FilterSimData.py', '%s.1HRandomWalk' % date_str, '30', '%s.1HRandomWalk' % date_str],
+    'task-name' : 'Plot 1HRandomWalk'
 }
 generate_RandomWalk = {
     'cmd' : ['python3', 'GenerateMatches.py', 'RandomWalk', '5000', '100', '%s.RandomWalk' % date_str, 'no', '8'],
     'task-name' : 'Generate RandomWalk'
 }
 histogram_RandomWalk = {
-    'cmd' : ['python3', 'scripts/FilterSimData.py', '%s.RandomWalk' % date_str, '30', '%s.RandomWalk' % date_str]
+    'cmd' : ['python3', 'scripts/FilterSimData.py', '%s.RandomWalk' % date_str, '30', '%s.RandomWalk' % date_str],
+    'task-name' : 'Plot RandomWalk'
 }
 generate_1HExchange = {
     'cmd' : ['python3', 'GenerateMatches.py', '1HExchange', '5000', '100', '%s.1HExchange' % date_str, 'no', '8'],
     'task-name' : 'Generate 1HExchange'
 }
 histogram_1HExchange = {
-    'cmd' : ['python3', 'scripts/FilterSimData.py', '%s.1HExchange' % date_str, '30', '%s.1HExchange' % date_str]
+    'cmd' : ['python3', 'scripts/FilterSimData.py', '%s.1HExchange' % date_str, '30', '%s.1HExchange' % date_str],
+    'task-name' : 'Generate 1HExchange'
 }
 
 
