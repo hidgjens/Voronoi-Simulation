@@ -6,7 +6,7 @@ Player::Player()
   : shirtNum(0)
   , team("Neutral")
   , smart(false)
-  , maxStep(5.0)
+  , maxStep(2.5)
 {
   setName(team + "Player" + std::to_string(shirtNum));
   setPos(0.0, 0.0);
@@ -16,7 +16,7 @@ Player::Player(int sh_num)
   : shirtNum(sh_num)
   , team("Neutral")
   , smart(false)
-  , maxStep(5.0)
+  , maxStep(2.5)
 {
   setName(team + "Player" + std::to_string(shirtNum));
   setPos(0.0, 0.0);
@@ -25,7 +25,7 @@ Player::Player(int sh_num, std::string tm)
   : shirtNum(sh_num)
   , team(tm)
   , smart(false)
-  , maxStep(5.0)
+  , maxStep(2.5)
 {
   setName(team + "Player" + std::to_string(shirtNum));
   setPos(0.0, 0.0);
@@ -34,7 +34,7 @@ Player::Player(int sh_num, std::string tm, bool smrt)
   : shirtNum(sh_num)
   , team(tm)
   , smart(smrt)
-  , maxStep(5.0)
+  , maxStep(2.5)
 {
   setName(team + "Player" + std::to_string(shirtNum));
   setPos(0.0, 0.0);

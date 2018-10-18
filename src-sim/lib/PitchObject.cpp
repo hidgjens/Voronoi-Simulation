@@ -116,19 +116,26 @@ void PitchObject::checkLegalPosition(Match& match){
 void PitchObject::checkSmartLegalPosition(Match& match){
 
   if (getPosX() > match.getPitchX() / 2.0){
-    std::cout << "illegal " << getPosX() << " " << getPosY() << "\n";
+    //std::cout << "illegal " << getPosX() << " " << getPosY() << "\n";
     setPosX(match.getPitchX() / 2.0);
   }
   if (getPosX() < -1.0 * match.getPitchX() / 2.0){
-    std::cout << "illegal " << getPosX() << " " << getPosY() << "\n";
+    //std::cout << "illegal " << getPosX() << " " << getPosY() << "\n";
     setPosX( -1.0 * match.getPitchX() / 2.0);
   }
   if (getPosY() > match.getPitchY() / 2.0){
-    std::cout << "illegal " << getPosX() << " " << getPosY() << "\n";
+    //std::cout << "illegal " << getPosX() << " " << getPosY() << "\n";
     setPosY(match.getPitchY() / 2.0);
   }
   if (getPosY() < -1.0 * match.getPitchY() / 2.0){
-    std::cout << "illegal " << getPosX() << " " << getPosY() << "\n";
+    //std::cout << "illegal " << getPosX() << " " << getPosY() << "\n";
     setPosY( -1.0 * match.getPitchY() / 2.0);
   }
+
+
+
+}
+
+void PitchObject::scatter(double r, double theta){
+  setdPos(r * cos(theta), r * sin(theta));
 }

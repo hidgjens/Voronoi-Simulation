@@ -141,6 +141,7 @@ void Match::printPitch() const {
 void Match::initRandObjPos() {
   homeTeam.initRandObjPos(*this);
   awayTeam.initRandObjPos(*this);
+  checkCollisions();
   pitches[0].storeFrame(*this);
 }
 
@@ -155,10 +156,124 @@ void Match::updateFrame(){
   // update teams
   homeTeam.updateFrame(*this);
   awayTeam.updateFrame(*this);
+  // check for collisions
+  //checkCollisions();
   // update frame counter
   currentframe++;
   // store new positions for later
   pitches[currentframe].storeFrame(*this);
+
+}
+
+void Match::checkCollisions(){
+  bool no_col = false;
+
+  do{
+    // set no_col to true, if contradiction is found it is changed
+    no_col = true;
+    // iterate through home team
+    for (int i{0}; i < homeTeam.getPlayerCount(); i++){
+      auto iPos = homeTeam.getPos(i + 1);
+      // for current player, iterate though rest of home team
+      for (int j{i + 1}; j < homeTeam.getPlayerCount(); j++){
+        auto jPos = homeTeam.getPos(j + 1);
+        // check distance from two points
+        if (iPos.dist2(jPos) == 0.0){
+          // collision detected
+          no_col = false;
+          // scatter players
+          double radius = 0.1;
+          double theta = ((double) rand() / RAND_MAX) * 2 * M_PI;
+          homeTeam.scatterPlayer(i + 1, radius, theta);
+          homeTeam.scatterPlayer(j + 1, radius, M_PI + theta);
+        }
+      }
+      // then away team
+      for (int j{0}; j < awayTeam.getPlayerCount(); j++){
+        auto jPos = awayTeam.getPos(j + 1);
+        // check distance from two points
+        if (iPos.dist2(jPos) == 0.0){
+          // collision detected
+          no_col = false;
+          // scatter players
+          double radius = 0.1;
+          double theta = ((double) rand() / RAND_MAX) * 2 * M_PI;
+          homeTeam.scatterPlayer(i + 1, radius, theta);
+          awayTeam.scatterPlayer(j + 1, radius, M_PI + theta);
+
+        }
+      }
+    }
+    // once home team is checked, check none of the away players collide with each other
+    for (int i{0}; i < awayTeam.getPlayerCount() - 1; i++){ // -1 because very last player doesn't need a check
+      auto iPos = awayTeam.getPos(i + 1);
+      // check against rest of players on away team
+      for (int j{i + 1}; j < awayTeam.getPlayerCount(); j++){
+        auto jPos = awayTeam.getPos(j + 1);
+
+        if (iPos.dist2(jPos) == 0.0){
+          // collision detected
+          no_col = false;
+          // scatter players
+          double radius = 0.1;
+          double theta = ((double) rand() / RAND_MAX) * 2 * M_PI;
+          awayTeam.scatterPlayer(i + 1, radius, theta);
+          awayTeam.scatterPlayer(j + 1, radius, M_PI + theta);
+
+        }
+      }
+    }
+    if (!no_col){
+      std::cout << "COLLISION\n";
+    }
+  }
+  while(!no_col);
+
+}
+
+void Match::checkCollisions(Player& iPlyr){
+  bool no_col = false;
+
+  do{
+    // set no_col to true, if contradiction is found it is changed
+    no_col = true;
+    // iterate through home team
+    auto iPos = iPlyr.getPos();
+    // for current player, iterate though rest of home team
+    for (int j{0}; j < homeTeam.getPlayerCount(); j++){
+      auto jPos = homeTeam.getPos(j + 1);
+      // check distance from two points
+      if (iPos.dist2(jPos) == 0.0 && &homeTeam.getPlayerR(j + 1) != &iPlyr){
+        // collision detected
+        no_col = false;
+        // scatter players
+        double radius = 0.1;
+        double theta = ((double) rand() / RAND_MAX) * 2 * M_PI;
+        iPlyr.scatter(radius, theta);
+        homeTeam.scatterPlayer(j + 1, radius, M_PI + theta);
+      }
+    }
+    // then away team
+    for (int j{0}; j < awayTeam.getPlayerCount(); j++){
+      auto jPos = awayTeam.getPos(j + 1);
+      // check distance from two points
+      if (iPos.dist2(jPos) == 0.0 && &awayTeam.getPlayerR(j + 1) != &iPlyr){
+        // collision detected
+        no_col = false;
+        // scatter players
+        double radius = 0.1;
+        double theta = ((double) rand() / RAND_MAX) * 2 * M_PI;
+        iPlyr.scatter(radius, theta);
+        awayTeam.scatterPlayer(j + 1, radius, M_PI + theta);
+
+        }
+      }
+
+    if (!no_col){
+      std::cout << "COLLISION\n";
+    }
+  }
+  while(!no_col);
 
 }
 // teams

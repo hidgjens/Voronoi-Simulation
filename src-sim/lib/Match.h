@@ -71,6 +71,8 @@ public:
   void initRandObjPos();
   void initUnitPolygon();
   void updateFrame();
+  void checkCollisions();
+  void checkCollisions(Player&);
 
   // get teams
   Team& getHomeTeam();

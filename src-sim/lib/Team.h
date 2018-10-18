@@ -33,7 +33,7 @@ public:
   Team(std::string, int); // name, count
   Team(std::string, int, AI&); // name, count, AI
   Team(std::string, int, AI&, int, AI&); // name, team count, default AI, smrt count, smart AI
-
+  Team(std::string, int, AI*, int, AI*); // name, team count, default AI, smrt count, smart AI
   // Team(std::string, int, AI&, int, RandomWalk&); // name, team count, default AI, smrt count, smart AI
 
   // copy and move constructors
@@ -61,6 +61,9 @@ public:
   void updateFrame(Match&);
 
   const Player getPlayer(int) const; // shirt num
+  Player& getPlayerR(int);
+
+  void scatterPlayer(int, double, double); // scatter shirt number by angle and radius
 
 };
 
