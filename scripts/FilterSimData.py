@@ -7,6 +7,9 @@
 # necessary
 import pandas as pd
 import numpy as np
+import matplotlib as mpl
+mpl.use('agg')
+import matplotlib.pyplot as plt
 from os import makedirs, listdir
 from os.path import exists
 import lib.DFFilters as DFF
@@ -72,6 +75,21 @@ def AnalyseSim(run_name, bins, filename = None, title = None, fltr = FilterSmart
     hist = Histogram(data, bins, run_name, x_label, title, y_label)
     hist.saveHistogram(filename)
     hist.saveFile(filename)
+    plt.clf()
+
+    # log plot
+    # remove zero bins
+    corr = [[b, m] for [b, m] in zip(hist.bins, hist.middle_values) if not b == 0]
+    corr_bins = [b for b, m in corr]
+    corr_mid = [m for b, m in corr]
+    corr_bins = np.log(corr_bins)
+
+    log_plot = plt.scatter(corr_mid, corr_bins, marker = 'x' )
+    plt.title('%s - Logarithm Plot' % filename)
+    plt.xlabel('dCtrl')
+    plt.ylabel('ln(Counts)')
+    plt.savefig('plots/histograms/%s/%sLog.png' % (filename, filename))
+    plt.clf()
 
 if __name__ == '__main__':
     # process sys args

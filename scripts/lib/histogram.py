@@ -23,6 +23,7 @@ class Histogram:
     # histogram details
     entries = None
     bins = None
+    middle_values = None
     ranges = None
     mean = None
     std = None
@@ -52,9 +53,11 @@ class Histogram:
         # calc mean and std
         Px = 0
         Px2 = 0
+        self.middle_values = []
 
         for quant, lower, upper in zip(self.bins, self.ranges[:-1], self.ranges[1:]):
             middle_value = (upper + lower) / 2
+            self.middle_values.append(middle_value)
             Px += quant * middle_value
             Px2 += quant * (middle_value ** 2)
         self.mean = Px / self.entries
