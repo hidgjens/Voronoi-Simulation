@@ -23,7 +23,7 @@ def LoadRunName(run_name):
     data_df = pd.DataFrame()
     for i, datafile in enumerate(datafiles):
         # print every 10%
-        if i % (num_files // 10) == 0:
+        if num_files > 10 and i % (num_files // 10) == 0:
             print('%i%%: loading %s' % (int(100 * i / num_files), datafile))
         # load csv
         dat = pd.read_csv('data_files/csvs/%s' % datafile, sep = '\t', index_col = 0)

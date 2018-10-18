@@ -8,31 +8,25 @@ from os.path import exists
 from os import makedirs
 from scipy.spatial import Voronoi, voronoi_plot_2d
 
-# placeholder values:
+# placeholder values
 PitchX = 105
 PitchY = 68
-def PullFrames(name, FrameNum, Frames, Balls):
+
+def importFrame(name, Balls):
     # pull data from csv into dataframe
     df = pd.read_csv('data_files/csvs/%s.csv' % name, sep = '\t', index_col = 0)
 
-    # drop frames outside limits
-    if not Frames == 0:
-    	df = df[df['FID'] < FrameNum + Frames]
-    df = df[df['FID'] >= FrameNum]
-
-    # ignore balls
-    if Balls == False:
+    # ignore balls 
+    if not Balls:
         df = df[df['Team'] != 'Ball']
 
-    # for plotting Voronois we only need the (FID, Team, Num, X, Y, Ctrl)
-    # so we can delete the other columns
+    # delete excess columns
     df = df.drop(columns = ['PID','Time'])
 
-#    print(df)
     return(df)
 
 # from stackoverflow: https://stackoverflow.com/questions/20515554/colorize-voronoi-diagram
-# makes Voronoi plot able to be coloured
+# allows us to colourise Voronoi plot
 def voronoi_finite_polygons_2d(vor, radius=1000):
     """
     Reconstruct infinite voronoi regions in a 2D diagram to finite
@@ -117,47 +111,31 @@ def voronoi_finite_polygons_2d(vor, radius=1000):
 
     return new_regions, np.asarray(new_vertices)
 
-
-# compute Voronoi tessellation for frames in csv
-# kwargs are frame1 (initial frame), frames (no. of frames), balls = True/False (include balls or not)
-def PlotVoronois(name, **kwargs):
+# compute Voronoi tessellation for all frames in df
+def PlotVoronois(name):
     # defaults to text and no balls
-    FrameNum = 0
-    Frames = 1
     Balls = False
     Text = True
-    # can specify a range of frames starting at frame1, and whether to include balls
-    if 'frame1' in kwargs.keys():
-        FrameNum = kwargs['frame1']
-    if 'balls' in kwargs.keys():
-        Balls = kwargs['balls']
-    if 'frames' in kwargs.keys():
-        Frames = kwargs['frames']
-    if 'text' in kwargs.keys():
-        Text = kwargs['text']
 
     # import dataframe
-    df = PullFrames(name, FrameNum, Frames, Balls)
-    if Frames == 0:
-        Frames = len(df.loc[(df['Team'] == 'Home') & (df['Num'] == 1)].values.tolist())
-        print('Frames ', Frames)
+    df = importFrame(name, Balls)
+
+    Frames = len(df.loc[(df['Team'] == 'Home') & (df['Num'] == 1)].values.tolist())
+    print('Frames ', Frames)
+
     # plot Voronoi diagram for each frame
     for i in range(Frames):
+        # create frame dataframe
+        frame = df.loc[df['FID'] == i, ['FID', 'X', 'Y', 'Team', 'Ctrl', 'Smart']]
+        frame = frame.reset_index()
 
-        # create team dataframe
-        team_frame = df.loc[df['FID'] == FrameNum + i, ['FID', 'X', 'Y', 'Team', 'Ctrl', 'Smart']]
-        # reset index so we can iterate through team_frame easily
-        team_frame = team_frame.reset_index()
-        pos_frame = team_frame.loc[team_frame['Team'] != 'Ball']
-        pos_array = pos_frame[['X', 'Y', 'Ctrl']].values
-        ball_pos = team_frame.loc[team_frame['Team'] == 'Ball'].values
+        # get array of player positions and ball position
+        pos_array = frame.loc[frame['Team'] != 'Ball', ['X', 'Y', 'Ctrl']].values
+        ball_pos = frame.loc[frame['Team'] == 'Ball', ['X','Y']].values
 
         # get numbers of home and away players in frame
-        HomePlayers = len(team_frame.loc[team_frame['Team'] == 'Home'].index)
-#        print(HomePlayers)
-
-        AwayPlayers = len(team_frame.loc[team_frame['Team'] == 'Away'].index)
-#        print(AwayPlayers)
+        HomePlayers = len(frame.loc[frame['Team'] == 'Home'].index)
+        AwayPlayers = len(frame.loc[frame['Team'] == 'Away'].index)
 
         # and number of balls
         if Balls:
@@ -166,10 +144,9 @@ def PlotVoronois(name, **kwargs):
             BallPlayers = 0
 
         AllPlayers = HomePlayers + AwayPlayers + BallPlayers
-        # compute and plot Voronoi tessellation from player positions
-        vor = Voronoi(pos_array[:,:2])
 
-        # plot
+        # compute Voronoi tessellation from player positions
+        vor = Voronoi(pos_array[:,:2])
         regions, vertices = voronoi_finite_polygons_2d(vor)
 
         # colourise
@@ -181,16 +158,17 @@ def PlotVoronois(name, **kwargs):
             polygon = vertices[region]
             plt.fill(*zip(*polygon), alpha=0.4, color = mapper.to_rgba(teamkey[idx]))
 
+        # plot
         for j in range(AllPlayers):
-            if  team_frame.at[j, 'Team'] == 'Home':
+            if  frame.at[j, 'Team'] == 'Home':
                 TeamColour = 'r'
                 # colour smart players differently so we can identify them more easily
-                if team_frame.at[j, 'Smart']:
+                if frame.at[j, 'Smart']:
                     TeamColour = 'm'
 
-            elif team_frame.at[j, 'Team'] == 'Away':
+            elif frame.at[j, 'Team'] == 'Away':
                 TeamColour = 'b'
-                if team_frame.at[j, 'Smart']:
+                if frame.at[j, 'Smart']:
                     TeamColour = 'c'
 
             plt.plot(pos_array[j,0], pos_array[j,1], 'o', color = TeamColour)
@@ -205,12 +183,12 @@ def PlotVoronois(name, **kwargs):
         plt.xlim(-0.5 * PitchX, 0.5 * PitchX)
         plt.ylim(-0.5 * PitchY, 0.5 * PitchY)
 
-        # print Voronoi plot
         # check if output folder exists
         if not exists('plots'):
             makedirs('plots')
         if not exists('plots/voronoi_plots_%s' % name):
             makedirs('plots/voronoi_plots_%s' % name)
 
-        plt.savefig('plots/voronoi_plots_%s/voronoi-%04d.png' % (name, FrameNum + i))
+        # save plot
+        plt.savefig('plots/voronoi_plots_%s/voronoi-%04d.png' % (name, i))
         plt.clf()

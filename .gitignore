@@ -1,0 +1,6 @@
+bin/
+data_files/
+plots/
+videos/
+scripts/__pycache__/
+scripts/lib/__pycache__/
