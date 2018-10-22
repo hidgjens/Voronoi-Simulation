@@ -5,7 +5,7 @@ cd $SRCDIR # go into source code folder
 
 echo "Compiling..." # compile the project
 
-gcc -o $FILE BasicSim.cpp lib/Match.cpp lib/Pitch.cpp lib/PitchObject.cpp lib/Player.cpp lib/Team.cpp lib/Ball.cpp lib/vect/Cart.cpp lib/ai/AI.cpp lib/ai/RandomWalk.cpp lib/ai/ExchangeAI.cpp lib/ai/ExchangeMetricAI.cpp lib/ai/TestingAI.cpp lib/scenarios/Scenario.cpp lib/scenarios/UnitPolygon.cpp lib/scenarios/Exchange.cpp lib/scenarios/ExchangeMetric.cpp lib/scenarios/RandomWalkers.cpp lib/scenarios/TestingScenario.cpp -lm -std=c++14 -lstdc++
+gcc -o $FILE BasicSim.cpp lib/Match.cpp lib/Pitch.cpp lib/PitchObject.cpp lib/Player.cpp lib/Team.cpp lib/Ball.cpp lib/vect/Cart.cpp lib/ai/AI.cpp lib/ai/RandomWalk.cpp lib/ai/ExchangeAI.cpp lib/ai/ExchangeMetricAI.cpp lib/ai/TestingAI.cpp lib/teams/ManagedTeam.cpp lib/teams/MetricTeam.cpp lib/teams/ExchangeTeam.cpp lib/teams/RandomWalkTeam.cpp lib/scenarios/Scenario.cpp lib/scenarios/UnitPolygon.cpp lib/scenarios/Exchange.cpp lib/scenarios/ExchangeMetric.cpp lib/scenarios/RandomWalkers.cpp lib/scenarios/TestingScenario.cpp lib/scenarios/ScenarioFromTeams.cpp -lm -std=c++14 -lstdc++
 
 RESULT=$? # store return code
 

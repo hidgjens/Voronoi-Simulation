@@ -29,6 +29,10 @@ Team::Team(std::string nm, int plyrs, AI& nAI, int splyrs, AI& smAI) : name(nm),
   buildTeam();
 }
 
+Team::Team(std::string nm, int plyrs, AI* nAI, int splyrs, AI* smAI) : name(nm), plyrcnt(plyrs), normAI(nAI), smartPlyrcnt(splyrs), smartAI(smAI) {
+  buildTeam();
+}
+
 // Team::Team(std::string nm, int plyrs, AI& nAI, int splyrs, RandomWalk& smAI) : name(nm), plyrcnt(plyrs), normAI(nAI), smartPlyrcnt(splyrs), smartAI(smAI) {
 //   std::cout << splyrs << smAI.getDesc() << " spec AI\n";
 //   buildTeam();
@@ -150,4 +154,11 @@ void Team::updateFrame(Match& ptch) {
 
  const Player Team::getPlayer(int shirt_num) const {
   return plyrs[shirt_num - 1];
+}
+Player& Team::getPlayerR(int shirt_num){
+ return plyrs[shirt_num - 1];
+}
+
+void Team::scatterPlayer(int shirt_num, double r, double theta){
+  plyrs[shirt_num - 1].setdPos(r * cos(theta), r * sin(theta));
 }

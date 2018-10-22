@@ -8,6 +8,7 @@ ExchangeMetricAI::ExchangeMetricAI() {
 }
 
 void ExchangeMetricAI::updateFrame(Player& plyr, Match& match){
+
   // get player position
   auto plyrpos = plyr.getPos();
 
@@ -104,7 +105,8 @@ void ExchangeMetricAI::updateFrame(Player& plyr, Match& match){
   // make move
   //std::cout << F.mod() << std::endl;
   plyr.setIdPos(F.unitVect() * plyr.getMaxStep());
-  plyr.checkSmartLegalPosition(match);
+  plyr.checkLegalPosition(match);
+  match.checkCollisions(plyr);
 
 }
 
@@ -124,7 +126,7 @@ Cart ExchangeMetricAI::metricV(Player& test_plyr, Player& far_plyr, Match& match
       gamma = 0.0;
     } else {
       // both same team
-      gamma = -0.1;
+      gamma = -1.0;
     }
 
   } else {

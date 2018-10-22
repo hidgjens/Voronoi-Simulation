@@ -1,12 +1,19 @@
 #include<iostream>
 #include<string>
 #include<chrono>
+// probably going to remove these
 #include "lib/scenarios/Scenario.h"
 #include "lib/scenarios/UnitPolygon.h"
 #include "lib/scenarios/Exchange.h"
 #include "lib/scenarios/ExchangeMetric.h"
 #include "lib/scenarios/RandomWalkers.h"
 #include "lib/scenarios/TestingScenario.h"
+// actually useful:
+#include "lib/scenarios/ScenarioFromTeams.h"
+#include "lib/teams/ManagedTeam.h"
+#include "lib/teams/MetricTeam.h"
+#include "lib/teams/ExchangeTeam.h"
+#include "lib/teams/RandomWalkTeam.h"
 
 using namespace std;
 
@@ -73,9 +80,21 @@ int main(int argc, char *argv[]){
     ExchangeMetric exch(frames, filename);
     exch.start(samples, start_num, legacy);
   } else
+  if (mode == "HmMetExch"){
+    // make teams
+    MetricTeam homeTm;
+    homeTm.buildTeam("Home", 11, 11);
+    MetricTeam awayTm;
+    awayTm.buildTeam("Away", 11, 11);
+    // make matches
+    ScenarioFromTeams scen(homeTm, awayTm, frames, filename);
+    scen.start(samples, start_num, legacy);
+  } else
   if (mode == "test"){
+
     TestingScenario testscen(frames, filename);
     testscen.start(samples, start_num, legacy);
+
   } else {
     cout << "Unrecognised mode '" << mode << "'\n";
     return 1;

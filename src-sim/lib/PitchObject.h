@@ -51,5 +51,7 @@ public:
   void checkLegalPosition(Match&);
   void checkSmartLegalPosition(Match&);
 
+  void scatter(double, double);
+
 };
 #endif
