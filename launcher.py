@@ -70,66 +70,66 @@ print('##################################################')
 def get_time():
     return(datetime.now().strftime('%d/%m  %H:%M:%S'))
 
-def upload_message(path):
-    name = path.split('/')[-1]
-    srv = pysftp.Connection(
-        host = '192.168.1.17',
-        username = 'lewis',
-        password = '')
-    srv.chdir('/home/lewis')
-    srv.put(path)
-    os.remove(path)
-    return('/home/lewis/%s' % name)
+# def upload_message(path):
+#     name = path.split('/')[-1]
+#     srv = pysftp.Connection(
+#         host = '192.168.1.17',
+#         username = 'lewis',
+#         password = '')
+#     srv.chdir('/home/lewis')
+#     srv.put(path)
+#     os.remove(path)
+#     return('/home/lewis/%s' % name)
 
-def sendemail(remote_file, subject = 'ptcone30 update'):
-    client = paramiko.SSHClient()
-    client.load_system_host_keys()
-    client.set_missing_host_key_policy(paramiko.WarningPolicy)
-    client.connect('192.168.1.17', username='lewis', password=passwd)
-    ssh_stdin, ssh_stdout, ssh_stderr = client.exec_command('''sendemail -l email.log \
-    	-f "LewisRPi@ptcone30" \
-    	-u "%s" \
-    	-t "lewis.higgins97@hotmail.com;jimworsfold@msn.com" \
-    	-s "smtp.gmail.com:587" \
-    	-o tls=yes \
-    	-xu "safarimanow@gmail.com" \
-    	-xp "%s" \
-    	-o message-file="%s"''' % (subject ,'', remote_file))
+# def sendemail(remote_file, subject = 'ptcone30 update'):
+#     client = paramiko.SSHClient()
+#     client.load_system_host_keys()
+#     client.set_missing_host_key_policy(paramiko.WarningPolicy)
+#     client.connect('192.168.1.17', username='lewis', password=passwd)
+#     ssh_stdin, ssh_stdout, ssh_stderr = client.exec_command('''sendemail -l email.log \
+#     	-f "LewisRPi@ptcone30" \
+#     	-u "%s" \
+#     	-t "lewis.higgins97@hotmail.com;jimworsfold@msn.com" \
+#     	-s "smtp.gmail.com:587" \
+#     	-o tls=yes \
+#     	-xu "safarimanow@gmail.com" \
+#     	-xp "%s" \
+#     	-o message-file="%s"''' % (subject ,'', remote_file))
 
-    #client.exec_command('rm %s' % remote_file)
-    client.close()
+#     #client.exec_command('rm %s' % remote_file)
+#     client.close()
 
-def gen_started_message(task, start_time, subject=''):
-    message = ['ptcone30', 'Started task %s' % task, 'Time started: %s' % start_time]
-    with open('%s_started.msg' % task, 'w') as msg:
-        for line in message:
-            msg.write('%s\n' % line)
-    if subject == '':
-        subject = 'ptcone30: %s started' % task
-    remote_msg = upload_message('%s_started.msg' % task)
-    sendemail(remote_msg, subject)
+# def gen_started_message(task, start_time, subject=''):
+#     message = ['ptcone30', 'Started task %s' % task, 'Time started: %s' % start_time]
+#     with open('%s_started.msg' % task, 'w') as msg:
+#         for line in message:
+#             msg.write('%s\n' % line)
+#     if subject == '':
+#         subject = 'ptcone30: %s started' % task
+#     remote_msg = upload_message('%s_started.msg' % task)
+#     sendemail(remote_msg, subject)
 
-def gen_success_message(task, start_time, subject=''):
-    finish_time = get_time()
-    message = ['ptcone30', 'Task %s has finished' % task, 'Time started: %s' % start_time, 'Time complete: %s' % finish_time]
-    with open('%s_success.msg' % task, 'w') as msg:
-        for line in message:
-            msg.write('%s\n' % line)
-    if subject == '':
-        subject = 'ptcone30: %s completed' % task
-    remote_msg = upload_message('%s_success.msg' % task)
-    sendemail(remote_msg, subject)
+# def gen_success_message(task, start_time, subject=''):
+#     finish_time = get_time()
+#     message = ['ptcone30', 'Task %s has finished' % task, 'Time started: %s' % start_time, 'Time complete: %s' % finish_time]
+#     with open('%s_success.msg' % task, 'w') as msg:
+#         for line in message:
+#             msg.write('%s\n' % line)
+#     if subject == '':
+#         subject = 'ptcone30: %s completed' % task
+#     remote_msg = upload_message('%s_success.msg' % task)
+#     sendemail(remote_msg, subject)
 
-def gen_failed_message(task, start_time, error_msg = '', subject = ''):
-    finish_time = get_time()
-    message = ['ptcone30', 'Task %s has failed' % task, 'Time started: %s' % start_time, 'Time stopped: %s' % finish_time, 'Error message: %s' % error_msg]
-    with open('%s_failed.msg' % task, 'w') as msg:
-        for line in message:
-            msg.write('%s\n' % line)
-    if subject == '':
-        subject = 'ptcone30: %s failed' % task
-    remote_msg = upload_message('%s_failed.msg' % task)
-    sendemail(remote_msg, subject)
+# def gen_failed_message(task, start_time, error_msg = '', subject = ''):
+#     finish_time = get_time()
+#     message = ['ptcone30', 'Task %s has failed' % task, 'Time started: %s' % start_time, 'Time stopped: %s' % finish_time, 'Error message: %s' % error_msg]
+#     with open('%s_failed.msg' % task, 'w') as msg:
+#         for line in message:
+#             msg.write('%s\n' % line)
+#     if subject == '':
+#         subject = 'ptcone30: %s failed' % task
+#     remote_msg = upload_message('%s_failed.msg' % task)
+#     sendemail(remote_msg, subject)
 
 def runTasks(schedule):
     for tsk in schedule:
@@ -139,6 +139,7 @@ def runTasks(schedule):
             subprocess.Popen(tsk['cmd']).wait()
         except Exception as e:
             #gen_failed_message(tsk['task-name'], tsk['start-time'], str(e))
+            print('Failed %s: %s\n' % (tsk['task-name'], str(e)))
             pass
         else:
             #gen_success_message(tsk['task-name'], tsk['start-time'])
