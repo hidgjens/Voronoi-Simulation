@@ -1,5 +1,6 @@
 #include "RandomWalk.h"
 #include "../Player.h"
+#include "../Match.h"
 
 RandomWalk::RandomWalk() {
   setDesc("RandomWalk");
@@ -17,4 +18,5 @@ void RandomWalk::updateFrame(Player& plyr, Match& match) {
   //std::cout << "RWUPDATE " << dx << " " << dy << "\n";
   plyr.setdPos(dx, dy);
   plyr.checkLegalPosition(match);
+  match.checkCollisions(plyr);
 }

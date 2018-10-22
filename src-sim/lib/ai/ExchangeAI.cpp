@@ -45,7 +45,8 @@ void ExchangeAI::updateFrame(Player& plyr, Match& match){
   if (met > 0){
     // make move
     plyr.setIPos(targetPos);
-    plyr.checkSmartLegalPosition(match);
+    plyr.checkLegalPosition(match);
+    match.checkCollisions(plyr);
   }
 
 

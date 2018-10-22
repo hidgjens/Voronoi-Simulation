@@ -23,6 +23,7 @@ public:
   ManagedTeam(std::string, int, int); // team name, players, smart
 
   void buildTeam(std::string, int, int);
+  static ManagedTeam* makeTeam(std::string, std::string, int, int); // team type, team name, players, smart players
   Team& getTeam();
   void setTeam(Team);
 

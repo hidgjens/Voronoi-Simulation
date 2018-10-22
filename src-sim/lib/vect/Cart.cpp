@@ -57,8 +57,22 @@ double Cart::dist(Cart& trgt) const{
 }
 
 Cart Cart::unitVect() const {
-  return *this / mod();
+  auto md = mod();
+  if (md == 0.0){
+    // divide by zero error
+    return Cart(0.0, 0.0);
+  } else {
+    // safe
+    return *this / mod();
+  }
 }
 Cart Cart::unitVect2(Cart& trgt) const {
-  return (trgt - *this) / dist(trgt);
+  auto dst = dist(trgt);
+  if (dst == 0.0){
+    // divide by zero error
+    return Cart(0.0, 0.0);
+  } else {
+    // safe
+    return (trgt - *this) / dist(trgt);
+  }
 }

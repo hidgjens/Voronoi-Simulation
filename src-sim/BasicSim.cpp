@@ -82,10 +82,27 @@ int main(int argc, char *argv[]){
   } else
   if (mode == "HmMetExch"){
     // make teams
+    ManagedTeam* hmTm = ManagedTeam::makeTeam("MetricTeam", "Home", 11, 11);
+    ManagedTeam* awTm = ManagedTeam::makeTeam("MetricTeam", "Away", 11, 0);
+
+    // make matches
+    ScenarioFromTeams scen(*hmTm, *awTm, frames, filename);
+    scen.start(samples, start_num, legacy);
+  } else
+  if (mode == "AllMetExch"){
     MetricTeam homeTm;
     homeTm.buildTeam("Home", 11, 11);
     MetricTeam awayTm;
     awayTm.buildTeam("Away", 11, 11);
+    // make matches
+    ScenarioFromTeams scen(homeTm, awayTm, frames, filename);
+    scen.start(samples, start_num, legacy);
+  } else
+  if (mode == "HmRandom") {
+    RandomWalkTeam homeTm;
+    homeTm.buildTeam("Home", 11, 11);
+    RandomWalkTeam awayTm;
+    awayTm.buildTeam("Away", 11, 0);
     // make matches
     ScenarioFromTeams scen(homeTm, awayTm, frames, filename);
     scen.start(samples, start_num, legacy);

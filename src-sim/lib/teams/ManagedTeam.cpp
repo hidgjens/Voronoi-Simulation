@@ -1,4 +1,7 @@
 #include "ManagedTeam.h"
+#include "RandomWalkTeam.h"
+#include "ExchangeTeam.h"
+#include "MetricTeam.h"
 
 ManagedTeam::ManagedTeam() {
 }
@@ -15,6 +18,27 @@ void ManagedTeam::buildTeam(std::string nm, int pc, int sc) {
   setPlyrCnt(pc);
   setSmartCnt(sc);
   setTeam(Team(getName(), getPlyrCnt(), getNormAI(), getSmartCnt(), getSmartAI()));
+}
+
+// add new team types here
+ManagedTeam* ManagedTeam::makeTeam(std::string team_type, std::string team_name, int plyr_cnt, int smrt_cnt) {
+  if (team_type == "RandomWalkers"){
+    ManagedTeam* mngteam = new RandomWalkTeam;
+    mngteam->buildTeam(team_name, plyr_cnt, smrt_cnt);
+    return mngteam;
+  } else
+  if (team_type == "ExchangeTeam"){
+    ManagedTeam* mngteam = new ExchangeTeam;
+    mngteam->buildTeam(team_name, plyr_cnt, smrt_cnt);
+    return mngteam;
+  } else
+  if (team_type == "MetricTeam"){
+    ManagedTeam* mngteam = new MetricTeam;
+    mngteam->buildTeam(team_name, plyr_cnt, smrt_cnt);
+    return mngteam;
+  } else {
+    throw std::invalid_argument("Unrecognised team type: " + team_type + "\n");
+  }
 }
 
 Team& ManagedTeam::getTeam() {

@@ -269,9 +269,9 @@ void Match::checkCollisions(Player& iPlyr){
         }
       }
 
-    if (!no_col){
-      std::cout << "COLLISION\n";
-    }
+    // if (!no_col){
+    //   //std::cout << "COLLISION\n";
+    // }
   }
   while(!no_col);
 
