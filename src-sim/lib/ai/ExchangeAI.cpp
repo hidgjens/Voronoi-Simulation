@@ -54,6 +54,8 @@ void ExchangeAI::updateFrame(Player& plyr, Match& match){
 
 Cart ExchangeAI::metricV(Player& test_plyr, Player& far_plyr, Match& match) {
   auto A_j = far_plyr.getCtrl(match);
+  auto A_i = test_plyr.getCtrl(match);
+  if (A_i >= A_j) {return Cart(0.0, 0.0);}
   auto testplyr_pos = test_plyr.getPos();
   auto farplyr_pos = far_plyr.getPos();
   auto d_ij = testplyr_pos.dist(farplyr_pos);
@@ -66,7 +68,7 @@ Cart ExchangeAI::metricV(Player& test_plyr, Player& far_plyr, Match& match) {
       gamma = 0.0;
     } else {
       // both same team
-      gamma = -0.1;
+      gamma = -1.0;
     }
 
   } else {
