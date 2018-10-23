@@ -16,7 +16,7 @@ def importFrame(name, Balls):
     # pull data from csv into dataframe
     df = pd.read_csv('data_files/csvs/%s.csv' % name, sep = '\t', index_col = 0)
 
-    # ignore balls 
+    # ignore balls
     if not Balls:
         df = df[df['Team'] != 'Ball']
 
@@ -120,7 +120,7 @@ def PlotVoronois(name):
     # import dataframe
     df = importFrame(name, Balls)
 
-    Frames = len(df.loc[(df['Team'] == 'Home') & (df['Num'] == 1)].values.tolist())
+    Frames = 1 + df['FID'].max()
     print('Frames ', Frames)
 
     # plot Voronoi diagram for each frame
