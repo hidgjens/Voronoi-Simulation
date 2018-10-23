@@ -21,7 +21,7 @@ print_date = {
 
 def generate(strat, match_num, frame_num):
     process_dict = {
-    'cmd' : ['python3', 'GenerateMatches.py', '%s' % strat, '%i' % match_num, '%i' % frame_num, '%s.%s' % (date_str, strat), 'no', '8'],
+    'cmd' : ['python3', 'GenerateTeamMatches.py', '%s' % strat, '%i' % match_num, '%i' % frame_num, '%s.%s' % (date_str, strat), 'no', '8'],
 
     'task-name' : 'Generate %s' % strat
     }
@@ -54,7 +54,7 @@ def makeSchedule(match_num, frame_num, vid_num, strategies):
 
     for strat in strategies:
         gen_sched.append(generate(strat, match_num, frame_num))
-        hist_sched.append(histogram(strat))
+        #hist_sched.append(histogram(strat))
         vor_sched.append(voronois(strat, vid_num))
 
     schedule = gen_sched + hist_sched + vor_sched

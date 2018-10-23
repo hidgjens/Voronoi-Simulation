@@ -34,7 +34,7 @@ def main(run_type, samples, frames, filename, legacy, processes):
     def worker(samples_, start_num):
         print(start_num)
         
-        cmdlist = ['bin/sim', run_type[0], run_type[1], run_type[2], run_type[3], filename, legacy, str(samples), str(frames), start_num]
+        cmdlist = ['bin/sim', run_type[0], run_type[1], run_type[2], run_type[3], filename, legacy, str(samples), str(frames), str(start_num)]
         s.call(cmdlist)
 
     # start threads
