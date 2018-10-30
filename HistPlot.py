@@ -32,10 +32,10 @@ def getFilterSettings(run_name):
     # [RemoveHomeTeam, RemoveAwayTeam, RemoveBalls, SelectSmartPlayer, RemoveStationary]
     filter_settings = {
     'RandomWalk': [False, False, True, False, False],
-    '1HExchange': [False, True, True, True, True],
+    '1HExchange': [False, True, True, True, False],
     'RandomWalkers:11:RandomWalkers:0': [False, True, True, False, False],
-    'MetricTeam:11:RandomWalkers:0': [False, True, True, False, True]
-    
+    'MetricTeam:11:RandomWalkers:0': [False, True, True, False, False],
+    'MetricTeam:11:RandomWalkers:11': [False, True, True, False, False]
     }
 
     return(filter_settings['%s' % run_name])
