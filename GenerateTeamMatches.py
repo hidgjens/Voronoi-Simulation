@@ -33,8 +33,8 @@ def main(run_type, samples, frames, filename, legacy, processes):
     # create worker function
     def worker(samples_, start_num):
         print(start_num)
-        
-        cmdlist = ['bin/sim', run_type[0], run_type[1], run_type[2], run_type[3], filename, legacy, str(samples), str(frames), str(start_num)]
+
+        cmdlist = ['bin/sim', run_type[0], run_type[1], run_type[2], run_type[3], filename, legacy, str(samples_), str(frames), str(start_num)]
         s.call(cmdlist)
 
     # start threads
@@ -63,7 +63,7 @@ if __name__ == '__main__':
         print('''
     %s - Runs the simulation multiple times
         args:
-        [1] - Run Type HomeTeam:smrtcnt:awayteam:smrtcnt
+        [1] - Run Type HomeTeam:smrtcnt:AwayTeam:smrtcnt
         [2] - Samples [default: 400]
         [3] - Frames per sample [default: 15000]
         [4] - Filename [default: (Run Type)]
