@@ -4,7 +4,7 @@ def Rm0Frame(dataframe):
     return(dataframe.loc[dataframe['FID'] != 0])
 
 def RmBall(dataframe):
-    return(dataframe.loc(dataframe['Team'] != 'Ball'))
+    return(dataframe.loc[dataframe['Team'] != 'Ball'])
 
 def RmHomeTeam(dataframe):
     return(dataframe.loc[dataframe['Team'] != 'Home'])
