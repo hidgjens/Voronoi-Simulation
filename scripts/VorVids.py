@@ -1,4 +1,4 @@
-import scripts.VorPlot as vplot
+import VorPlot as vplot
 import subprocess as s
 import sys
 from os.path import exists

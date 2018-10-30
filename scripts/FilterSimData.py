@@ -53,6 +53,26 @@ def FilterSmartWalker(dataframe):
 
     return(dataframe)
 
+def plotTeamHistogram(data, bins, run_name, x_label, title, y_label, team, filename):
+    # we don't need balls or any information about opponent team
+    df = data
+    df = df[df['Team'] != team]
+
+    Frames = df['FID'].max()
+
+    dat = []
+    # calculate total team dCtrl in each frame and add to list
+    # we implicitly remove frame 0 here
+    for i in range(Frames):
+        frame = df[df['FID'] == i + 1]
+        dat.append(frame['dCtrl'].sum())
+
+    # plot histogram
+    hist = Histogram(dat, bins, run_name, x_label, '%s - %s' % (title, team), y_label)
+    hist.saveHistogram('%s%s' % (filename, team))
+    hist.saveFile('%s%s' % (filename, team))
+    plt.clf()
+
 def AnalyseSim(run_name, bins, filename = None, title = None, fltr = FilterSmartWalker, x_label = 'dCtrl [Ctrl(t_n) - Ctrl(t_n - 1)]', y_label = 'Counts'):
     # check args
     if filename is None:
@@ -60,8 +80,13 @@ def AnalyseSim(run_name, bins, filename = None, title = None, fltr = FilterSmart
     if title is None:
         title = filename
 
-    # # gather data
+    # gather data
     data = LoadRunName(run_name)
+
+    # print team-level histograms (pre selection cuts)
+    print('\nPrinting team histograms')
+    plotTeamHistogram(data, bins, run_name, x_label, title, y_label, 'Home', filename)
+    plotTeamHistogram(data, bins, run_name, x_label, title, y_label, 'Away', filename)
 
     print('\nApplying cuts')
     # apply cuts
@@ -78,18 +103,31 @@ def AnalyseSim(run_name, bins, filename = None, title = None, fltr = FilterSmart
     plt.clf()
 
     # log plot
-    # remove zero bins
+    # remove zero bins, take log of remaining bins, output bar plot
     corr = [[b, m] for [b, m] in zip(hist.bins, hist.middle_values) if not b == 0]
-    corr_bins = [b for b, m in corr]
-    corr_mid = [m for b, m in corr]
-    corr_bins = np.log(corr_bins)
+    y = np.log([b for b, m in corr])
+    x = [m for b, m in corr]
+    bar_width = x[1] - x[0]
 
-    log_plot = plt.scatter(corr_mid, corr_bins, marker = 'x' )
+    log_plot = plt.bar(x, y, width = bar_width, align = 'center', color = '#1f77b4', edgecolor = '#1f77b4')
+
+    # quadratic fit to log data to compare distribution to Gaussian
+    qfit = np.polyfit(x, y, 2)
+    f = np.poly1d(qfit)
+    x_qfit = np.linspace(x[0], x[-1], 100)
+    y_qfit = f(x_qfit)
+    plt.plot(x_qfit, y_qfit, linestyle = '-', color = 'r')
+    plt.ylim(0,)
+    # display equation of fit
+    plt.text(0, max(y), '$y = %ix^2 + %ix +%i$' % (qfit[2],qfit[1],qfit[0]))
+
     plt.title('%s - Logarithm Plot' % filename)
     plt.xlabel('dCtrl')
     plt.ylabel('ln(Counts)')
     plt.savefig('plots/histograms/%s/%sLog.png' % (filename, filename))
     plt.clf()
+
+    print('\nLog plot saved.\n')
 
 if __name__ == '__main__':
     # process sys args
