@@ -167,8 +167,8 @@ def PlotVoronois(name, frame, framenum):
         plt.text(pos_array[j,0] + 0.8, pos_array[j,1] + 0.8,  '%.1f' % (100 * pos_array[j,2]), fontsize = 8)
 
     # plot balls if we want them
-#    if BallPlayers == 1:
-#        plt.plot(ball_pos[0,0], ball_pos[0,1], 'o', color = TeamColour)
+    if BallPlayers == 1:
+        plt.plot(ball_pos[0,0], ball_pos[0,1], 'o', color = TeamColour)
 
     plt.xlim(-0.5 * PitchX, 0.5 * PitchX)
     plt.ylim(-0.5 * PitchY, 0.5 * PitchY)
