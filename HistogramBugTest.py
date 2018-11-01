@@ -6,7 +6,7 @@ from scripts.VorPlot import PlotVoronois
 import sys
 
 def importFrame(name):
-    df = pd.read_csv('data_files/test_csvs/%s.csv' % name, sep = '\t', index_col = 0)
+    df = pd.read_csv('data_files/csvs/%s.csv' % name, sep = '\t', index_col = 0)
     
     # delete excess columns
     df = df.drop(columns = ['PID','Time'])
@@ -27,7 +27,7 @@ def plotZeroCtrlFrames(name, dataframe):
 def main(run_name, date):
     # search directory for files
     filename = '%s.%s' % (date, run_name)
-    datafiles = [file for file in listdir('data_files/test_csvs') if file.split('_')[0] == filename]
+    datafiles = [file for file in listdir('data_files/csvs') if file.split('_')[0] == filename]
     num_files = len(datafiles)
     print('%i files found.' % num_files)
 
