@@ -12,14 +12,9 @@ from scipy.spatial import Voronoi, voronoi_plot_2d
 PitchX = 105
 PitchY = 68
 
-def importFrame(name, Balls):
+def importFrame(name):
     # pull data from csv into dataframe
     df = pd.read_csv('data_files/csvs/%s.csv' % name, sep = '\t', index_col = 0)
-
-    # ignore balls
-    if not Balls:
-        df = df[df['Team'] != 'Ball']
-
     # delete excess columns
     df = df.drop(columns = ['PID','Time'])
 
@@ -112,13 +107,9 @@ def voronoi_finite_polygons_2d(vor, radius=1000):
     return new_regions, np.asarray(new_vertices)
 
 # compute Voronoi tessellation for all frames in df
-def PlotVoronois(name):
-    # defaults to text and no balls
-    Balls = False
-    Text = True
-
+def iterPlot(name):
     # import dataframe
-    df = importFrame(name, Balls)
+    df = importFrame(name)
 
     Frames = 1 + df['FID'].max()
     print('Frames ', Frames)
@@ -127,68 +118,67 @@ def PlotVoronois(name):
     for i in range(Frames):
         # create frame dataframe
         frame = df.loc[df['FID'] == i, ['FID', 'X', 'Y', 'Team', 'Ctrl', 'Smart']]
-        frame = frame.reset_index()
+        PlotVoronois(name, frame, i)
 
-        # get array of player positions and ball position
-        pos_array = frame.loc[frame['Team'] != 'Ball', ['X', 'Y', 'Ctrl']].values
-        ball_pos = frame.loc[frame['Team'] == 'Ball', ['X','Y']].values
+def PlotVoronois(name, frame, framenum):
+    frame = frame.reset_index()
+    # get array of player positions and ball position
+    pos_array = frame.loc[frame['Team'] != 'Ball', ['X', 'Y', 'Ctrl']].values
+    ball_pos = frame.loc[frame['Team'] == 'Ball', ['X','Y']].values
 
-        # get numbers of home and away players in frame
-        HomePlayers = len(frame.loc[frame['Team'] == 'Home'].index)
-        AwayPlayers = len(frame.loc[frame['Team'] == 'Away'].index)
+    # get number of players in frame
+    HomePlayers = len(frame.loc[frame['Team'] == 'Home'].index)
+    AwayPlayers = len(frame.loc[frame['Team'] == 'Away'].index)
+    BallPlayers = len(frame.loc[frame['Team'] == 'Ball'].index)
+    
+    AllPlayers = HomePlayers + AwayPlayers + BallPlayers
 
-        # and number of balls
-        if Balls:
-            BallPlayers = 1
-        else:
-            BallPlayers = 0
+    # compute Voronoi tessellation from player positions
+    vor = Voronoi(pos_array[:,:2])
+    regions, vertices = voronoi_finite_polygons_2d(vor)
 
-        AllPlayers = HomePlayers + AwayPlayers + BallPlayers
+    # colourise
+    teamkey = np.append(np.ones(HomePlayers)*0.9, np.ones(AwayPlayers)*0.1)
+    norm = mpl.colors.Normalize(vmin=0.0, vmax=1.0, clip=True)
+    mapper = cm.ScalarMappable(norm=norm, cmap=cm.coolwarm)
 
-        # compute Voronoi tessellation from player positions
-        vor = Voronoi(pos_array[:,:2])
-        regions, vertices = voronoi_finite_polygons_2d(vor)
+    for idx, region in enumerate(regions):
+        polygon = vertices[region]
+        plt.fill(*zip(*polygon), alpha=0.4, color = mapper.to_rgba(teamkey[idx]))
 
-        # colourise
-        teamkey = np.append(np.ones(HomePlayers)*0.9, np.ones(AwayPlayers)*0.1)
-        norm = mpl.colors.Normalize(vmin=0.0, vmax=1.0, clip=True)
-        mapper = cm.ScalarMappable(norm=norm, cmap=cm.coolwarm)
+    # plot
+    for j in range(AllPlayers):
+        if  frame.at[j, 'Team'] == 'Home':
+            TeamColour = 'r'
+            # colour smart players differently so we can identify them more easily
+        #    if frame.at[j, 'Smart']:
+        #        TeamColour = 'm'
 
-        for idx, region in enumerate(regions):
-            polygon = vertices[region]
-            plt.fill(*zip(*polygon), alpha=0.4, color = mapper.to_rgba(teamkey[idx]))
+        elif frame.at[j, 'Team'] == 'Away':
+            TeamColour = 'b'
+        #    if frame.at[j, 'Smart']:
+        #        TeamColour = 'c'
+        elif frame.at[j, 'Team'] == 'Ball':
+            TeamColour = 'k'
+            
+        plt.plot(pos_array[j,0], pos_array[j,1], 'o', color = TeamColour)
 
-        # plot
-        for j in range(AllPlayers):
-            if  frame.at[j, 'Team'] == 'Home':
-                TeamColour = 'r'
-                # colour smart players differently so we can identify them more easily
-                if frame.at[j, 'Smart']:
-                    TeamColour = 'm'
+        # write spatial control (in %) of each player near them
+        plt.text(pos_array[j,0] + 0.8, pos_array[j,1] + 0.8,  '%.1f' % (100 * pos_array[j,2]), fontsize = 8)
 
-            elif frame.at[j, 'Team'] == 'Away':
-                TeamColour = 'b'
-                if frame.at[j, 'Smart']:
-                    TeamColour = 'c'
+    # plot balls if we want them
+#    if BallPlayers == 1:
+#        plt.plot(ball_pos[0,0], ball_pos[0,1], 'o', color = TeamColour)
 
-            plt.plot(pos_array[j,0], pos_array[j,1], 'o', color = TeamColour)
+    plt.xlim(-0.5 * PitchX, 0.5 * PitchX)
+    plt.ylim(-0.5 * PitchY, 0.5 * PitchY)
 
-            # write spatial control (in %) of each player near them
-            plt.text(pos_array[j,0] + 0.8, pos_array[j,1] + 0.8,  '%.1f' % (100 * pos_array[j,2]), fontsize = 8)
+    # check if output folder exists
+    if not exists('plots'):
+        makedirs('plots')
+    if not exists('plots/voronoi_plots_%s' % name):
+        makedirs('plots/voronoi_plots_%s' % name)
 
-        # plot balls if we want them
-        if Balls:
-            plt.plot(ball_pos[0,0], ball_pos[0,1], 'o', color = 'k')
-
-        plt.xlim(-0.5 * PitchX, 0.5 * PitchX)
-        plt.ylim(-0.5 * PitchY, 0.5 * PitchY)
-
-        # check if output folder exists
-        if not exists('plots'):
-            makedirs('plots')
-        if not exists('plots/voronoi_plots_%s' % name):
-            makedirs('plots/voronoi_plots_%s' % name)
-
-        # save plot
-        plt.savefig('plots/voronoi_plots_%s/voronoi-%04d.png' % (name, i))
-        plt.clf()
+    # save plot
+    plt.savefig('plots/voronoi_plots_%s/voronoi-%04d.png' % (name, framenum))
+    plt.clf()
