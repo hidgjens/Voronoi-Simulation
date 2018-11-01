@@ -3,7 +3,7 @@ import pandas as pd
 import sys
 from pathlib import Path
 from os import makedirs
-from os.path import exists, dirname
+from os.path import exists
 
 def generateCtrlArray(name):
     PitchX = 105; PitchY = 68
@@ -13,11 +13,11 @@ def generateCtrlArray(name):
     # check if output folder exists
     p = Path('.').resolve().parent
     path = '%s/data_files/heatmaps' % p
-    print(path)
+    
     if not exists(path):
         makedirs(path)
 
-    df.to_csv("%s/%s.csv" % (path, name))
+    df.to_csv("%s/%s.csv" % (path, name), index = False)
 
 def main(name):
     generateCtrlArray(name)
