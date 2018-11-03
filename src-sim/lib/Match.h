@@ -30,6 +30,8 @@ private:
   Team awayTeam;
   double homeCtrl;
   double awayCtrl;
+  double homeCtrl2;
+  double awayCtrl2;
 
   // ball
   Ball ball;
@@ -84,6 +86,8 @@ public:
   // get control
   double avgHomeCtrl() const;
   double avgAwayCtrl() const;
+  double avgHomeCtrl2() const;
+  double avgAwayCtrl2() const;
 
   // store match
   void saveMatchToFile(std::string, bool) const; // file name
