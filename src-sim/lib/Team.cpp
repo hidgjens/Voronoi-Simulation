@@ -159,6 +159,21 @@ Player& Team::getPlayerR(int shirt_num){
  return plyrs[shirt_num - 1];
 }
 
+double Team::minDist(Cart ps) {
+  double mindist = plyrs[0].getPos().dist(ps); // return variable;
+  
+  double tempdist;
+  for (int i{1}; i < plyrcnt; i++){ // not counting from 0, since mindist is plyr 0 by default
+    tempdist = plyrs[i].getPos().dist(ps);
+    if (tempdist < mindist) {
+      // current player is closer, update, mindist
+      mindist = tempdist;
+    }
+  }
+  // mindist is the distance of the closest player
+  return mindist;
+}
+
 void Team::scatterPlayer(int shirt_num, double r, double theta){
   plyrs[shirt_num - 1].setdPos(r * cos(theta), r * sin(theta));
 }

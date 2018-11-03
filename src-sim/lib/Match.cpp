@@ -288,10 +288,15 @@ Team& Match::getAwayTeam(){
 void Match::startSimulation(bool calc_space){
   homeCtrl = 0.0;
   awayCtrl = 0.0;
+  homeCtrl2 = 0.0;
+  awayCtrl2 = 0.0;
   if (calc_space){
     pitches[0].computeControl();
     homeCtrl += pitches[0].getHomeCtrl();
     awayCtrl += pitches[0].getAwayCtrl();
+    pitches[currentframe].computeControl2();
+    homeCtrl2 += pitches[currentframe].getHomeCtrl2();
+    awayCtrl2 += pitches[currentframe].getAwayCtrl2();
   }
 
 
@@ -302,12 +307,17 @@ void Match::startSimulation(bool calc_space){
       pitches[currentframe].computeControl();
       homeCtrl += pitches[currentframe].getHomeCtrl();
       awayCtrl += pitches[currentframe].getAwayCtrl();
+      pitches[currentframe].computeControl2();
+      homeCtrl2 += pitches[currentframe].getHomeCtrl2();
+      awayCtrl2 += pitches[currentframe].getAwayCtrl2();
     }
     if (i % 500 == 0 || i + 1 == frames) {
       printPlayers();
       if (calc_space){
         std::cout << "\nHomeCtrl: " << avgHomeCtrl() << "\n";
         std::cout << "AwayCtrl: " << avgAwayCtrl() << "\n";
+        std::cout << "\nHomeCtrl2: " << avgHomeCtrl2() << "\n";
+        std::cout << "AwayCtrl2: " << avgAwayCtrl2() << "\n";
       }
     }
   }
@@ -319,8 +329,17 @@ double Match::avgHomeCtrl() const{
 }
 double Match::avgAwayCtrl() const{
 
-    //std::cout << "AwayCTRL " << homeCtrl << "\n\n";
+  //std::cout << "AwayCTRL " << homeCtrl << "\n\n";
   return awayCtrl / ((double) currentframe + 1);
+}
+double Match::avgHomeCtrl2() const{
+  //std::cout << "\nHomeCTRL " << homeCtrl2 << "\n";
+  return homeCtrl2 / ((double) currentframe + 1);
+}
+double Match::avgAwayCtrl2() const{
+
+  //std::cout << "AwayCTRL " << awayCtrl2 << "\n\n";
+  return awayCtrl2 / ((double) currentframe + 1);
 }
 
 void Match::saveMatchToFile(std::string file_name, bool legacy) const {
@@ -336,10 +355,11 @@ void Match::saveMatchToFile(std::string file_name, bool legacy) const {
   if (legacy) {
     datafile << "\n";
   } else {
-    datafile << "\tCtrl\tdCtrl\tSmart\n"; // header
+    datafile << "\tdX\tdY\tCtrl\tdCtrl\tCtrl2\tdCtrl2\tSmart\n"; // header
   }
   int index{0}; // index counter must increment with every row
   Cart temp_pos;
+  Cart last_pos;
   int PID;
   int last_frame;
   for (int frame_{0}; frame_ < frames; frame_++){
@@ -357,6 +377,7 @@ void Match::saveMatchToFile(std::string file_name, bool legacy) const {
     }
     // ball
     temp_pos = pitches[frame_].getBallPos();
+    last_pos = pitches[last_frame].getBallPos();
     datafile
       << index << "\t"
       << PID << "\t"
@@ -373,9 +394,13 @@ void Match::saveMatchToFile(std::string file_name, bool legacy) const {
     } else {
       // legacy not required, add extra information
       datafile << "\t"
-      << 0.0 << "\t"
-      << 0.0 << "\t"
-      << "False" << "\n";
+        << temp_pos.xComp() - last_pos.xComp() << "\t"
+        << temp_pos.yComp() - last_pos.yComp() << "\t"
+        << 0.0 << "\t"
+        << 0.0 << "\t"
+        << 0.0 << "\t"
+        << 0.0 << "\t"
+        << "False" << "\n";
     }
 
     index++; // increment index
@@ -385,6 +410,7 @@ void Match::saveMatchToFile(std::string file_name, bool legacy) const {
 
       auto pl = homeTeam.getPlayer(i + 1);
       temp_pos = pitches[frame_].getHomePos(i + 1); // get player pos
+      last_pos = pitches[last_frame].getHomePos(i + 1); // get last pos
       // write to file
       datafile
         << index << "\t"
@@ -399,8 +425,12 @@ void Match::saveMatchToFile(std::string file_name, bool legacy) const {
         datafile << "\n";
       } else {
         datafile << "\t"
+          << temp_pos.xComp() - last_pos.xComp() << "\t"
+          << temp_pos.yComp() - last_pos.yComp() << "\t"
           << pitches[frame_].getHomePlyrCtrl(i + 1) << "\t"
           << pitches[frame_].getHomePlyrCtrl(i + 1) - pitches[last_frame].getHomePlyrCtrl(i + 1) << "\t"
+          << pitches[frame_].getHomePlyrCtrl2(i + 1) << "\t"
+          << pitches[frame_].getHomePlyrCtrl2(i + 1) - pitches[last_frame].getHomePlyrCtrl2(i + 1) << "\t"
           << pl.getSmartStr() << "\n";
       }
 
@@ -410,6 +440,7 @@ void Match::saveMatchToFile(std::string file_name, bool legacy) const {
     for (int i{0}; i < awayTeam.getPlayerCount(); i++){
       auto pl = awayTeam.getPlayer(i + 1);
       temp_pos = pitches[frame_].getAwayPos(i + 1);
+      last_pos = pitches[last_frame].getAwayPos(i + 1);
       datafile
         << index << "\t"
         << PID << "\t"
@@ -423,9 +454,13 @@ void Match::saveMatchToFile(std::string file_name, bool legacy) const {
         datafile << "\n";
       } else {
         datafile << "\t"
-        << pitches[frame_].getAwayPlyrCtrl(i + 1) << "\t"
-        << pitches[frame_].getAwayPlyrCtrl(i + 1) - pitches[last_frame].getAwayPlyrCtrl(i + 1) << "\t"
-        << pl.getSmartStr() << "\n";
+          << temp_pos.xComp() - last_pos.xComp() << "\t"
+          << temp_pos.yComp() - last_pos.yComp() << "\t"
+          << pitches[frame_].getAwayPlyrCtrl(i + 1) << "\t"
+          << pitches[frame_].getAwayPlyrCtrl(i + 1) - pitches[last_frame].getAwayPlyrCtrl(i + 1) << "\t"
+          << pitches[frame_].getAwayPlyrCtrl2(i + 1) << "\t"
+          << pitches[frame_].getAwayPlyrCtrl2(i + 1) - pitches[last_frame].getAwayPlyrCtrl2(i + 1) << "\t"
+          << pl.getSmartStr() << "\n";
       }
 
       index++;

@@ -86,6 +86,16 @@ double Player::getCtrl(Match& match) const {
     return match.getCurrentPitch().getAwayPlyrCtrl(shirtNum);
   }
 }
+double Player::getCtrl2(Match& match) const {
+  if (team == "Home") {
+    //std::cout << "I am a HOME player\n";
+    return match.getCurrentPitch().getHomePlyrCtrl2(shirtNum);
+  } else
+  if (team == "Away") {
+    //std::cout << "I am a AWAY player\n";
+    return match.getCurrentPitch().getAwayPlyrCtrl2(shirtNum);
+  }
+}
 
 void Player::setIPos(Cart idealpos){
   // set ideal position, player will move in direction of this position at max step unless the position is reached

@@ -63,6 +63,8 @@ public:
   const Player getPlayer(int) const; // shirt num
   Player& getPlayerR(int);
 
+  double minDist(Cart); // minimum distance to point (checks all players)
+
   void scatterPlayer(int, double, double); // scatter shirt number by angle and radius
 
 };

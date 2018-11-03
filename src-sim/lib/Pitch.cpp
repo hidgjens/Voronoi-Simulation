@@ -15,8 +15,11 @@ Pitch::Pitch()
   xSamp = (int) pitchX;
   ySamp = (int) pitchY;
   control = std::make_unique<int[]>(xSamp * ySamp);
+  points = std::make_unique<Point[]>(xSamp * ySamp);
   homePlyrCtrl = std::make_unique<double[]>(homeCnt);
   awayPlyrCtrl = std::make_unique<double[]>(awayCnt);
+  homePlyrCtrl2 = std::make_unique<double[]>(homeCnt);
+  awayPlyrCtrl2 = std::make_unique<double[]>(awayCnt);
 }
 
 // parameterised constructors
@@ -33,8 +36,11 @@ Pitch::Pitch(int new_fm)
   xSamp = (int) pitchX;
   ySamp = (int) pitchY;
   control = std::make_unique<int[]>(xSamp * ySamp);
+  points = std::make_unique<Point[]>(xSamp * ySamp);
   homePlyrCtrl = std::make_unique<double[]>(homeCnt);
   awayPlyrCtrl = std::make_unique<double[]>(awayCnt);
+  homePlyrCtrl2 = std::make_unique<double[]>(homeCnt);
+  awayPlyrCtrl2 = std::make_unique<double[]>(awayCnt);
 }
 // parameterised constructors
 Pitch::Pitch(Match& match)
@@ -50,8 +56,11 @@ Pitch::Pitch(Match& match)
   xSamp = (int) pitchX;
   ySamp = (int) pitchY;
   control = std::make_unique<int[]>(xSamp * ySamp);
+  points = std::make_unique<Point[]>(xSamp * ySamp);
   homePlyrCtrl = std::make_unique<double[]>(homeCnt);
   awayPlyrCtrl = std::make_unique<double[]>(awayCnt);
+  homePlyrCtrl2 = std::make_unique<double[]>(homeCnt);
+  awayPlyrCtrl2 = std::make_unique<double[]>(awayCnt);
 }
 
 // copy constructor
@@ -69,6 +78,10 @@ Pitch::Pitch(Pitch& ptch) : homeCnt(ptch.homeCnt), awayCnt(ptch.awayCnt), pitchX
   for (int i{0}; i < xSamp * ySamp; i++){
     control[i] = ptch.control[i];
   }
+  points = std::make_unique<Point[]>(xSamp * ySamp);
+  for (int i{0}; i < xSamp * ySamp; i++){
+    points[i] = ptch.points[i];
+  }
   homePlyrCtrl = std::make_unique<double[]>(homeCnt);
   awayPlyrCtrl = std::make_unique<double[]>(awayCnt);
   for (int i{0}; i < homeCnt; i++){
@@ -76,6 +89,16 @@ Pitch::Pitch(Pitch& ptch) : homeCnt(ptch.homeCnt), awayCnt(ptch.awayCnt), pitchX
   }
   for (int i{0}; i < awayCnt; i++){
     awayPlyrCtrl[i] = ptch.awayPlyrCtrl[i];
+  }
+
+  homePlyrCtrl2 = std::make_unique<double[]>(homeCnt);
+  awayPlyrCtrl2 = std::make_unique<double[]>(awayCnt);
+
+  for (int i{0}; i < homeCnt; i++){
+    homePlyrCtrl2[i] = ptch.homePlyrCtrl2[i];
+  }
+  for (int i{0}; i < awayCnt; i++){
+    awayPlyrCtrl2[i] = ptch.awayPlyrCtrl2[i];
   }
 }
 
@@ -107,6 +130,10 @@ Pitch& Pitch::operator=(Pitch& ptch){
   for (int i{0}; i < xSamp * ySamp; i++){
     control[i] = ptch.control[i];
   }
+  points = std::make_unique<Point[]>(xSamp * ySamp);
+  for (int i{0}; i < xSamp * ySamp; i++){
+    points[i] = ptch.points[i];
+  }
   homePlyrCtrl = std::make_unique<double[]>(homeCnt);
   awayPlyrCtrl = std::make_unique<double[]>(awayCnt);
 
@@ -115,6 +142,16 @@ Pitch& Pitch::operator=(Pitch& ptch){
   }
   for (int i{0}; i < awayCnt; i++){
     awayPlyrCtrl[i] = ptch.awayPlyrCtrl[i];
+  }
+
+  homePlyrCtrl2 = std::make_unique<double[]>(homeCnt);
+  awayPlyrCtrl2 = std::make_unique<double[]>(awayCnt);
+
+  for (int i{0}; i < homeCnt; i++){
+    homePlyrCtrl2[i] = ptch.homePlyrCtrl2[i];
+  }
+  for (int i{0}; i < awayCnt; i++){
+    awayPlyrCtrl2[i] = ptch.awayPlyrCtrl2[i];
   }
 
   return *this;
@@ -138,8 +175,11 @@ Pitch& Pitch::operator=(Pitch&& ptch){
   homePos = std::move(ptch.homePos);
   awayPos = std::move(ptch.awayPos);
   control = std::move(ptch.control);
+  points = std::move(ptch.points);
   homePlyrCtrl = std::move(ptch.homePlyrCtrl);
   awayPlyrCtrl = std::move(ptch.awayPlyrCtrl);
+  homePlyrCtrl2 = std::move(ptch.homePlyrCtrl2);
+  awayPlyrCtrl2 = std::move(ptch.awayPlyrCtrl2);
 
   ptch.homeCnt = 0;
   ptch.awayCnt = 0;
@@ -204,6 +244,8 @@ void Pitch::storeFrame(Match& match) {
 void Pitch::computeControl() {
   homeCtrl = 0;
   awayCtrl = 0;
+  for (int i{0}; i < homeCnt; i++) { homePlyrCtrl[i] = 0.0; }
+  for (int i{0}; i < awayCnt; i++) { awayPlyrCtrl[i] = 0.0; }
   double temp_mindist; // current min dist
   double temp_dist;
   int temp_player; // +ve shirt number for home team, -ve shirt num for away team
@@ -255,6 +297,63 @@ void Pitch::computeControl() {
   //std::cout << "homeCtrl ptch " << homeCtrl << "\tawayCtrl " << awayCtrl << "\n";
 }
 
+void Pitch::computeControl2(){
+  homeCtrl2 = 0;
+  awayCtrl2 = 0;
+  for (int i{0}; i < homeCnt; i++) { homePlyrCtrl2[i] = 0.0; }
+  for (int i{0}; i < awayCnt; i++) { awayPlyrCtrl2[i] = 0.0; }
+  // sample the pitch for control
+  for (int j{0}; j < ySamp; j++){ // iterate through y
+    for (int i{0}; i < xSamp; i++){ // iterate through x
+      
+      Cart loc = convertIdx2Coords(i, j); // position on pitch
+      // distances
+      double hm_X = homePos[0].dist(loc);
+      double aw_X = awayPos[0].dist(loc);
+      // shirt numbers
+      int hm_num = 1;
+      int aw_num = 1;
+      // check if any other player is closer
+      for (int k{1}; k < homeCnt; k++){
+        double temp_X = homePos[k].dist(loc);
+        if (temp_X < hm_X){
+          // player is closer, update info
+          hm_X = temp_X;
+          hm_num = k + 1;
+        }
+      }
+      for (int k{1}; k < awayCnt; k++){
+        double temp_X = awayPos[k].dist(loc);
+        if (temp_X < aw_X){
+          aw_X = temp_X;
+          aw_num = k + 1;
+        }
+      }
+
+      points[i + j * xSamp] = Point(loc, hm_X, aw_X, 1.0);
+
+      homeCtrl2 += points[i + j * xSamp].getHomeArea();
+      awayCtrl2 += points[i + j * xSamp].getAwayArea();
+      //std::cout << "Home: " << points[i + j * xSamp].getHomeArea() << "\tAway: " << points[i + j * xSamp].getAwayArea() << "\n";
+
+      homePlyrCtrl2[hm_num - 1] += points[i + j * xSamp].getHomeArea();
+      awayPlyrCtrl2[aw_num - 1] += points[i + j * xSamp].getAwayArea();
+      //std::cout << "Home: " << homeCtrl2 << "\tAway: " << awayCtrl2 << "\n";
+      //std::cout << "Home: " << homePlyrCtrl2[hm_num - 1] << "\tAway: " << awayPlyrCtrl2[aw_num - 1] << "\n";
+
+    }
+  }
+
+  homeCtrl2 /= xSamp * ySamp;
+  awayCtrl2 /= xSamp * ySamp;
+  for (int i{0}; i < homeCnt; i++){
+    homePlyrCtrl2[i] /= xSamp * ySamp;
+  }
+  for (int i{0}; i < awayCnt; i++){
+    awayPlyrCtrl2[i] /= xSamp * ySamp;
+  }
+}
+
 Cart Pitch::convertIdx2Coords(int i, int j){
   double X = ((i + 0.5) - xSamp/2) * pitchX / xSamp;
   double Y = ((j + 0.5) - ySamp/2) * pitchY / ySamp;
@@ -266,6 +365,12 @@ double Pitch::getHomeCtrl() const{
 }
 double Pitch::getAwayCtrl() const{
   return awayCtrl;
+}
+double Pitch::getHomeCtrl2() const{
+  return homeCtrl2;
+}
+double Pitch::getAwayCtrl2() const{
+  return awayCtrl2;
 }
 
 Cart Pitch::getHomePos(int shirt_num) const{
@@ -282,4 +387,10 @@ double Pitch::getHomePlyrCtrl(int shirt_num) const{
 }
 double Pitch::getAwayPlyrCtrl(int shirt_num) const{
   return awayPlyrCtrl[shirt_num - 1];
+}
+double Pitch::getHomePlyrCtrl2(int shirt_num) const{
+  return homePlyrCtrl2[shirt_num - 1];
+}
+double Pitch::getAwayPlyrCtrl2(int shirt_num) const{
+  return awayPlyrCtrl2[shirt_num - 1];
 }
