@@ -10,7 +10,7 @@ def CreateVid(name):
         makedirs('videos')
 
     # create pngs
-    vplot.PlotVoronois(name)
+    vplot.iterPlot(name)
 
     # create vid from pngs
     s.call(['ffmpeg','-framerate','5','-i','plots/voronoi_plots_%s/voronoi-%%04d.png' % name,'videos/vor_plot_%s.mp4' % name,'-vcodec','mpeg4','-y'])

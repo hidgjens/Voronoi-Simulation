@@ -1,8 +1,8 @@
-import scripts.VorVids as vvid
+from scripts.VorVids import CreateVid
 import sys
 
 def main(name):
-    vvid.CreateVid(name)
+    CreateVid(name)
 
 if __name__ == '__main__':
     name = sys.argv[1]
