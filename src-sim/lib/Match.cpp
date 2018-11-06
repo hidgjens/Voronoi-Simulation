@@ -314,10 +314,10 @@ void Match::startSimulation(bool calc_space){
     if (i % 500 == 0 || i + 1 == frames) {
       printPlayers();
       if (calc_space){
-        // std::cout << "\nHomeCtrl: " << avgHomeCtrl() << "\n";
-        // std::cout << "AwayCtrl: " << avgAwayCtrl() << "\n";
-        std::cout << "\nHomeCtrl2: " << avgHomeCtrl2() << "\n";
-        std::cout << "AwayCtrl2: " << avgAwayCtrl2() << "\n";
+        std::cout << "\nHomeCtrl: " << avgHomeCtrl() << "\n";
+        std::cout << "AwayCtrl: " << avgAwayCtrl() << "\n";
+        // std::cout << "\nHomeCtrl2: " << avgHomeCtrl2() << "\n";
+        // std::cout << "AwayCtrl2: " << avgAwayCtrl2() << "\n";
       }
     }
   }
