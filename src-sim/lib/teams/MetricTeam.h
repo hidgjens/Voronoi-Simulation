@@ -12,10 +12,13 @@ class MetricTeam: public ManagedTeam{
 private:
   RandomWalk normMetAI;
   ExchangeMetricAI smartMetAI;
-
+  double decay_const;
+  double op_coeff;
+  double sm_coeff;
 public:
   // constructors
   MetricTeam();
+  MetricTeam(double, double, double);
   // MetricTeam(std::string); // team name
   // MetricTeam(std::string, int); // team name, players
   // MetricTeam(std::string, int, int); // tema name, players, smart
