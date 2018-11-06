@@ -67,10 +67,10 @@ def filter(dataframe, run_name):
 
 # if log == True, also saves log plot
 # var is variable to be plotted, eg. 'Ctrl', 'dCtrl'
-def plotHistogram(run_name, date, var, log):
+def plotHistogram(df, run_name, date, var, log):
     filename = '%s.%s' % (date, run_name)
     # load filtered data
-    df = filter(LoadRunName(filename), run_name)
+    
     values = df[var].values
     n = len(values)
 
@@ -153,8 +153,10 @@ def plotHistogram(run_name, date, var, log):
         print('\nLog histogram png saved at: plots/histograms/%s/%sLog%s - %i Bins.png\n' % (filename, filename, var, bin_num))
 
 def main(run_name, date):
-    plotHistogram(run_name, date, 'dCtrl', True)
-    plotHistogram(run_name, date, 'Ctrl', False)
+    filename = '%s.%s' % (date, run_name)
+    df = filter(LoadRunName(filename), run_name)
+    plotHistogram(df, run_name, date, 'dCtrl', True)
+    plotHistogram(df, run_name, date, 'Ctrl', False)
 
 if __name__ == '__main__':
 
