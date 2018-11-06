@@ -112,8 +112,8 @@ void ExchangeMetricAI::updateFrame(Player& plyr, Match& match){
 
 Cart ExchangeMetricAI::metricV(Player& test_plyr, Player& far_plyr, Match& match) {
   //std::cout << test_plyr.getShirtNum() << "\t" << far_plyr.getShirtNum() << std::endl;
-  auto A_j = far_plyr.getCtrl2(match);
-  auto A_i = test_plyr.getCtrl2(match);
+  auto A_j = far_plyr.getCtrl(match);
+  auto A_i = test_plyr.getCtrl(match);
   if (A_i >= A_j && test_plyr.getTeam() != far_plyr.getTeam()) {return Cart(0.0, 0.0);} // ignore smaller areas only if opposing team
   //std::cout << A_j << std::endl;
   auto testplyr_pos = test_plyr.getPos();

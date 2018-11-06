@@ -35,7 +35,7 @@ public:
   void setSmart(bool);
 
   double getCtrl(Match&) const;
-  double getCtrl2(Match&) const;
+  // double getCtrl2(Match&) const;
 
   void setIPos(Cart);
   void setIdPos(Cart);

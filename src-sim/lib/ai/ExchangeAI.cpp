@@ -53,9 +53,9 @@ void ExchangeAI::updateFrame(Player& plyr, Match& match){
 }
 
 Cart ExchangeAI::metricV(Player& test_plyr, Player& far_plyr, Match& match) {
-  auto A_j = far_plyr.getCtrl2(match);
-  auto A_i = test_plyr.getCtrl2(match);
-  if (A_i >= A_j) {return Cart(0.0, 0.0);} // ignore smaller areas
+  auto A_j = far_plyr.getCtrl(match);
+  auto A_i = test_plyr.getCtrl(match);
+  if (A_i >= A_j && test_plyr.getTeam() != far_plyr.getTeam()) {return Cart(0.0, 0.0);} // ignore smaller areas
   auto testplyr_pos = test_plyr.getPos();
   auto farplyr_pos = far_plyr.getPos();
   auto d_ij = testplyr_pos.dist(farplyr_pos);
