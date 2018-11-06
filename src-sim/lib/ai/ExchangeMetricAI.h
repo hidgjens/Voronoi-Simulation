@@ -7,9 +7,15 @@
 
 class ExchangeMetricAI: public AI {
 
+private:
+  double decay_const;
+  double sm_coeff;
+  double op_coeff;
+
 public:
   // constructors
   ExchangeMetricAI();
+  ExchangeMetricAI(double, double, double);
 
   void updateFrame(Player&, Match&);
 

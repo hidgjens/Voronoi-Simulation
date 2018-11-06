@@ -21,7 +21,7 @@ void ManagedTeam::buildTeam(std::string nm, int pc, int sc) {
 }
 
 // add new team types here
-ManagedTeam* ManagedTeam::makeTeam(std::string team_type, std::string team_name, int plyr_cnt, int smrt_cnt) {
+ManagedTeam* ManagedTeam::makeTeam(std::string team_type, std::string team_name, int plyr_cnt, int smrt_cnt, double d, double o, double s) {
   if (team_type == "RandomWalkers"){
     ManagedTeam* mngteam = new RandomWalkTeam;
     mngteam->buildTeam(team_name, plyr_cnt, smrt_cnt);
@@ -33,7 +33,7 @@ ManagedTeam* ManagedTeam::makeTeam(std::string team_type, std::string team_name,
     return mngteam;
   } else
   if (team_type == "MetricTeam"){
-    ManagedTeam* mngteam = new MetricTeam;
+    ManagedTeam* mngteam = new MetricTeam(d, o, s);
     mngteam->buildTeam(team_name, plyr_cnt, smrt_cnt);
     return mngteam;
   } else {

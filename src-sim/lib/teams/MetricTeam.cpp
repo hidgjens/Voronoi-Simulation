@@ -1,9 +1,9 @@
 #include "MetricTeam.h"
 #include "ManagedTeam.h"
 
-MetricTeam::MetricTeam() {
+MetricTeam::MetricTeam() : decay_const(1.0), op_coeff(1.0), sm_coeff(1.0) {}
+MetricTeam::MetricTeam(double d, double o, double s) : decay_const(d), op_coeff(o), sm_coeff(s) {}
 
-}
 // MetricTeam::MetricTeam(std::string nm) {
 //   buildTeam(nm, 11, 11);
 // }

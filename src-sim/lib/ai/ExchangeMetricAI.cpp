@@ -3,7 +3,11 @@
 #include<fstream>
 #include<cmath>
 
-ExchangeMetricAI::ExchangeMetricAI() {
+ExchangeMetricAI::ExchangeMetricAI() : decay_const(1.0), op_coeff(1.0), sm_coeff(1.0) {
+  setDesc("Find nearest opponent with larger area and approach them in attempt to swap positions");
+}
+
+ExchangeMetricAI::ExchangeMetricAI(double d, double o, double s) : decay_const(d), op_coeff(o), sm_coeff(s) {
   setDesc("Find nearest opponent with larger area and approach them in attempt to swap positions");
 }
 
@@ -119,7 +123,7 @@ Cart ExchangeMetricAI::metricV(Player& test_plyr, Player& far_plyr, Match& match
   auto testplyr_pos = test_plyr.getPos();
   auto farplyr_pos = far_plyr.getPos();
   auto d_ij = testplyr_pos.dist(farplyr_pos);
-  auto d_0 = sqrt(match.getPitchX() * match.getPitchY());
+  auto d_0 = sqrt(match.getPitchX() * match.getPitchY()) * decay_const;
   double gamma;
 
   if (test_plyr.getTeam() == far_plyr.getTeam()){
@@ -128,12 +132,12 @@ Cart ExchangeMetricAI::metricV(Player& test_plyr, Player& far_plyr, Match& match
       gamma = 0.0;
     } else {
       // both same team
-      gamma = -1.0;
+      gamma = -1.0 * sm_coeff;
     }
 
   } else {
     // opposite teams
-    gamma = 1.0;
+    gamma = op_coeff;
   }
   auto scalar = A_j * exp(-1.0 * d_ij / d_0) * gamma;
   auto unitVector = testplyr_pos.unitVect2(farplyr_pos);
