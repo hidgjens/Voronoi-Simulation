@@ -125,6 +125,7 @@ void CSV::loadFile() {
 
             // create row to store data
             rows[line_num] = Row(IDX, PID, TIME, FID, TEAM, NUM, X, Y, DX, DY, CTRL, DCTRL, CTRL2, DCTRL2, SMART);
+        }
         line_num++;
     }
 
