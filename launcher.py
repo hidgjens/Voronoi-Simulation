@@ -17,11 +17,16 @@ print_date = {
     'task-name' : 'print_date_test'
 }
 
+sim_types = {
+    'met' : 'GenerateMetricMatches.py',
+    'team' : 'GenerateTeamMatches.py'
+}
+
 # functions to generate process dicts for match generation, histogram plotting and Voronoi analysis
 
-def generate(strat, match_num, frame_num):
+def generate(strat, match_num, frame_num, sim_type = 'team'):
     process_dict = {
-    'cmd' : ['python3', 'GenerateTeamMatches.py', '%s' % strat, '%i' % match_num, '%i' % frame_num, '%s.%s' % (date_str, strat), 'no', '8'],
+    'cmd' : ['python3', sim_types[sim_type], '%s' % strat, '%i' % match_num, '%i' % frame_num, '%s.%s' % (date_str, strat), 'no', '8'],
 
     'task-name' : 'Generate %s' % strat
     }
@@ -46,14 +51,14 @@ def voronois(strat, vid_num):
 ##############################################################################################################################################################################
 # creates list of processes to run, in order (generates matches for all strategies, then plots all histograms, then does all visualisation)
 
-def makeSchedule(match_num, frame_num, vid_num, strategies):
+def makeSchedule(match_num, frame_num, vid_num, sim_type, strategies):
     schedule = []
     gen_sched = []
     hist_sched = []
     vor_sched = []
 
     for strat in strategies:
-        gen_sched.append(generate(strat, match_num, frame_num))
+        gen_sched.append(generate(strat, match_num, frame_num, sim_type))
         hist_sched.append(histogram(strat))
         vor_sched.append(voronois(strat, vid_num))
 
@@ -87,9 +92,9 @@ def runTasks(schedule):
     for tsk in schedule:
         print('Task:\t%s\nStarted:\t%s\nFinished:\t%s\n' % (tsk['task-name'], tsk['start-time'], tsk['end-time']))
 
-def main(match_num, frame_num, vid_num, strategies):
+def main(match_num, frame_num, vid_num, sim_type, strategies):
     # builds schedule and then runs processes
-    schedule = makeSchedule(match_num, frame_num, vid_num, strategies)
+    schedule = makeSchedule(match_num, frame_num, vid_num, sim_type, strategies)
     runTasks(schedule)
 
 if __name__ == '__main__':
@@ -98,7 +103,8 @@ if __name__ == '__main__':
         match_num = int(sys.argv[1])
         frame_num = int(sys.argv[2])
         vid_num = int(sys.argv[3])
-        strategies = sys.argv[4:]
+        sim_type = sys.argv[4]
+        strategies = sys.argv[5:]
     else:
         print('''
     %s - Generates and analyses multiple matches.
@@ -106,8 +112,9 @@ if __name__ == '__main__':
         [1] - Number of matches to generate per type
         [2] - Frames per match
         [3] - Number of matches to visualise
-        [4+] - Match types (HomeTeam:smrtcnt:AwayTeam:smrtcnt)
+        [4] - Sim Type (team/met)
+        [5+] - Match types (HomeTeam:smrtcnt:AwayTeam:smrtcnt)/(decay:opp:same)
         ''' % sys.argv[0])
         exit()
 
-    main(match_num, frame_num, vid_num, strategies)
+    main(match_num, frame_num, vid_num, sim_type, strategies)

@@ -37,10 +37,14 @@ def getFilterSettings(run_name):
     'MetricTeam:11:RandomWalkers:0': [False, True, True, False, False],
     'MetricTeam:11:RandomWalkers:11': [False, True, True, False, False],
     'MetricTeam:11:MetricTeam:0' : [False, True, True, False, False],
-    'ExchangeTeam:11:ExchangeTeam:0' : [False, True, True, False, False]
+    'ExchangeTeam:11:ExchangeTeam:0' : [False, True, True, False, False],
+    'MetricSim' : [False, True, True, False, False]
     }
 
-    return(filter_settings['%s' % run_name])
+    if len(run_name.split(':')) == 3:
+        return(filter_settings['MetricSim'])
+    else:
+        return(filter_settings['%s' % run_name])
 
 def filter(dataframe, run_name):
     # apply filter settings
@@ -76,7 +80,7 @@ def plotHistogram(run_name, date, var, log):
 
     fig, ax = plt.subplots()
     bins, ranges, patches = ax.hist(values, bin_num)
-
+    del patches
     # calc mean and standard deviation
     Px = 0
     Px2 = 0
