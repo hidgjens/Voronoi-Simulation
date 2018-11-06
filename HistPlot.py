@@ -33,9 +33,11 @@ def getFilterSettings(run_name):
     filter_settings = {
     'RandomWalk': [False, False, True, False, False],
     '1HExchange': [False, True, True, True, False],
-    'RandomWalkers:11:RandomWalkers:0': [False, True, True, False, False],
+    'RandomWalkers:11:RandomWalkers:0': [False, True, True, True, False],
     'MetricTeam:11:RandomWalkers:0': [False, True, True, False, False],
-    'MetricTeam:11:RandomWalkers:11': [False, True, True, False, False]
+    'MetricTeam:11:RandomWalkers:11': [False, True, True, False, False],
+    'MetricTeam:11:MetricTeam:0' : [False, True, True, True, False],
+    'ExchangeTeam:11:ExchangeTeam:0' : [False, True, True, True, False]
     }
 
     return(filter_settings['%s' % run_name])
