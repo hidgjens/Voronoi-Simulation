@@ -150,6 +150,7 @@ Cart ExchangeMetricAI::metricV(Player& test_plyr, Player& far_plyr, Match& match
   } else
   {
     return unitVector * scalar;
+    
   }
 
 }
