@@ -8,7 +8,8 @@ from os.path import exists
 from HistPlot import filter, plotHistogram
 import sys
 
-def LoadRunName(filename):
+def LoadRunName(run_name, date):
+    filename = '%s.%s' % (date, run_name)
     datafiles = [file for file in listdir('data_files/csvs') if file.split('_')[0] == filename]
     num_files = len(datafiles)
     print('%s: %i csv files found' % (filename, num_files))
@@ -22,21 +23,21 @@ def LoadRunName(filename):
             print('%i%%: loading %s' % (int(100 * i / num_files), datafile))
         
         # load csv
-        dat = pd.read_csv('data_files/csvs/%s' % datafile, sep = '\t', index_col = 0)
+        df = pd.read_csv('data_files/csvs/%s' % datafile, sep = '\t', index_col = 0)
         
         # apply filters
-        dat = filter(dat, filename)
+        df = filter(df, run_name)
         
         # calculate total team Ctrl or dCtrl in each frame and add to list
         # we implicitly remove frame 0 here
-        Frames = dat['FID'].max()
+        Frames = df['FID'].max()
         for j in range(Frames):
             frame = df[df['FID'] == j + 1]
             ctrl.append(frame['Ctrl'].sum())
             dctrl.append(frame['dCtrl'].sum())
 
-        teamdf = pd.DataFrame(list(zip(ctrl, dctrl)), columns = ['Ctrl', 'dCtrl'])
-
+    teamdf = pd.DataFrame(list(zip(ctrl, dctrl)), columns = ['Ctrl', 'dCtrl'])
+    print(teamdf)
     print('100%: finished.')
     return(teamdf)
 
@@ -49,9 +50,8 @@ def plotTeamHistogram(data, run_name, date, var, log, team, title):
         plotHistogram(data, run_name, date, var, log, title = title)
 
 def main(run_name, date):
-    filename = '%s.%s' % (date, run_name)
     # load data
-    df = LoadRunName(filename)
+    df = LoadRunName(run_name, date)
 
     # plot histograms
     plotTeamHistogram(df, run_name, date, 'Ctrl', log = False, team = 'Home', title = None)

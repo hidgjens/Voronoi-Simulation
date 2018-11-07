@@ -96,7 +96,6 @@ def plotHistogram(df, run_name, date, var, log, title):
     stdev = np.sqrt(Px2 / n - (mean) ** 2)
 
     # save title and labels
-    ax.set_title('%s\nMean: %.4e, Std: %.4e | Entries: %i' % (filename, mean, stdev, n))
     ax.set_xlabel(var)
     ax.set_ylabel('Counts')
 
@@ -110,10 +109,14 @@ def plotHistogram(df, run_name, date, var, log, title):
 
     # save fig
     if title == None:
-        fig.savefig('plots/histograms/%s/%s%s - %i Bins.png' % (filename, filename, var, bin_num))
-        plt.clf()
+        ax.set_title('%s\nMean: %.4e, Std: %.4e | Entries: %i' % (filename, mean, stdev, n))
+        plt.savefig('plots/histograms/%s/%s%s - %i Bins.png' % (filename, filename, var, bin_num))
         print('\nHistogram png saved at: plots/histograms/%s/%s%s - %i Bins.png\n' % (filename, filename, var, bin_num))
     else:
+        ax.set_title('%s\nMean: %.4e, Std: %.4e | Entries: %i' % (title, mean, stdev, n))
+        plt.savefig('plots/histograms/%s/%s%s - %i Bins.png' % (filename, title, var, bin_num))
+        print('\nHistogram png saved at: plots/histograms/%s/%s%s - %i Bins.png\n' % (filename, title, var, bin_num))
+    plt.clf()
 
     # log plot
     if log == True:
