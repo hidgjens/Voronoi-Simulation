@@ -67,10 +67,10 @@ def filter(dataframe, run_name):
 
 # if log == True, also saves log plot
 # var is variable to be plotted, eg. 'Ctrl', 'dCtrl'
-def plotHistogram(df, run_name, date, var, log):
+def plotHistogram(df, run_name, date, var, log, title):
     filename = '%s.%s' % (date, run_name)
-    # load filtered data
     
+    # load filtered data
     values = df[var].values
     n = len(values)
 
@@ -81,6 +81,7 @@ def plotHistogram(df, run_name, date, var, log):
     fig, ax = plt.subplots()
     bins, ranges, patches = ax.hist(values, bin_num)
     del patches
+    
     # calc mean and standard deviation
     Px = 0
     Px2 = 0
@@ -108,9 +109,11 @@ def plotHistogram(df, run_name, date, var, log):
         makedirs('plots/histograms/%s' % filename)
 
     # save fig
-    fig.savefig('plots/histograms/%s/%s%s - %i Bins.png' % (filename, filename, var, bin_num))
-    plt.clf()
-    print('\nHistogram png saved at: plots/histograms/%s/%s%s - %i Bins.png\n' % (filename, filename, var, bin_num))
+    if title == None:
+        fig.savefig('plots/histograms/%s/%s%s - %i Bins.png' % (filename, filename, var, bin_num))
+        plt.clf()
+        print('\nHistogram png saved at: plots/histograms/%s/%s%s - %i Bins.png\n' % (filename, filename, var, bin_num))
+    else:
 
     # log plot
     if log == True:
@@ -144,19 +147,24 @@ def plotHistogram(df, run_name, date, var, log):
 
         # more formatting
         plt.ylim(0,)
-        plt.title('%s | Logarithm Plot\nMean: %.4e, Std: %.4e | Entries: %i' % (filename, mean, stdev, n))
         plt.xlabel(var)
         plt.ylabel('ln(Counts)')
-        plt.savefig('plots/histograms/%s/%sLog%s - %i Bins.png' % (filename, filename, var, bin_num))
-        plt.clf()
 
-        print('\nLog histogram png saved at: plots/histograms/%s/%sLog%s - %i Bins.png\n' % (filename, filename, var, bin_num))
+        if title == None:
+            plt.title('%s | Logarithm Plot\nMean: %.4e, Std: %.4e | Entries: %i' % (filename, mean, stdev, n))
+            plt.savefig('plots/histograms/%s/%sLog%s - %i Bins.png' % (filename, filename, var, bin_num))
+            print('\nLog histogram png saved at: plots/histograms/%s/%sLog%s - %i Bins.png\n' % (filename, filename, var, bin_num))
+        else:
+            plt.title('%s | Logarithm Plot\nMean: %.4e, Std: %.4e | Entries: %i' % (title, mean, stdev, n))
+            plt.savefig('plots/histograms/%s/%sLog%s - %i Bins.png' % (filename, title, var, bin_num))
+            print('\nLog histogram png saved at: plots/histograms/%s/%sLog%s - %i Bins.png\n' % (filename, title, var, bin_num))
+        plt.clf()        
 
 def main(run_name, date):
     filename = '%s.%s' % (date, run_name)
     df = filter(LoadRunName(filename), run_name)
-    plotHistogram(df, run_name, date, 'dCtrl', True)
-    plotHistogram(df, run_name, date, 'Ctrl', False)
+    plotHistogram(df, run_name, date, 'dCtrl', True, None)
+    plotHistogram(df, run_name, date, 'Ctrl', False, None)
 
 if __name__ == '__main__':
 
