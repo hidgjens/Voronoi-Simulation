@@ -35,34 +35,23 @@ def LoadByGame(filename):
 
 # plots time series graphs for a given match
 def TimeSeriesPlot(df, var, title, filename):    
+    # define useful quantities
     frames =  1 + df['FID'].max()
-    print('frames: %i' % frames)
-
-    allpoints = []
-    for t in range(1, frames):
-        # for each frame want to plot each player's Ctrl
-        # select frame
-        frame = df.loc[df['FID'] == t].reset_index()
-        players = frame.shape[0]
-        
-        # create array of points
-        colours = cm.rainbow(np.linspace(0, 1, players))
-        values = []
-        time = [t] * players
-        
-        for j in range(players):
-            values.append(frame.at[j, var])
-
-        points = zip(time, values, colours)
-        allpoints.extend(points)
+    players = df['Num'].max()
+    t = range(1, frames) 
+    colours = cm.rainbow(np.linspace(0, 1, players)) 
     
-        if frames > 10 and t % (frames // 10) == 0:
-            print('Frames computed: %i%%' % (int(100 * t / frames)))
+    print('frames: %i' % frames)
+    plt.figure(figsize = (21, 7), dpi = 300) 
 
-    # plot all points
-    x, y, c = zip(*allpoints)
-    plt.scatter(x, y, color = c, marker = '+')
-    print('Frames plotted')
+    for i in range(players):
+        # get player data
+        plyrdf = df.loc[df['Num'] == i + 1]
+        plyrdata = plyrdf[var].tolist()
+
+        # plot
+        plt.plot(t, plyrdata, color = colours[i], linestyle = '-', linewidth = 0.5)
+        print('Player plotted: %i' % (i + 1))
 
     # formatting
     plt.ylim(0,)
