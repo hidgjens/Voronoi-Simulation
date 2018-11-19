@@ -1,11 +1,11 @@
-#ifndef EXCHANGEMETRICAI_H
-#define EXCHANGEMETRICAI_H
+#ifndef METRICAI_H
+#define METRICAI_H
 
 #include "AI.h"
 #include "ExchangeAI.h"
 #include "../Player.h"
 
-class ExchangeMetricAI: public AI {
+class MetricAI: public AI {
 
 private:
   double decay_const;
@@ -14,8 +14,8 @@ private:
 
 public:
   // constructors
-  ExchangeMetricAI();
-  ExchangeMetricAI(double, double, double);
+  MetricAI();
+  MetricAI(double, double, double);
 
   void updateFrame(Player&, Match&);
 

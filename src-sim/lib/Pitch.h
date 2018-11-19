@@ -42,6 +42,7 @@ private:
 
   // ball
   Cart ball;
+  bool homePossession;
 
 public:
   // default constructor
@@ -94,6 +95,11 @@ public:
   double getAwayPlyrCtrl(int) const;
   //double getHomePlyrCtrl2(int) const;
   //double getAwayPlyrCtrl2(int) const;
+
+  bool getHomePossession() const;
+  bool getAwayPossession() const;
+  std::string getHomePossStr() const;
+  std::string getAwayPossStr() const;
 
 };
 

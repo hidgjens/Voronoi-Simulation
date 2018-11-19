@@ -62,6 +62,25 @@ Cart ExchangeAI::metricV(Player& test_plyr, Player& far_plyr, Match& match) {
   auto d_0 = sqrt(match.getPitchX() * match.getPitchY());
   double gamma;
 
+  // need to check if the player is on the active side of the pitch
+  /*
+    Home Team possession => x >= 0
+    Away Team possession => x <= 0
+  */
+  // first find out if current player is in possession, then if the far player is in the right half
+  if (match.getHomePossession()){
+    // home team possession
+    if (far_plyr.getPosX() < 0)
+      return Cart(0.0, 0.0); // wrong side
+
+  } else {
+    // away team possession
+    if (far_plyr.getPosX() > 0)
+      return Cart(0.0, 0.0);
+
+  }
+
+  // check value of gamma
   if (test_plyr.getTeam() == far_plyr.getTeam()){
     if (test_plyr.getShirtNum() == far_plyr.getShirtNum()){
       // players are the same person

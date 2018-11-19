@@ -3,43 +3,60 @@
 #include "Match.h"
 # define M_PI           3.14159265358979323846  /* pi */
 
-Team::Team() : plyrcnt(11) , name("Team") {
-  buildTeam();
-}
+// Team::Team() : plyrcnt(11) , name("Team") {
+//   buildTeam();
+// }
 
-Team::Team(int plyrs) : plyrcnt(plyrs) , name("Team") {
-  buildTeam();
-}
+// Team::Team(int plyrs) : plyrcnt(plyrs) , name("Team") {
+//   buildTeam();
+// }
 
-Team::Team(std::string nm) : plyrcnt(11) , name(nm) {
-  buildTeam();
-}
+// Team::Team(std::string nm) : plyrcnt(11) , name(nm) {
+//   buildTeam();
+// }
 
-Team::Team(std::string nm, int plyrs) : plyrcnt(plyrs), name(nm) {
-  buildTeam();
-}
+// Team::Team(std::string nm, int plyrs) : plyrcnt(plyrs), name(nm) {
+//   buildTeam();
+// }
 
-Team::Team(std::string nm, int plyrs, AI& nAI) : name(nm), plyrcnt(plyrs), smartPlyrcnt(0) {
-  smartAI = &nAI;
-  normAI = &nAI;
-  buildTeam();
-}
+// Team::Team(std::string nm, int plyrs, AI& nAI) : name(nm), plyrcnt(plyrs), smartPlyrcnt(0) {
+//   smartAI = &nAI;
+//   normAI = &nAI;
+//   buildTeam();
+// }
 
-Team::Team(std::string nm, int plyrs, AI& nAI, int splyrs, AI& smAI) : name(nm), plyrcnt(plyrs), normAI(&nAI), smartPlyrcnt(splyrs), smartAI(&smAI) {
-  buildTeam();
-}
+// Team::Team(std::string nm, int plyrs, AI& nAI, int splyrs, AI& smAI) : name(nm), plyrcnt(plyrs), normAI(&nAI), smartPlyrcnt(splyrs), smartAI(&smAI) {
+//   buildTeam();
+// }
 
-Team::Team(std::string nm, int plyrs, AI* nAI, int splyrs, AI* smAI) : name(nm), plyrcnt(plyrs), normAI(nAI), smartPlyrcnt(splyrs), smartAI(smAI) {
-  buildTeam();
-}
+// Team::Team(std::string nm, int plyrs, AI* nAI, int splyrs, AI* smAI) : name(nm), plyrcnt(plyrs), normAI(nAI), smartPlyrcnt(splyrs), smartAI(smAI) {
+//   buildTeam();
+// }
 
 // Team::Team(std::string nm, int plyrs, AI& nAI, int splyrs, RandomWalk& smAI) : name(nm), plyrcnt(plyrs), normAI(nAI), smartPlyrcnt(splyrs), smartAI(smAI) {
 //   std::cout << splyrs << smAI.getDesc() << " spec AI\n";
 //   buildTeam();
 // }
 
+Team::Team() {}
+
+Team::Team(TeamConfigFile tcf_) 
+: name(tcf_.getTeamName())
+, plyrcnt(tcf_.getPlayerCount())
+, smartPlyrcnt(tcf_.getSmartCount())
+{
+  std::cout << "Team " + name + "\n";
+  // need to get AI from the TeamConfigFile
+  ATK_smartAI = AI::makeAI(tcf_.getAtkSmartAI());
+  ATK_normAI = AI::makeAI(tcf_.getAtkNormAI());
+  DEF_smartAI = AI::makeAI(tcf_.getDefSmartAI());
+  DEF_normAI = AI::makeAI(tcf_.getDefNormAI());
+  // build team
+  buildTeam();
+}
+
 // copy constructor
-Team::Team(Team& team) : plyrcnt(team.plyrcnt) , name(team.name) , smartPlyrcnt(team.smartPlyrcnt) , smartAI(team.smartAI) , normAI(team.normAI) {
+Team::Team(Team& team) : plyrcnt(team.plyrcnt) , name(team.name) , smartPlyrcnt(team.smartPlyrcnt) , ATK_smartAI(team.ATK_smartAI) , ATK_normAI(team.ATK_normAI), DEF_smartAI(team.DEF_smartAI), DEF_normAI(team.DEF_normAI) {
   plyrs = std::make_unique<Player[]>(plyrcnt);
   for (int i{0}; i < plyrcnt; i++){
     plyrs[i] = team.plyrs[i];
@@ -52,11 +69,13 @@ Team& Team::operator=(Team& team) {
     return *this;
   }
 
-  plyrcnt = team.plyrcnt;
   name = team.name;
+  plyrcnt = team.plyrcnt;
   smartPlyrcnt = team.smartPlyrcnt;
-  smartAI = team.smartAI;
-  normAI = team.normAI;
+  ATK_smartAI = team.ATK_smartAI;
+  ATK_normAI = team.ATK_normAI;
+  DEF_smartAI = team.DEF_smartAI;
+  DEF_normAI = team.DEF_normAI;
 
   plyrs = std::make_unique<Player[]>(plyrcnt);
   for (int i{0}; i < plyrcnt; i++){
@@ -73,9 +92,10 @@ Team& Team::operator=(Team&& team) {
   plyrcnt = team.plyrcnt;
   name = team.name;
   smartPlyrcnt = team.smartPlyrcnt;
-  smartAI = team.smartAI;
-  normAI = team.normAI;
-
+  ATK_smartAI = team.ATK_smartAI;
+  ATK_normAI = team.ATK_normAI;
+  DEF_smartAI = team.DEF_smartAI;
+  DEF_normAI = team.DEF_normAI;
   plyrs = std::move(team.plyrs);
 
   team.plyrcnt = 0;
@@ -90,9 +110,12 @@ void Team::buildTeam(){
     if (i < smartPlyrcnt){
       // smart player
       plyrs[i] = Player(i + 1, name, true);
+      plyrs[i].linkPossession(&possession);
     } else {
       // normal player
       plyrs[i] = Player(i + 1, name, false);
+      plyrs[i].linkPossession(&possession);
+
     }
   }
 }
@@ -114,6 +137,10 @@ Cart Team::getPos(int shirt_num) const {
 double Team::getPlyrCtrl(int shirt_num, Match& match) const {
   return plyrs[shirt_num - 1].getCtrl(match);
 }
+
+void Team::setPossession(bool possess_) { possession = possess_; }
+bool Team::getPossession() const { return possession; }
+void Team::togglePossession() { possession = !possession; }
 
 
 void Team::initRandObjPos(Match& ptch) {
@@ -142,17 +169,22 @@ void Team::updateFrame(Match& ptch) {
     if (i < smartPlyrcnt){
       // smart player
       //std::cout << "smart";
-
-      smartAI->updateFrame(plyrs[i], ptch);
+      if (possession)
+        ATK_smartAI->updateFrame(plyrs[i], ptch);
+      else
+        DEF_smartAI->updateFrame(plyrs[i], ptch);
     } else {
       // normal player
-      normAI->updateFrame(plyrs[i], ptch);
+      if (possession)
+        ATK_normAI->updateFrame(plyrs[i], ptch);
+      else 
+        DEF_normAI->updateFrame(plyrs[i], ptch);
     }
 
   }
 }
 
- const Player Team::getPlayer(int shirt_num) const {
+const Player Team::getPlayer(int shirt_num) const {
   return plyrs[shirt_num - 1];
 }
 Player& Team::getPlayerR(int shirt_num){

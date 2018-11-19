@@ -7,10 +7,6 @@
 
 class ScenarioFromTeams{
 private:
-  std::string filename;
-  double pitchX;
-  double pitchY;
-  int frames;
   ManagedTeam* hmMTeam;
   ManagedTeam* awMTeam;
 public:
