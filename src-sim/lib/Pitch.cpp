@@ -232,6 +232,7 @@ void Pitch::storeFrame(Match& match) {
   // update frame
   frame = match.currentframe;
   ball = match.ball.getPos();
+  homePossession = match.getHomePossession();
 
   for (int i{0}; i < homeCnt; i++){
     homePos[i] = match.homeTeam.getPos(i + 1);
@@ -394,3 +395,8 @@ double Pitch::getAwayPlyrCtrl(int shirt_num) const{
 // double Pitch::getAwayPlyrCtrl2(int shirt_num) const{
 //   return awayPlyrCtrl2[shirt_num - 1];
 // }
+
+bool Pitch::getHomePossession() const { return homePossession; }
+bool Pitch::getAwayPossession() const { return !homePossession; }
+std::string Pitch::getHomePossStr() const { if (homePossession) return "True"; else return "False"; }
+std::string Pitch::getAwayPossStr() const { if (homePossession) return "False"; else return "True"; }

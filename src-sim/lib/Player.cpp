@@ -113,3 +113,9 @@ void Player::setIdPos(Cart idealpos){
     setdPos(idealpos);
   }
 }
+
+void Player::linkPossession(bool* pos_ptr) { possession = pos_ptr; }
+bool Player::getPossession() const { return *possession; }
+std::string Player::getPossession_txt() const {
+  if (possession) return "True"; else return "False";
+}

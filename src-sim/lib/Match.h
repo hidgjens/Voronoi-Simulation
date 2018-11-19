@@ -8,6 +8,8 @@
 #include "Team.h"
 #include "Ball.h"
 #include "ai/AI.h"
+#include "cfg/MatchConfigFile.h"
+#include "cfg/TeamConfigFile.h"
 
 
 class Match{
@@ -35,13 +37,17 @@ private:
 
   // ball
   Ball ball;
+  bool homePossession; // whether home or away possesses the ball
 
 public:
   Match();
-  Match(int); // frames based off 90 mins
-  Match(int, double); // frames, framerate
-  Match(int, int, int); // frames, home, away
-  Match(int, Team, Team, double, double); // frames, homeTeam, awayTeam, pitchX, pitchY
+  // Match(int); // frames based off 90 mins
+  // Match(int, double); // frames, framerate
+  // Match(int, int, int); // frames, home, away
+  // Match(int, Team, Team, double, double); // frames, homeTeam, awayTeam, pitchX, pitchY
+  Match(MatchConfigFile);
+  Match(MatchConfigFile, TeamConfigFile, TeamConfigFile);
+
 
   // copy and move constructors
   Match(Match&);
@@ -91,6 +97,12 @@ public:
 
   // store match
   void saveMatchToFile(std::string, bool) const; // file name
+
+  void setHomePossession(bool);
+  bool getHomePossession() const;
+  bool getAwayPossession() const;
+  void toggleHomePossession();
+
 
 };
 

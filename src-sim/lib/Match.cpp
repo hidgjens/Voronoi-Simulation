@@ -3,38 +3,70 @@
 #include<fstream>
 #include "Player.h"
 
+
+// // default constructor
+// Match::Match() : matchID(1), frames(100), currentframe(0), framerate(5.0), pitchX(105.0), pitchY(68.0), homeTeam("Home", 11), awayTeam("Away", 11), ball(), homeCtrl(0.0), awayCtrl(0.0) {
+//   pitches = std::make_unique<Pitch[]>(frames);
+//   for (int i{0}; i < frames; i ++ ){
+//     pitches[i] = Pitch(*this);
+//   }
+// }
+// // parameterised constructors
+// Match::Match(int frm) : matchID(1), frames(frm), currentframe(0), framerate(5.0), pitchX(105.0), pitchY(68.0), homeTeam("Home", 11), awayTeam("Away", 11), ball(), homeCtrl(0.0), awayCtrl(0.0)  {
+//   pitches = std::make_unique<Pitch[]>(frames);
+//   for (int i{0}; i < frames; i ++ ){
+//     pitches[i] = Pitch(*this);
+//   }
+// }
+// Match::Match(int frm, double fmrt) : matchID(1), frames(frm), currentframe(0), framerate(fmrt), pitchX(105.0), pitchY(68.0), homeTeam("Home", 11), awayTeam("Away", 11), ball(), homeCtrl(0.0), awayCtrl(0.0)  {
+//   pitches = std::make_unique<Pitch[]>(frames);
+//   for (int i{0}; i < frames; i ++ ){
+//     pitches[i] = Pitch(*this);
+//   }
+// }
+// Match::Match(int frm, int hm, int aw) : matchID(1), frames(frm), currentframe(0), framerate(5.0), pitchX(100.0), pitchY(100.0), homeTeam("Home", hm), awayTeam("Away", aw), ball(), homeCtrl(0.0), awayCtrl(0.0)  {
+//   pitches = std::make_unique<Pitch[]>(frames);
+//   for (int i{0}; i < frames; i ++ ){
+//     pitches[i] = Pitch(*this);
+//   }
+// }
+// Match::Match(int frms, Team hmteam, Team awteam, double PitchX, double PitchY) : matchID(1), frames(frms), currentframe(0), framerate(5.0), pitchX(PitchX), pitchY(PitchY), homeTeam(hmteam), awayTeam(awteam), ball(), homeCtrl(0.0), awayCtrl(0.0) {
+//   pitches = std::make_unique<Pitch[]>(frames);
+//   for (int i{0}; i < frames; i ++ ){
+//     pitches[i] = Pitch(*this);
+//   }
+// }
+
 // default constructor
-Match::Match() : matchID(1), frames(100), currentframe(0), framerate(5.0), pitchX(105.0), pitchY(68.0), homeTeam("Home", 11), awayTeam("Away", 11), ball(), homeCtrl(0.0), awayCtrl(0.0) {
+Match::Match() {}
+// config constructor
+Match::Match(MatchConfigFile mcf_) 
+: frames(mcf_.getNumberOfFrames())
+, framerate(mcf_.getFramerate())
+, currentframe(0)
+, pitchX(mcf_.getPitchX())
+, pitchY(mcf_.getPitchY()) 
+{
   pitches = std::make_unique<Pitch[]>(frames);
   for (int i{0}; i < frames; i ++ ){
     pitches[i] = Pitch(*this);
   }
 }
-// parameterised constructors
-Match::Match(int frm) : matchID(1), frames(frm), currentframe(0), framerate(5.0), pitchX(105.0), pitchY(68.0), homeTeam("Home", 11), awayTeam("Away", 11), ball(), homeCtrl(0.0), awayCtrl(0.0)  {
+Match::Match(MatchConfigFile mcf_, TeamConfigFile home_tcf, TeamConfigFile away_tcf) 
+: frames(mcf_.getNumberOfFrames())
+, framerate(mcf_.getFramerate())
+, currentframe(0)
+, pitchX(mcf_.getPitchX())
+, pitchY(mcf_.getPitchY()) 
+, homeTeam(home_tcf)
+, awayTeam(away_tcf)
+{
   pitches = std::make_unique<Pitch[]>(frames);
   for (int i{0}; i < frames; i ++ ){
     pitches[i] = Pitch(*this);
   }
 }
-Match::Match(int frm, double fmrt) : matchID(1), frames(frm), currentframe(0), framerate(fmrt), pitchX(105.0), pitchY(68.0), homeTeam("Home", 11), awayTeam("Away", 11), ball(), homeCtrl(0.0), awayCtrl(0.0)  {
-  pitches = std::make_unique<Pitch[]>(frames);
-  for (int i{0}; i < frames; i ++ ){
-    pitches[i] = Pitch(*this);
-  }
-}
-Match::Match(int frm, int hm, int aw) : matchID(1), frames(frm), currentframe(0), framerate(5.0), pitchX(100.0), pitchY(100.0), homeTeam("Home", hm), awayTeam("Away", aw), ball(), homeCtrl(0.0), awayCtrl(0.0)  {
-  pitches = std::make_unique<Pitch[]>(frames);
-  for (int i{0}; i < frames; i ++ ){
-    pitches[i] = Pitch(*this);
-  }
-}
-Match::Match(int frms, Team hmteam, Team awteam, double PitchX, double PitchY) : matchID(1), frames(frms), currentframe(0), framerate(5.0), pitchX(PitchX), pitchY(PitchY), homeTeam(hmteam), awayTeam(awteam), ball(), homeCtrl(0.0), awayCtrl(0.0) {
-  pitches = std::make_unique<Pitch[]>(frames);
-  for (int i{0}; i < frames; i ++ ){
-    pitches[i] = Pitch(*this);
-  }
-}
+
 // copy constructor
 Match::Match(Match& match) : matchID(match.matchID), frames(match.frames), framerate(match.framerate), currentframe(match.currentframe), pitchX(match.pitchX), pitchY(match.pitchY), homeTeam(match.homeTeam), awayTeam(match.awayTeam), ball(match.ball), homeCtrl(match.homeCtrl), awayCtrl(match.awayCtrl) {
   pitches = std::make_unique<Pitch[]>(frames);
@@ -139,9 +171,15 @@ void Match::printPitch() const {
 
 // initialise pitch
 void Match::initRandObjPos() {
+
   homeTeam.initRandObjPos(*this);
   awayTeam.initRandObjPos(*this);
   checkCollisions();
+  setHomePossession(true);
+  // toggle with 50% chance
+  int flip = (rand()%2)+ 1 ;
+  if (flip == 1) toggleHomePossession();
+
   pitches[0].storeFrame(*this);
 }
 
@@ -152,7 +190,9 @@ void Match::initUnitPolygon() {
 }
 
 void Match::updateFrame(){
-
+  // toggle possession with 2% chance
+  int flip = (rand()%50)+ 1 ;
+  if (flip == 1) toggleHomePossession();
   // update teams
   homeTeam.updateFrame(*this);
   awayTeam.updateFrame(*this);
@@ -355,7 +395,7 @@ void Match::saveMatchToFile(std::string file_name, bool legacy) const {
   if (legacy) {
     datafile << "\n";
   } else {
-    datafile << "\tdX\tdY\tCtrl\tdCtrl\tSmart\n"; // header
+    datafile << "\tdX\tdY\tCtrl\tdCtrl\tTmCtrl\tTmdCtrl\tPossession\tSmart\n"; // header
   }
   int index{0}; // index counter must increment with every row
   Cart temp_pos;
@@ -400,12 +440,20 @@ void Match::saveMatchToFile(std::string file_name, bool legacy) const {
         << 0.0 << "\t"
         // << 0.0 << "\t"
         // << 0.0 << "\t"
+        << 0.0 << "\t"
+        << 0.0 << "\t"
+        << "False" << "\t"
         << "False" << "\n";
     }
 
     index++; // increment index
 
     // homeplayers
+    double hmCtrl = pitches[frame_].getHomeCtrl();
+    double awCtrl = pitches[frame_].getAwayCtrl();
+    double dHmCtrl = hmCtrl - pitches[last_frame].getHomeCtrl();
+    double dAwCtrl = awCtrl - pitches[last_frame].getAwayCtrl();
+
     for (int i{0}; i < homeTeam.getPlayerCount(); i++){
 
       auto pl = homeTeam.getPlayer(i + 1);
@@ -431,6 +479,9 @@ void Match::saveMatchToFile(std::string file_name, bool legacy) const {
           << pitches[frame_].getHomePlyrCtrl(i + 1) - pitches[last_frame].getHomePlyrCtrl(i + 1) << "\t"
           // << pitches[frame_].getHomePlyrCtrl2(i + 1) << "\t"
           // << pitches[frame_].getHomePlyrCtrl2(i + 1) - pitches[last_frame].getHomePlyrCtrl2(i + 1) << "\t"
+          << hmCtrl << "\t"
+          << dHmCtrl << "\t"
+          << pitches[frame_].getHomePossStr() << "\t"
           << pl.getSmartStr() << "\n";
       }
 
@@ -460,6 +511,9 @@ void Match::saveMatchToFile(std::string file_name, bool legacy) const {
           << pitches[frame_].getAwayPlyrCtrl(i + 1) - pitches[last_frame].getAwayPlyrCtrl(i + 1) << "\t"
           // << pitches[frame_].getAwayPlyrCtrl2(i + 1) << "\t"
           // << pitches[frame_].getAwayPlyrCtrl2(i + 1) - pitches[last_frame].getAwayPlyrCtrl2(i + 1) << "\t"
+          << awCtrl << "\t"
+          << dAwCtrl << "\t"
+          << pitches[frame_].getAwayPossStr() << "\t"
           << pl.getSmartStr() << "\n";
       }
 
@@ -481,3 +535,8 @@ void Match::saveMatchToFile(std::string file_name, bool legacy) const {
   }
 
 }
+
+void Match::setHomePossession(bool hp_) { homePossession = hp_; homeTeam.setPossession(hp_); awayTeam.setPossession(!hp_); }
+bool Match::getHomePossession() const { return homePossession; }
+bool Match::getAwayPossession() const { return !homePossession; }
+void Match::toggleHomePossession() { homePossession = !homePossession; homeTeam.togglePossession(); awayTeam.togglePossession();}

@@ -66,6 +66,39 @@ function compile_metricsim () {
     fi
 }
 
+function compile_configsim () {
+    FILE="confsim"
+    SRCDIR="src-sim"
+
+    cd $SRCDIR # go into source code folder
+
+    printf "Compiling configsim..."
+    gcc -o $FILE ConfigSim.cpp lib/SimManager.cpp lib/Match.cpp lib/Pitch.cpp lib/PitchObject.cpp lib/Player.cpp lib/Team.cpp lib/Ball.cpp lib/vect/Cart.cpp lib/vect/Point.cpp lib/ai/AI.cpp lib/ai/RandomWalk.cpp lib/ai/Stationary.cpp lib/ai/ExchangeAI.cpp lib/ai/MetricAI.cpp lib/ai/TestingAI.cpp lib/cfg/MatchConfigFile.cpp lib/cfg/TeamConfigFile.cpp -lm -std=c++14 -lstdc++
+
+    RESULT=$?
+
+    cd .. # move back to folder
+
+    if [ $RESULT = 0 ]; then # if compile was successful, run it
+        printf "Success\n"
+        # make folders
+        if [ ! -d "bin" ]; then
+            mkdir bin
+        fi
+
+        if [ ! -d "data_files" ]; then
+            mkdir data_files
+        fi
+
+        if [ ! -d "data_files/csvs" ]; then
+            mkdir data_files/csvs
+        fi
+
+        mv $SRCDIR/$FILE bin
+
+    fi
+}
+
 if [ $# = 0 ]; then
     echo "Build script: Type projects to build as arguments"
     exit 1
@@ -77,6 +110,8 @@ do
         compile_metricsim
     elif [ $proj = "team" ]; then
         compile_teamsim
+    elif [ $proj = "conf" ]; then
+        compile_configsim
     else
         printf "Unknown project $proj\n"
     fi

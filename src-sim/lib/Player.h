@@ -11,6 +11,7 @@ private:
   std::string team;
   bool smart;
   double maxStep;
+  bool* possession; // ptr to teams possession bool (saves updating for individuals)
 
 public:
   // default constructor
@@ -39,6 +40,10 @@ public:
 
   void setIPos(Cart);
   void setIdPos(Cart);
+
+  void linkPossession(bool*);
+  bool getPossession() const;
+  std::string getPossession_txt() const;
 
 
 };
