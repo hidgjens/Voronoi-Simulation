@@ -81,7 +81,8 @@ void TeamConfigFile::parseConfigFile(const std::unordered_map<std::string, std::
         // use ATK
         DEF_smartAI_raw = ATK_smartAI_raw;
     
-
+    if (smartPlayerCount > playerCount)
+        throw std::invalid_argument("SmartPlayerCount > PlayerCount (" + std::to_string(smartPlayerCount) + "/" + std::to_string(playerCount) + ")\n");
 }
 
 void TeamConfigFile::loadFile(){ loadFile(configFileName); } // use filename stored

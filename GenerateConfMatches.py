@@ -24,7 +24,7 @@ def main(run_type, samples, frames, filename, legacy, processes):
     # add extras
     for i in range(left_over):
         batches[i] += 1
-    # for each batch need to know what the first sample number is, for filemanagement
+    # for each batch need to know what the first sample number is, for file management
     ctr = 0
     batch_data = []
     for batch in batches:
@@ -34,11 +34,10 @@ def main(run_type, samples, frames, filename, legacy, processes):
     # create worker function
     def worker(samples_, start_num):
         sleep(start_num / 2) # used to stagger thread starts for random seed
+
         print(start_num)
-        if run_type == 'UnitSquare':
-            cmdlist = ['bin/sim', filename, str(samples_), str(frames), str(start_num), legacy, 'UnitPolygon', '4']
-        else:
-            cmdlist = ['bin/sim', filename, str(samples_), str(frames), str(start_num), legacy, run_type]
+
+        cmdlist = ['bin/confsim', run_type[0], run_type[1], run_type[2], filename, str(samples_), str(start_num)]
         s.call(cmdlist)
 
     # start threads
@@ -50,14 +49,14 @@ def main(run_type, samples, frames, filename, legacy, processes):
 if __name__ == '__main__':
     # process sys args
     if len(sys.argv) == 7:
-        run_type = sys.argv[1]
+        run_type = sys.argv[1].split(':')
         samples = int(sys.argv[2])
         frames = int(sys.argv[3])
         filename = sys.argv[4]
         legacy = sys.argv[5]
         processes = int(sys.argv[6])
     elif len(sys.argv) == 2:
-        run_type = sys.argv[1]
+        run_type = sys.argv[1].split(':')
         samples = 400
         frames = 15000
         filename = sys.argv[1]
@@ -67,11 +66,11 @@ if __name__ == '__main__':
         print('''
     %s - Runs the simulation multiple times
         args:
-        [1] - Run Type (RandomWalk/1HRandomWalk/1HExchange/UnitSquare)
+        [1] - Run Type MatchConf:HomeConf:AwayConf
         [2] - Samples [default: 400]
-        [3] - Frames per sample [default: 15000]
+        [3] - Frames per sample [actually doesn't matter, given in cfg]
         [4] - Filename [default: (Run Type)]
-        [5] - Legacy file (yes/no) [default: (no)]
+        [5] - Legacy file (yes/no) [also doesn't matter, always no]
         [6] - Processes [default: 8]
         ''' % sys.argv[0])
         exit()
