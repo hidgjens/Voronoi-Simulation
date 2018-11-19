@@ -19,7 +19,8 @@ print_date = {
 
 sim_types = {
     'met' : 'GenerateMetricMatches.py',
-    'team' : 'GenerateTeamMatches.py'
+    'team' : 'GenerateTeamMatches.py',
+    'conf' : 'GenerateConfMatches.py'
 }
 
 # functions to generate process dicts for match generation, histogram plotting and Voronoi analysis
@@ -112,8 +113,8 @@ if __name__ == '__main__':
         [1] - Number of matches to generate per type
         [2] - Frames per match
         [3] - Number of matches to visualise
-        [4] - Sim Type (team/met)
-        [5+] - Match types (HomeTeam:smrtcnt:AwayTeam:smrtcnt)/(decay:opp:same)
+        [4] - Sim Type (team/met/conf)
+        [5+] - Match types (HomeTeam:smrtcnt:AwayTeam:smrtcnt)/(decay:opp:same)/(MatchConf:HomeConf:AwayConf)
         ''' % sys.argv[0])
         exit()
 
