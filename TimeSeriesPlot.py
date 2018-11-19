@@ -39,7 +39,7 @@ def TimeSeriesPlot(df, var, title, filename):
     frames =  1 + df['FID'].max()
     players = df['Num'].max()
     t = range(1, frames) 
-    colours = cm.rainbow(np.linspace(0, 1, players)) 
+    colours = cm.plasma(np.linspace(0, 1, players)) 
     
     print('frames: %i' % frames)
     plt.figure(figsize = (21, 7), dpi = 300) 
@@ -50,8 +50,8 @@ def TimeSeriesPlot(df, var, title, filename):
         plyrdata = plyrdf[var].tolist()
 
         # plot
-        plt.plot(t, plyrdata, color = colours[i], linestyle = '-', linewidth = 0.5)
-        print('Player plotted: %i' % (i + 1))
+        plt.plot(t, plyrdata, color = colours[i], linestyle = '-', linewidth = 0.75)
+        # print('Player plotted: %i' % (i + 1))
 
     # formatting
     plt.ylim(0,)
