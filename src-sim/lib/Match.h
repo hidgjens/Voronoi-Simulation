@@ -62,6 +62,7 @@ public:
   double getFramerate() const;
   int getFrames() const;
   int getCurrentFrame() const;
+  void setMatchID(int);
 
   // pitch info
   double getPitchX() const;
@@ -96,7 +97,7 @@ public:
   double avgAwayCtrl2() const;
 
   // store match
-  void saveMatchToFile(std::string, bool) const; // file name
+  void saveMatchToFile(std::string, int, bool) const; // file name
 
   void setHomePossession(bool);
   bool getHomePossession() const;

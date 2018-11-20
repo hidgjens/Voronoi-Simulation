@@ -24,7 +24,7 @@ void ExchangeAI::updateFrame(Player& plyr, Match& match){
   if (plyrteam == "Away"){
     eteam = match.getHomeTeam();
   } else {
-    std::cout << "Unrecognised team " << plyrteam << "(this will crash now)\n";
+    std::cout << "Unrecognised team " << plyrteam << " (this will crash now)\n";
   }
 
   for (int i{0}; i < eteam.getPlayerCount(); i++) {
