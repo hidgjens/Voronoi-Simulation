@@ -1,17 +1,17 @@
-#include "ExchangeMetricAI.h"
+#include "MetricAI.h"
 #include "../Match.h"
 #include<fstream>
 #include<cmath>
 
-ExchangeMetricAI::ExchangeMetricAI() : decay_const(1.0), op_coeff(1.0), sm_coeff(1.0) {
+MetricAI::MetricAI() : decay_const(1.0), op_coeff(1.0), sm_coeff(1.0) {
   setDesc("Find nearest opponent with larger area and approach them in attempt to swap positions");
 }
 
-ExchangeMetricAI::ExchangeMetricAI(double d, double o, double s) : decay_const(d), op_coeff(o), sm_coeff(s) {
+MetricAI::MetricAI(double d, double o, double s) : decay_const(d), op_coeff(o), sm_coeff(s) {
   setDesc("Find nearest opponent with larger area and approach them in attempt to swap positions");
 }
 
-void ExchangeMetricAI::updateFrame(Player& plyr, Match& match){
+void MetricAI::updateFrame(Player& plyr, Match& match){
 
   // get player position
   auto plyrpos = plyr.getPos();
@@ -114,7 +114,7 @@ void ExchangeMetricAI::updateFrame(Player& plyr, Match& match){
 
 }
 
-Cart ExchangeMetricAI::metricV(Player& test_plyr, Player& far_plyr, Match& match) {
+Cart MetricAI::metricV(Player& test_plyr, Player& far_plyr, Match& match) {
   //std::cout << test_plyr.getShirtNum() << "\t" << far_plyr.getShirtNum() << std::endl;
   auto A_j = far_plyr.getCtrl(match);
   auto A_i = test_plyr.getCtrl(match);
@@ -125,6 +125,26 @@ Cart ExchangeMetricAI::metricV(Player& test_plyr, Player& far_plyr, Match& match
   auto d_ij = testplyr_pos.dist(farplyr_pos);
   auto d_0 = sqrt(match.getPitchX() * match.getPitchY()) * decay_const;
   double gamma;
+
+    // need to check if the player is on the active side of the pitch
+  /*
+    Home Team possession => x >= 0
+    Away Team possession => x <= 0
+  */
+  // first find out if current player is in possession, then if the far player is in the right half
+  if (match.getHomePossession()){
+    // home team possession
+    if (far_plyr.getPosX() < 0)
+      return Cart(0.0, 0.0); // wrong side
+
+  } else {
+    // away team possession
+    if (far_plyr.getPosX() > 0)
+      return Cart(0.0, 0.0);
+
+  }
+
+  // check gamma
 
   if (test_plyr.getTeam() == far_plyr.getTeam()){
     if (test_plyr.getShirtNum() == far_plyr.getShirtNum()){
@@ -150,10 +170,11 @@ Cart ExchangeMetricAI::metricV(Player& test_plyr, Player& far_plyr, Match& match
   } else
   {
     return unitVector * scalar;
+    
   }
 
 }
 
-double ExchangeMetricAI::metricD(Player& test_plyr, Player& far_plyr, Match& match) {
+double MetricAI::metricD(Player& test_plyr, Player& far_plyr, Match& match) {
   return metricV(test_plyr, far_plyr, match).mod();
 }

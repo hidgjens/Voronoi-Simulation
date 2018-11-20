@@ -6,8 +6,8 @@
 #include<cmath>
 #include<memory>
 #include "Player.h"
-#include "ai/RandomWalk.h"
 #include "ai/AI.h"
+#include "cfg/TeamConfigFile.h"
 
 
 class Match;
@@ -21,20 +21,17 @@ private:
   int smartPlyrcnt;
   std::unique_ptr<Player[]> plyrs;
 
-  AI* smartAI;
-  AI* normAI;
+  AI* ATK_smartAI;
+  AI* ATK_normAI;
+  AI* DEF_smartAI;
+  AI* DEF_normAI;
+
+  bool possession;
 
 public:
   // default constructor
   Team();
-  // parameterised constructor
-  Team(int); // player count
-  Team(std::string); // team name
-  Team(std::string, int); // name, count
-  Team(std::string, int, AI&); // name, count, AI
-  Team(std::string, int, AI&, int, AI&); // name, team count, default AI, smrt count, smart AI
-  Team(std::string, int, AI*, int, AI*); // name, team count, default AI, smrt count, smart AI
-  // Team(std::string, int, AI&, int, RandomWalk&); // name, team count, default AI, smrt count, smart AI
+  Team(TeamConfigFile); // build from config
 
   // copy and move constructors
   Team(Team&);
@@ -53,6 +50,10 @@ public:
   void printPlayers() const;
   Cart getPos(int) const; // get player i position
   double getPlyrCtrl(int, Match&) const;
+
+  void setPossession(bool);
+  bool getPossession() const;
+  void togglePossession();
 
   void initRandObjPos(Match&);
   void initCentre(Match&);

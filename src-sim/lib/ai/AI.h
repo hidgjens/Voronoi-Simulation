@@ -16,6 +16,8 @@ public:
   AI(); // defaul constructor
   AI(std::string); // desc
 
+  static AI* makeAI(std::string);
+
   void setDesc(std::string);
   std::string getDesc() const;
 
