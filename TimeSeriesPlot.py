@@ -22,11 +22,10 @@ def LoadByGame(filename):
             print('%i%%: loading %s' % (int(100 * i / num_files), datafile))
         # load csv
         dat = pd.read_csv('data_files/csvs/%s' % datafile, sep = '\t', index_col = 0)
-        
-        
+                
         # assign each match its unique ID from csv name
-        # hacky - replace '.' with '_' then split and take 4th element
-        match_num = int(datafile.replace('.','_').split('_')[3])
+        # split filename by '_' (returns 'X.csv'), then split by '.' to get 'X'
+        match_num = int(datafile.split('_')[1].split('.')[0])
         dat['MID'] = [match_num] * len(dat.index)
         # append match to dataframe
         df = df.append(dat, ignore_index = True)
@@ -43,7 +42,7 @@ def TimeSeriesPlot(df, var, title, filename):
     colours = cm.plasma(np.linspace(0, 1, players)) 
     patches = []
 
-    print('frames: %i' % frames)
+    print('Frames: %i' % frames)
     plt.figure(figsize = (21, 7), dpi = 300) 
 
     for i in range(players):
@@ -75,6 +74,33 @@ def TimeSeriesPlot(df, var, title, filename):
     print('Time series saved at: plots/time_series/%s/%s.png' % (filename, title))
     plt.close()
 
+def TimeTeam(df, var, title, filename):    
+    # define useful quantities
+    tmdata = df[var].tolist()
+    frames =  1 + df['FID'].max()
+    t = range(1, frames)
+
+    print('Frames: %i' % frames)
+    plt.figure(figsize = (21, 7), dpi = 300) 
+    
+    # plot
+    plt.plot(t, tmdata, linestyle = '-', linewidth = 0.75)
+
+    # formatting
+    plt.xlim(0,)
+    plt.ylim(0,)
+    plt.xlabel('Frame')
+    plt.ylabel(var)
+    plt.title(title)
+
+    # better safe than sorry
+    if not exists('plots/time_series/%s' % filename):
+        makedirs('plots/time_series/%s' % filename)
+
+    plt.savefig('plots/time_series/%s/%s.png' % (filename, title))
+    print('Time series saved at: plots/time_series/%s/%s.png' % (filename, title))
+    plt.close()
+
 # plots time series graphs for all matches in a given run
 def PlotMatches(df, var, title, filename):
     matches = 1 + df['MID'].max()
@@ -84,6 +110,11 @@ def PlotMatches(df, var, title, filename):
         mdf = df.loc[df['MID'] == i]
         # pass match to plot
         TimeSeriesPlot(mdf, var, '%s | Match %i' % (title, i), filename)
+        
+        # filter out single player for team plot
+        mdf = mdf.loc[(mdf['Team'] == 'Home') & (mdf['Num'] == 1)]
+        # plot with team variable
+        TimeTeam(mdf, 'Tm%s' % var, '%s | Team Plot | Match %i' % (title, i), filename)
         print('Match %i plotted.' % i)
 
 def main(run_name, date):

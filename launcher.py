@@ -35,9 +35,17 @@ def generate(strat, match_num, frame_num, sim_type = 'team'):
 
 def histogram(strat):
     process_dict = {
-    'cmd' : ['python3', 'HistPlot.py', strat, date_str],
+    'cmd' : ['python3', 'PeakFitting.py', strat, date_str],
 
-    'task-name' : 'Plot %s' % strat
+    'task-name' : 'Histogram %s' % strat
+    }
+    return(process_dict)
+
+def time_series(strat):
+    process_dict = {
+    'cmd' : ['python3', 'TimeSeriesPlot.py', strat, date_str],
+
+    'task-name' : 'Time series %s' % strat
     }
     return(process_dict)
 
@@ -56,14 +64,16 @@ def makeSchedule(match_num, frame_num, vid_num, sim_type, strategies):
     schedule = []
     gen_sched = []
     hist_sched = []
+    time_sched = []
     vor_sched = []
 
     for strat in strategies:
         gen_sched.append(generate(strat, match_num, frame_num, sim_type))
         hist_sched.append(histogram(strat))
+        time_sched.append(time_series(strat))
         vor_sched.append(voronois(strat, vid_num))
 
-    schedule = gen_sched + hist_sched + vor_sched
+    schedule = gen_sched + hist_sched + time_sched + vor_sched
 
     return(schedule)
 
