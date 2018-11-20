@@ -5,6 +5,7 @@ mpl.use('agg')
 import sys
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 from os import makedirs, listdir
 from os.path import exists
 from PeakFitting import filter
@@ -39,8 +40,9 @@ def TimeSeriesPlot(df, var, title, filename):
     frames =  1 + df['FID'].max()
     players = df['Num'].max()
     t = range(1, frames) 
-    colours = cm.rainbow(np.linspace(0, 1, players)) 
-    
+    colours = cm.plasma(np.linspace(0, 1, players)) 
+    patches = []
+
     print('frames: %i' % frames)
     plt.figure(figsize = (21, 7), dpi = 300) 
 
@@ -50,22 +52,28 @@ def TimeSeriesPlot(df, var, title, filename):
         plyrdata = plyrdf[var].tolist()
 
         # plot
-        plt.plot(t, plyrdata, color = colours[i], linestyle = '-', linewidth = 0.5)
-        print('Player plotted: %i' % (i + 1))
+        plt.plot(t, plyrdata, color = colours[i], linestyle = '-', linewidth = 0.75)
+        # print('Player plotted: %i' % (i + 1))
+
+        patches.append(mpatches.Patch(color = colours[i], label = 'Player %i' % (i + 1)))
 
     # formatting
+    plt.xlim(0,)
     plt.ylim(0,)
     plt.xlabel('Frame')
     plt.ylabel(var)
     plt.title(title)
     
+    # legend
+    plt.legend(handles = patches, loc = 1)
+
     # better safe than sorry
     if not exists('plots/time_series/%s' % filename):
         makedirs('plots/time_series/%s' % filename)
 
     plt.savefig('plots/time_series/%s/%s.png' % (filename, title))
     print('Time series saved at: plots/time_series/%s/%s.png' % (filename, title))
-    plt.clf()
+    plt.close()
 
 # plots time series graphs for all matches in a given run
 def PlotMatches(df, var, title, filename):
@@ -76,7 +84,7 @@ def PlotMatches(df, var, title, filename):
         mdf = df.loc[df['MID'] == i]
         # pass match to plot
         TimeSeriesPlot(mdf, var, '%s | Match %i' % (title, i), filename)
-        print('Match %i plotted:' % i)
+        print('Match %i plotted.' % i)
 
 def main(run_name, date):
     filename = '%s.%s' % (date, run_name)    
