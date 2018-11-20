@@ -6,14 +6,15 @@ from os import makedirs
 
 def CreateVid(name):
     # create video subdirectory
-    if not exists('videos'):
-        makedirs('videos')
+    dirname = name.split('_')[0]
+    if not exists('videos/vorplots_%s' % dirname):
+        makedirs('videos/vorplots_%s' % dirname)
 
     # create pngs
     vplot.iterPlot(name)
 
     # create vid from pngs
-    s.call(['ffmpeg','-framerate','5','-i','plots/voronoi_plots_%s/voronoi-%%04d.png' % name,'videos/vor_plot_%s.mp4' % name,'-vcodec','mpeg4','-y'])
+    s.call(['ffmpeg','-framerate','5','-i','plots/vorplots/vorplots_%s/voronoi-%%04d.png' % name,'videos/vorplots_%s/vorplots_%s.mp4' % (dirname, name),'-vcodec','mpeg4','-y'])
 
 def main(name, vid_num):
     if not vid_num == 0:

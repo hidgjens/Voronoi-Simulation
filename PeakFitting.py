@@ -235,7 +235,7 @@ class Histogram:
             xfit = np.linspace(x[0], x[-1], 500)
             yfit = gaussian(xfit, **gfit.best_values)
             plt.plot(xfit, yfit, 'r-')
-            plt.plot(px, py, 'yx')
+            # plt.plot(px, py, 'yx')
 
             # save fit report to file
             f = open("plots/histograms/%s/%s Fit Report.txt" % (filename, title), "a")
@@ -266,15 +266,15 @@ def main(run_name, date):
     plyrdctrlhist.quadFitPlot(plyrdctrlhist.computeLog(), '%s | Player dCtrl - Log Plot' % (filename), 'dCtrl', 'ln(Counts)', filename, save = True)
     
     # team-level histograms
-    '''
+    df = df.loc[(df['Team'] == 'Home') & (df['Num'] == 1)]
+
     tmctrlhist = Histogram(df, 'TmCtrl')
-    tmctrlhist.gaussFitPlot(tmctrlhist.data, '%s | Team Ctrl' % (filename), 'Ctrl', 'Counts', filename, save = True)
+    tmctrlhist.gaussFitPlot(tmctrlhist.data, '%s | Team Ctrl' % (filename), 'Team Ctrl', 'Counts', filename, save = True)
 
     tmdctrlhist = Histogram(df, 'TmdCtrl')
-    tmdctrlhist.gaussianPeakPlot(tmdctrlhist.data, '%s | Team dCtrl' % (filename), 'dCtrl', 'Counts', filename, save = True)
+    tmdctrlhist.gaussFitPlot(tmdctrlhist.data, '%s | Team dCtrl' % (filename), 'Team dCtrl', 'Counts', filename, save = True)
 
-    tmdctrlhist.quadFitPlot(tmdctrlhist.computeLog(), '%s | Team dCtrl - Log Plot' % (filename), 'dCtrl', 'Counts', filename, save = True)
-    '''
+    tmdctrlhist.quadFitPlot(tmdctrlhist.computeLog(), '%s | Team dCtrl - Log Plot' % (filename), 'Team dCtrl', 'Counts', filename, save = True)
 
 if __name__ == '__main__':
     # process sys args
