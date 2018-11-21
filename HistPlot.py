@@ -10,7 +10,7 @@ from scripts.lib.DFFilters import FilterData
 import sys
 
 def LoadRunName(filename):
-    datafiles = [file for file in listdir('data_files/csvs/%s/' % filename) if file.split('.')[1] == 'csv']
+    datafiles = [file for file in listdir('data_files/csvs/%s/' % filename) if file.split('.')[-1] == 'csv']
     num_files = len(datafiles)
     print('%s: %i csv files found' % (filename, num_files))
 

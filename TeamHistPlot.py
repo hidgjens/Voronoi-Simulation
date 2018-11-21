@@ -10,7 +10,7 @@ import sys
 
 def LoadRunName(run_name, date):
     filename = '%s.%s' % (date, run_name)
-    datafiles = [file for file in listdir('data_files/csvs') if file.split('_')[0] == filename]
+    datafiles = [file for file in listdir('data_files/csvs/%s' % run_name) if file.split('.')[-1] == 'csv']
     num_files = len(datafiles)
     print('%s: %i csv files found' % (filename, num_files))
 
@@ -23,7 +23,7 @@ def LoadRunName(run_name, date):
             print('%i%%: loading %s' % (int(100 * i / num_files), datafile))
         
         # load csv
-        df = pd.read_csv('data_files/csvs/%s' % datafile, sep = '\t', index_col = 0)
+        df = pd.read_csv('data_files/csvs/%s/%s' % (run_name, datafile), sep = '\t', index_col = 0)
         
         # apply filters
         df = filter(df, run_name)

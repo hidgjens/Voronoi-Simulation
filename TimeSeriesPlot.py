@@ -11,7 +11,7 @@ from os.path import exists
 from PeakFitting import filter
 
 def LoadByGame(filename):
-    datafiles = [file for file in listdir('data_files/csvs') if file.split('_')[0] == filename]
+    datafiles = [file for file in listdir('data_files/csvs/%s' % filename) if file.split('.')[-1] == 'csv']
     num_files = len(datafiles)
     print('%s: %i csv files found' % (filename, num_files))
 
@@ -21,11 +21,11 @@ def LoadByGame(filename):
         if num_files > 10 and i % (num_files // 10) == 0:
             print('%i%%: loading %s' % (int(100 * i / num_files), datafile))
         # load csv
-        dat = pd.read_csv('data_files/csvs/%s' % datafile, sep = '\t', index_col = 0)
+        dat = pd.read_csv('data_files/csvs/%s/%s' % (filename, datafile), sep = '\t', index_col = 0)
                 
         # assign each match its unique ID from csv name
         # split filename by '_' (returns 'X.csv'), then split by '.' to get 'X'
-        match_num = int(datafile.split('_')[1].split('.')[0])
+        match_num = int(datafile.split('.')[0])
         dat['MID'] = [match_num] * len(dat.index)
         # append match to dataframe
         df = df.append(dat, ignore_index = True)

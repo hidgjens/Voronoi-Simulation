@@ -13,9 +13,10 @@ from scipy.spatial import Voronoi, voronoi_plot_2d
 PitchX = 105
 PitchY = 68
 
-def importFrame(name):
+def importFrame(run_name, number):
+    
     # pull data from csv into dataframe
-    df = pd.read_csv('data_files/csvs/%s.csv' % name, sep = '\t', index_col = 0)
+    df = pd.read_csv('data_files/csvs/%s/%s.csv' % (run_name, number), sep = '\t', index_col = 0)
     # delete excess columns
     df = df.drop(columns = ['PID','Time'])
 
@@ -108,9 +109,9 @@ def voronoi_finite_polygons_2d(vor, radius=1000):
     return new_regions, np.asarray(new_vertices)
 
 # compute Voronoi tessellation for all frames in df
-def iterPlot(name):
+def iterPlot(run_name, number):
     # import dataframe
-    df = importFrame(name)
+    df = importFrame(run_name, number)
 
     Frames = 1 + df['FID'].max()
     print('Frames: ', Frames)
@@ -119,6 +120,7 @@ def iterPlot(name):
     for i in tqdm(range(Frames)):
         # create frame dataframe
         frame = df.loc[df['FID'] == i, ['FID', 'X', 'Y', 'Team', 'Ctrl', 'Smart']]
+        name = run_name + '_' + number
         PlotVoronois(name, frame, i)
 
 def PlotVoronois(name, frame, framenum):
