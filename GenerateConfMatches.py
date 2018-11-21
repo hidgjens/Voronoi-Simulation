@@ -33,7 +33,7 @@ def main(run_type, samples, frames, filename, legacy, processes):
 
     # create worker function
     def worker(samples_, start_num):
-        sleep(start_num / 2) # used to stagger thread starts for random seed
+        sleep(start_num / samples_ + 1) # used to stagger thread starts for random seed
 
         print(start_num)
 
