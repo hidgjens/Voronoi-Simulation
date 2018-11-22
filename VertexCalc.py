@@ -87,7 +87,7 @@ def main(filename, batchsize):
     if not exists('plots/vertex_count/%s' % filename):
         makedirs('plots/vertex_count/%s' % filename)
 
-    f = open('plots/vertex_count/%s' % filename, 'w')
+    f = open('plots/vertex_count/%s/%s.txt' % (filename, filename), 'w')
     f.write('Mean Voronoi edges per player per frame: %f\n' % vtxpppf)
     f.write('Entries: %i' % entries)
     f.close()
