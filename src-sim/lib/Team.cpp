@@ -190,6 +190,9 @@ const Player Team::getPlayer(int shirt_num) const {
 Player& Team::getPlayerR(int shirt_num){
  return plyrs[shirt_num - 1];
 }
+Player* Team::getPlayerPtr(int shirt_num){
+  return &plyrs[shirt_num - 1 ];
+}
 
 double Team::minDist(Cart ps) {
   double mindist = plyrs[0].getPos().dist(ps); // return variable;
