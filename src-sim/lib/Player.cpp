@@ -62,6 +62,10 @@ double Player::getMaxStep() const {
 void Player::setMaxStep(double mxs) {
   maxStep = mxs;
 }
+
+void Player::setTeamPtr(Team* tm) { team_players = tm; }
+Team* Player::getTeamPtr() { return team_players; }
+
 bool Player::getSmart() const {
   return smart;
 }
@@ -118,4 +122,8 @@ void Player::linkPossession(bool* pos_ptr) { possession = pos_ptr; }
 bool Player::getPossession() const { return *possession; }
 std::string Player::getPossession_txt() const {
   if (possession) return "True"; else return "False";
+}
+
+void Player::printDetails() {
+  std::cout << team << ": " << shirtNum << "\t( " << getPosX() << " , " << getPosY() << " )\n"; 
 }

@@ -4,6 +4,8 @@
 #include "PitchObject.h"
 #include "ai/AI.h"
 
+class Team;
+
 class Player: public PitchObject {
 private:
   // player info
@@ -12,6 +14,7 @@ private:
   bool smart;
   double maxStep;
   bool* possession; // ptr to teams possession bool (saves updating for individuals)
+  Team* team_players;
 
 public:
   // default constructor
@@ -31,6 +34,9 @@ public:
   double getMaxStep() const;
   void setMaxStep(double);
 
+  void setTeamPtr(Team*);
+  Team* getTeamPtr();
+
   bool getSmart() const;
   std::string getSmartStr() const;
   void setSmart(bool);
@@ -44,6 +50,8 @@ public:
   void linkPossession(bool*);
   bool getPossession() const;
   std::string getPossession_txt() const;
+
+  void printDetails();
 
 
 };

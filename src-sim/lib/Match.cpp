@@ -358,7 +358,7 @@ void Match::startSimulation(bool calc_space){
       // homeCtrl2 += pitches[currentframe].getHomeCtrl2();
       // awayCtrl2 += pitches[currentframe].getAwayCtrl2();
     }
-    if (i % 500 == 0 || i + 1 == frames) {
+    if (i % 10 == 0 || i + 1 == frames) {
       printPlayers();
       if (calc_space){
         std::cout << "\nHomeCtrl: " << avgHomeCtrl() << "\n";

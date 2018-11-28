@@ -1,4 +1,4 @@
-#include "DSquared.h"
+#include "DSquaredSTD.h"
 #include <vector>
 #include <algorithm> // std::sort
 #include "../Match.h"
@@ -8,34 +8,23 @@
 # define M_PI           3.14159265358979323846  /* pi */
 
 
-DSquared::DSquared() : players_to_consider(5), density_samples(18) {}
-DSquared::DSquared(int smp) : players_to_consider(5), density_samples(smp) {}
-DSquared::DSquared(int smp, int ptc) : players_to_consider(ptc), density_samples(smp) {}
+DSquaredSTD::DSquaredSTD() : players_to_consider(5), density_samples(18) {}
+DSquaredSTD::DSquaredSTD(int smp) : players_to_consider(5), density_samples(smp) {}
+DSquaredSTD::DSquaredSTD(int smp, int ptc) : players_to_consider(ptc), density_samples(smp) {}
 
 // accessors and mutators
 
-void DSquared::setPlayers_to_consider(int ptc) { players_to_consider = ptc; }
-int DSquared::getPlayers_to_consider() const { return players_to_consider; }
+void DSquaredSTD::setPlayers_to_consider(int ptc) { players_to_consider = ptc; }
+int DSquaredSTD::getPlayers_to_consider() const { return players_to_consider; }
 
-void DSquared::setDensity_samples(int smp) { density_samples = smp; }
-int DSquared::getDensity_samples() const { return density_samples; }
+void DSquaredSTD::setDensity_samples(int smp) { density_samples = smp; }
+int DSquaredSTD::getDensity_samples() const { return density_samples; }
 
 // update
 
-void DSquared::updateFrame(Player& player_, Match& match_) {
+void DSquaredSTD::updateFrame(Player& player_, Match& match_) {
     auto player_position = player_.getPos();
-    // before anything else, check if there's a player within 4 meters, if so move directly away from them
-    Player* nearestplayer = player_.getTeamPtr()->nearestPlayer(player_);
-    double distance2nearest = nearestplayer->getPos().dist(player_position);
-    if (distance2nearest < 3.0 * player_.getMaxStep()) {
-        if (distance2nearest == 0.0 && player_.getShirtNum() == 1) { std::cout << "1st PLAYER \n";}
-        Cart unitvector_away = nearestplayer->getPos().unitVect2(player_position); // here i have deliberately done this way round, i've worked out the unit vector from ally to player so i can just move in that direction
-        double theta = atan2(unitvector_away.xComp(), unitvector_away.yComp());
-        player_.scatter(player_.getMaxStep(), theta);
-        player_.checkLegalPosition(match_);
-        match_.checkCollisions(player_);
-        return;
-    }
+
     // update player_
     // get pitchborder
     PitchBorder* pb = new PitchBorder(match_.getPitchX(), match_.getPitchY());
@@ -190,7 +179,7 @@ void DSquared::updateFrame(Player& player_, Match& match_) {
     delete pb;
 }
 
-bool DSquared::checkLegalMove(Cart pos, Match& match_) {
+bool DSquaredSTD::checkLegalMove(Cart pos, Match& match_) {
     if (std::fabs(pos.xComp()) >= match_.getPitchX() / 2.0){
         return false;
     } else
@@ -202,7 +191,7 @@ bool DSquared::checkLegalMove(Cart pos, Match& match_) {
     }
 }
 
-double DSquared::calcD(std::vector<Player*> closest_players, PitchBorder* pb, Cart pos, int edge_){
+double DSquaredSTD::calcD(std::vector<Player*> closest_players, PitchBorder* pb, Cart pos, int edge_){
     double dsquared = 0.0;
     double dist;
     double scale = 30.0;
