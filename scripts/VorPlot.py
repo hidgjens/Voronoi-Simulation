@@ -4,6 +4,7 @@ mpl.use('agg')
 import pandas as pd
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
+import sys
 from tqdm import tqdm
 from os.path import exists
 from os import makedirs
@@ -119,14 +120,15 @@ def iterPlot(run_name, number):
     # plot Voronoi diagram for each frame
     for i in tqdm(range(Frames)):
         # create frame dataframe
-        frame = df.loc[df['FID'] == i, ['FID', 'X', 'Y', 'Team', 'Ctrl', 'Smart']]
+        frame = df.loc[df['FID'] == i, ['FID', 'X', 'Y', 'Team', 'Ctrl', 'Smart', 'Possession']]
         name = run_name + '_' + number
         PlotVoronois(name, frame, i)
 
 def PlotVoronois(name, frame, framenum):
     frame = frame[frame['Team'] != 'Ball'].reset_index()
-    # get array of player positions and ball position
+    # get array of player positions and possession value
     pos_array = frame[['X', 'Y', 'Ctrl']].values
+    poss = frame.at[1, 'Possession']
 
     # get number of players in frame
     HomePlayers = len(frame.loc[frame['Team'] == 'Home'].index)
@@ -165,6 +167,16 @@ def PlotVoronois(name, frame, framenum):
         # write spatial control (in %) of each player near them
         plt.text(pos_array[j,0] + 0.8, pos_array[j,1] + 0.8,  '%.1f' % (100 * pos_array[j,2]), fontsize = 8)
 
+        # write current possession state on plot
+        if poss:
+            posstext = 'Possession: Home'
+            posscolour = 'r'
+        else:
+            posstext = 'Possession: Away'
+            posscolour = 'b'
+        plt.text((-PitchX/2)+1, (PitchY/2)+1, posstext, fontsize = 12, color = posscolour)
+
+    plt.gca().set_aspect('equal')
     plt.xlim(-0.5 * PitchX, 0.5 * PitchX)
     plt.ylim(-0.5 * PitchY, 0.5 * PitchY)
 
@@ -175,3 +187,11 @@ def PlotVoronois(name, frame, framenum):
     # save plot
     plt.savefig('plots/vorplots/vorplots_%s/voronoi-%04d.png' % (name, framenum))
     plt.clf()
+
+def main(run_name, number):
+    iterPlot(run_name, number)
+
+if __name__ == '__main__':
+    run_name = sys.argv[1]
+    number = sys.argv[2]
+    main(run_name, number)
