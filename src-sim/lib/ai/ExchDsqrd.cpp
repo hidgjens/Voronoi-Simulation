@@ -1,12 +1,12 @@
-#include "ExchangeAI.h"
+#include "ExchDsqrd.h"
 #include "../Match.h"
 #include<cmath>
 
-ExchangeAI::ExchangeAI() {
+ExchDsqrd::ExchDsqrd() {
   setDesc("Find nearest opponent with larger area and approach them in attempt to swap positions");
 }
 
-void ExchangeAI::updateFrame(Player& plyr, Match& match){
+void ExchDsqrd::updateFrame(Player& plyr, Match& match){
   // get player position
   auto plyrpos = plyr.getPos();
   // check the players team
@@ -47,12 +47,14 @@ void ExchangeAI::updateFrame(Player& plyr, Match& match){
     plyr.setIPos(targetPos);
     plyr.checkLegalPosition(match);
     match.checkCollisions(plyr);
+  }else{
+    dsq.updateFrame(plyr, match);
   }
 
 
 }
 
-Cart ExchangeAI::metricV(Player& test_plyr, Player& far_plyr, Match& match) {
+Cart ExchDsqrd::metricV(Player& test_plyr, Player& far_plyr, Match& match) {
   auto A_j = far_plyr.getCtrl(match);
   auto A_i = test_plyr.getCtrl(match);
   if (A_i >= A_j && test_plyr.getTeam() != far_plyr.getTeam()) {return Cart(0.0, 0.0);} // ignore smaller areas
@@ -107,6 +109,6 @@ Cart ExchangeAI::metricV(Player& test_plyr, Player& far_plyr, Match& match) {
   }
 }
 
-double ExchangeAI::metricD(Player& test_plyr, Player& far_plyr, Match& match) {
+double ExchDsqrd::metricD(Player& test_plyr, Player& far_plyr, Match& match) {
   return metricV(test_plyr, far_plyr, match).mod();
 }

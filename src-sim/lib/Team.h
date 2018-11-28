@@ -63,6 +63,7 @@ public:
 
   const Player getPlayer(int) const; // shirt num
   Player& getPlayerR(int);
+  Player* getPlayerPtr(int);
 
   double minDist(Cart); // minimum distance to point (checks all players)
 

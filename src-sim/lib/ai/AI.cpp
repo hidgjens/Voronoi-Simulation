@@ -7,6 +7,9 @@
 #include "RandomWalk.h"
 #include "TestingAI.h"
 #include "Stationary.h"
+#include "Spreading.h"
+#include "DSquared.h"
+#include "ExchDsqrd.h"
 
 AI::AI() : desc("unspecified") {}
 
@@ -36,6 +39,15 @@ AI* AI::makeAI(std::string ai_type){
   else
   if (ai_type == "Stationary")
     return_ai = new StationaryAI();
+  else
+  if (ai_type == "Spreading")
+    return_ai = new Spreading();
+  else
+  if (ai_type == "DSquared")
+    return_ai = new DSquared();
+  else
+  if (ai_type == "ExchDsqrd")
+    return_ai = new ExchDsqrd();
   /*
     add more here
   */

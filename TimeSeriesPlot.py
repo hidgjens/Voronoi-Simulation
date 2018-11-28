@@ -66,7 +66,7 @@ def getPossessionRegions(df):
 
     # add final endpoint 
     endpoints.append(Frames)
-    print(list(zip(startpoints, endpoints, colours)))
+    #print(list(zip(startpoints, endpoints, colours)))
     return(list(zip(startpoints, endpoints, colours)))
     
 # plots time series graphs for a given match
