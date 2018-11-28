@@ -69,6 +69,8 @@ public:
 
   void scatterPlayer(int, double, double); // scatter shirt number by angle and radius
 
+  Player* nearestPlayer(Player&); // return pointer to the nearest player to a point
+
 };
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef DSQUARED_H
-#define DSQUARED_H
+#ifndef DSQUAREDSTD_H
+#define DSQUAREDSTD_H
 
 #include "AI.h"
 #include "../Player.h"
@@ -9,16 +9,16 @@ class PitchBorder;
 class Cart;
 
 
-class DSquared: public AI {
+class DSquaredSTD: public AI {
 private:
   int players_to_consider; // number of players to sum over
   int density_samples; // number of steps to check 0 -> 360
 
 public:
   // constructors
-  DSquared();
-  DSquared(int);
-  DSquared(int, int);
+  DSquaredSTD();
+  DSquaredSTD(int);
+  DSquaredSTD(int, int);
 
   // accessors and mutators
   void setPlayers_to_consider(int);

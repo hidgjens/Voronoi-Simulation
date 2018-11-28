@@ -110,10 +110,12 @@ void Team::buildTeam(){
     if (i < smartPlyrcnt){
       // smart player
       plyrs[i] = Player(i + 1, name, true);
+      plyrs[i].setTeamPtr(this);
       plyrs[i].linkPossession(&possession);
     } else {
       // normal player
       plyrs[i] = Player(i + 1, name, false);
+      plyrs[i].setTeamPtr(this);
       plyrs[i].linkPossession(&possession);
 
     }
@@ -211,4 +213,29 @@ double Team::minDist(Cart ps) {
 
 void Team::scatterPlayer(int shirt_num, double r, double theta){
   plyrs[shirt_num - 1].setdPos(r * cos(theta), r * sin(theta));
+}
+
+Player* Team::nearestPlayer(Player& targetPlayer) {
+  Cart pos = targetPlayer.getPos();
+  double mindist = -1.0;
+  Player* closestPlayer;
+  double testdist;
+  Player* testPlayer;
+  Cart temp_player_pos;
+
+  for (int i{0}; i < plyrcnt; i++){
+    testPlayer = &plyrs[i];
+    if (testPlayer == &targetPlayer) { //testPlayer->printDetails(); targetPlayer.printDetails(); 
+      continue; } // skip if the same
+
+    temp_player_pos = testPlayer->getPos();
+    testdist = pos.dist(temp_player_pos);
+    if (testdist < mindist || mindist < 0) { // < 0 is default meaning unset
+      mindist = testdist;
+      closestPlayer = testPlayer;
+    }
+  }
+
+  return closestPlayer;
+  
 }

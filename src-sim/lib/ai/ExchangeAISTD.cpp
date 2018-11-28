@@ -1,12 +1,12 @@
-#include "ExchangeAI.h"
+#include "ExchangeAISTD.h"
 #include "../Match.h"
 #include<cmath>
 
-ExchangeAI::ExchangeAI() {
+ExchangeAISTD::ExchangeAISTD() {
   setDesc("Find nearest opponent with larger area and approach them in attempt to swap positions");
 }
 
-void ExchangeAI::updateFrame(Player& plyr, Match& match){
+void ExchangeAISTD::updateFrame(Player& plyr, Match& match){
   // get player position
   auto plyrpos = plyr.getPos();
   // check the players team
@@ -14,17 +14,6 @@ void ExchangeAI::updateFrame(Player& plyr, Match& match){
   // get plyrs control
   auto plyrctrl = plyr.getCtrl(match);
 
-    // before anything else, check if there's a player within 4 meters, if so move directly away from them
-  Player* nearestplayer = plyr.getTeamPtr()->nearestPlayer(plyr);
-  double distance2nearest = nearestplayer->getPos().dist(plyrpos);
-  if (distance2nearest < 3.0 * plyr.getMaxStep()) {
-    Cart unitvector_away = nearestplayer->getPos().unitVect2(plyrpos); // here i have deliberately done this way round, i've worked out the unit vector from ally to player so i can just move in that direction
-    double theta = atan2(unitvector_away.xComp(), unitvector_away.yComp());
-    plyr.scatter(plyr.getMaxStep(), theta);
-    plyr.checkLegalPosition(match);
-    match.checkCollisions(plyr);
-    return;
-  }
 
   // find opponent team
   Team eteam;
@@ -67,7 +56,7 @@ void ExchangeAI::updateFrame(Player& plyr, Match& match){
 
 }
 
-Cart ExchangeAI::metricV(Player& test_plyr, Player& far_plyr, Match& match) {
+Cart ExchangeAISTD::metricV(Player& test_plyr, Player& far_plyr, Match& match) {
   auto A_j = far_plyr.getCtrl(match);
   auto A_i = test_plyr.getCtrl(match);
   if (A_i >= A_j && test_plyr.getTeam() != far_plyr.getTeam()) {return Cart(0.0, 0.0);} // ignore smaller areas
@@ -122,6 +111,6 @@ Cart ExchangeAI::metricV(Player& test_plyr, Player& far_plyr, Match& match) {
   }
 }
 
-double ExchangeAI::metricD(Player& test_plyr, Player& far_plyr, Match& match) {
+double ExchangeAISTD::metricD(Player& test_plyr, Player& far_plyr, Match& match) {
   return metricV(test_plyr, far_plyr, match).mod();
 }

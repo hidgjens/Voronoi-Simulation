@@ -10,6 +10,8 @@
 #include "Spreading.h"
 #include "DSquared.h"
 #include "ExchDsqrd.h"
+#include "DSquaredSTD.h"
+#include "ExchangeAISTD.h"
 
 AI::AI() : desc("unspecified") {}
 
@@ -48,6 +50,12 @@ AI* AI::makeAI(std::string ai_type){
   else
   if (ai_type == "ExchDsqrd")
     return_ai = new ExchDsqrd();
+  else
+  if (ai_type == "DSquaredSTD")
+    return_ai = new DSquaredSTD();
+  else
+  if (ai_type == "ExchangeSTD")
+    return_ai = new ExchangeAISTD();
   /*
     add more here
   */

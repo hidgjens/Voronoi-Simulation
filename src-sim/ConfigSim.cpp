@@ -3,6 +3,7 @@
 #include "lib/SimManager.h"
 
 int main(int argc, char* argv[]){
+    srand (time(NULL));
     // check if enough args are given
     int args_required = 5;
     // match cfg, home cfg, away cfg, filename, samples, [starting number = 0]
