@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from os import makedirs, listdir
 from os.path import exists
+from scipy import signal
 from PeakFitting import filter
 
 def LoadByGame(filename):
@@ -66,16 +67,35 @@ def getPossessionRegions(df):
 
     # add final endpoint 
     endpoints.append(Frames)
+<<<<<<< HEAD
     #print(list(zip(startpoints, endpoints, colours)))
+=======
+    # print(list(zip(startpoints, endpoints, colours)))
+>>>>>>> 11c41efe0abca312ed259907f4968c17fa03a6d3
     return(list(zip(startpoints, endpoints, colours)))
+
+# computes mean of a variable in a possession region, stores as list
+def possRegionMean(df, var):
+    # get details of possession regions
+    startpoints, endpoints, colours = zip(*getPossessionRegions(df))
+    del colours
+
+    means = []
+    # compute mean of var in each region    
+    for s, e in zip(startpoints, endpoints):
+        regionvalues = df.loc[(df['FID'] >= s) & (df['FID'] <= e), var].values       
+        regionmean = sum(regionvalues) / len(regionvalues)
+        means.append(regionmean)
     
+    return(means)
+
 # plots time series graphs for a given match
 def TimeSeriesPlot(df, var, title, filename):    
     # define useful quantities
     frames =  1 + df['FID'].max()
     players = df['Num'].max()
     t = range(1, frames) 
-    colours = cm.inferno(np.linspace(0, 1, players)) 
+    colours = cm.plasma(np.linspace(0, 1, players)) 
     patches = []
 
     print('Frames: %i' % frames)
@@ -123,10 +143,14 @@ def TimeTeam(df, var, title, filename):
     print('Frames: %i' % frames)
     plt.figure(figsize = (21, 7), dpi = 300) 
     
-    # plot possession regions
-    for s, e, c in getPossessionRegions(df):
+    # plot possession regions and mean dCtrl (ie mean gradient over region)
+    means = possRegionMean(df, 'TmdCtrl')
+    for i, regionlist in enumerate(getPossessionRegions(df)):
+        s, e, c = regionlist
+        height = 5*(1 + signal.sawtooth(np.pi/2 * i)) 
         plt.axvspan(s, e, facecolor = c, alpha = 0.4)
-
+        plt.text((s+e)/2, height, "{:.2f}".format(means[i]), fontsize = 10, color = c)
+    
     # plot
     plt.plot(t, tmdata, linestyle = '-', linewidth = 0.75, color = 'k')
 
@@ -148,6 +172,10 @@ def TimeTeam(df, var, title, filename):
 # plots time series graphs for all matches in a given run
 def PlotMatches(df, var, title, filename):
     matches = 1 + df['MID'].max()
+    # convert values to percentages
+    vars = ['Ctrl', 'dCtrl', 'TmCtrl', 'TmdCtrl']
+    for v in vars:
+        df[v] = df[v].apply(lambda x: x*100)
 
     # split dataframe into matches
     for i in range(matches):
