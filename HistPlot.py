@@ -10,7 +10,7 @@ from scripts.lib.DFFilters import FilterData
 import sys
 
 def LoadRunName(filename):
-    datafiles = [file for file in listdir('data_files/csvs') if file.split('_')[0] == filename]
+    datafiles = [file for file in listdir('data_files/csvs/%s/' % filename) if file.split('.')[-1] == 'csv']
     num_files = len(datafiles)
     print('%s: %i csv files found' % (filename, num_files))
 
@@ -20,7 +20,7 @@ def LoadRunName(filename):
         if num_files > 10 and i % (num_files // 10) == 0:
             print('%i%%: loading %s' % (int(100 * i / num_files), datafile))
         # load csv
-        dat = pd.read_csv('data_files/csvs/%s' % datafile, sep = '\t', index_col = 0)
+        dat = pd.read_csv('data_files/csvs/%s/%s' % (filename, datafile), sep = '\t', index_col = 0)
         # append to dataframe
         data_df = data_df.append(dat, ignore_index = True)
 

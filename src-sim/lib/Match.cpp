@@ -2,6 +2,10 @@
 #include "vect/Cart.h"
 #include<fstream>
 #include "Player.h"
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 
 // // default constructor
@@ -129,6 +133,9 @@ int Match::getFrames() const{
 }
 int Match::getCurrentFrame() const{
   return currentframe;
+}
+void Match::setMatchID(int i) {
+  matchID = i;
 }
 
 // pitch info
@@ -382,14 +389,18 @@ double Match::avgAwayCtrl2() const{
   return awayCtrl2 / ((double) currentframe + 1);
 }
 
-void Match::saveMatchToFile(std::string file_name, bool legacy) const {
-  std::cout << "\nSaving Match " << matchID << " to data_files/csvs/" + file_name + ".csv\n\n";
+void Match::saveMatchToFile(std::string file_name, int i, bool legacy) const {
+  std::cout << "\nSaving Match " << matchID << " to data_files/csvs/" + file_name + "/" + std::to_string(i) + ".csv\n\n";
+  struct stat st;
+  if(!stat(("data_files/csvs/" + file_name).c_str(), &st) == 0)
+    // directory doesn't exist, make it
+    system(("mkdir data_files/csvs/" + file_name).c_str());
   // open file
   std::ofstream datafile;
   if (legacy){
-    datafile.open("data_files/legacy_csvs/" + file_name + ".csv");
+    datafile.open("data_files/legacy_csvs/" + file_name + "/"  + std::to_string(i) + ".csv");
   } else {
-    datafile.open("data_files/csvs/" + file_name + ".csv");
+    datafile.open("data_files/csvs/" + file_name + "/" + std::to_string(i) + ".csv");
   }
   datafile << "idx\tPID\tTime\tFID\tTeam\tNum\tX\tY";
   if (legacy) {

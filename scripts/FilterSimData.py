@@ -19,7 +19,7 @@ from lib.histogram import Histogram, Histogram_fromFile
 import sys
 
 def LoadRunName(run_name):
-    datafiles = [file for file in listdir('data_files/csvs') if file.split('_')[0] == run_name]
+    datafiles = [file for file in listdir('data_files/csvs/%s') if file.split('.')[1] == 'csv']
     num_files = len(datafiles)
     print('%s: %i csv files found' % (run_name, num_files))
 
@@ -29,7 +29,7 @@ def LoadRunName(run_name):
         if num_files > 10 and i % (num_files // 10) == 0:
             print('%i%%: loading %s' % (int(100 * i / num_files), datafile))
         # load csv
-        dat = pd.read_csv('data_files/csvs/%s' % datafile, sep = '\t', index_col = 0)
+        dat = pd.read_csv('data_files/csvs/%s/%s' % (run_name, datafile), sep = '\t', index_col = 0)
         # append to dataframe
         data_df = data_df.append(dat, ignore_index = True)
 
