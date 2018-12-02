@@ -103,7 +103,6 @@ def TimeSeriesPlot(df, var, title, filename):
         makedirs('plots/time_series/%s' % filename)
 
     plt.savefig('plots/time_series/%s/%s.png' % (filename, title))
-    print('Time series saved at: plots/time_series/%s/%s.png' % (filename, title))
     plt.close()
 
 # plots time series of teams spatial control
@@ -139,7 +138,6 @@ def TimeTeam(df, var, title, filename):
         makedirs('plots/time_series/%s' % filename)
 
     plt.savefig('plots/time_series/%s/%s.png' % (filename, title))
-    print('Time series saved at: plots/time_series/%s/%s.png' % (filename, title))
     plt.close()
 
 # plots time series graphs for all matches in a given run

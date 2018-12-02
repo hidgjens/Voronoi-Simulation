@@ -46,7 +46,7 @@ def LoadBatch(batch, filename):
 def main(run_name, date):
     filename = '%s.%s' % (date, run_name)
     batches = MakeBatches(filename)
-    print(batches)
+    
     # create worker function
     def worker(batch, filename):
         df = LoadBatch(batch, filename)
