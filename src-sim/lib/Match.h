@@ -6,10 +6,12 @@
 #include<memory>
 #include "Pitch.h"
 #include "Team.h"
-#include "Ball.h"
 #include "ai/AI.h"
 #include "cfg/MatchConfigFile.h"
 #include "cfg/TeamConfigFile.h"
+#include "Ball.h"
+
+class PitchModel;
 
 
 class Match{
@@ -39,6 +41,8 @@ private:
   Ball ball;
   bool homePossession; // whether home or away possesses the ball
 
+  PitchModel* pm;
+
 public:
   Match();
   // Match(int); // frames based off 90 mins
@@ -56,6 +60,10 @@ public:
   // copy and move assignments
   Match& operator=(Match&);
   Match& operator=(Match&&);
+
+  // pm
+  PitchModel* getModel();
+  void setModel(PitchModel*);
 
   // accessors and mutators
   // sim info

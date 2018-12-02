@@ -6,6 +6,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include "PitchModel.h"
+#include "Ball.h"
 
 
 // // default constructor
@@ -49,7 +51,8 @@ Match::Match(MatchConfigFile mcf_)
 , framerate(mcf_.getFramerate())
 , currentframe(0)
 , pitchX(mcf_.getPitchX())
-, pitchY(mcf_.getPitchY()) 
+, pitchY(mcf_.getPitchY())
+, pm(PitchModel::getPitchModel(mcf_.getMdlName()))
 {
   pitches = std::make_unique<Pitch[]>(frames);
   for (int i{0}; i < frames; i ++ ){
@@ -64,6 +67,7 @@ Match::Match(MatchConfigFile mcf_, TeamConfigFile home_tcf, TeamConfigFile away_
 , pitchY(mcf_.getPitchY()) 
 , homeTeam(home_tcf)
 , awayTeam(away_tcf)
+, pm(PitchModel::getPitchModel(mcf_.getMdlName()))
 {
   pitches = std::make_unique<Pitch[]>(frames);
   for (int i{0}; i < frames; i ++ ){
@@ -72,7 +76,7 @@ Match::Match(MatchConfigFile mcf_, TeamConfigFile home_tcf, TeamConfigFile away_
 }
 
 // copy constructor
-Match::Match(Match& match) : matchID(match.matchID), frames(match.frames), framerate(match.framerate), currentframe(match.currentframe), pitchX(match.pitchX), pitchY(match.pitchY), homeTeam(match.homeTeam), awayTeam(match.awayTeam), ball(match.ball), homeCtrl(match.homeCtrl), awayCtrl(match.awayCtrl) {
+Match::Match(Match& match) : matchID(match.matchID), frames(match.frames), framerate(match.framerate), currentframe(match.currentframe), pitchX(match.pitchX), pitchY(match.pitchY), homeTeam(match.homeTeam), awayTeam(match.awayTeam), ball(match.ball), homeCtrl(match.homeCtrl), awayCtrl(match.awayCtrl), pm(match.pm) {
   pitches = std::make_unique<Pitch[]>(frames);
   for (int i{0}; i < frames; i++){
     pitches[i] = match.pitches[i];
@@ -93,6 +97,7 @@ Match& Match::operator=(Match& match){
   homeTeam = match.homeTeam;
   awayTeam = match.awayTeam;
   ball = match.ball;
+  pm = match.pm;
   homeCtrl = match.homeCtrl;
   awayCtrl = match.awayCtrl;
   pitches = std::make_unique<Pitch[]>(frames);
@@ -121,8 +126,13 @@ Match& Match::operator=(Match&& match){
   pitches = std::move(match.pitches);
   match.frames = 0;
 
+  pm = match.pm;
+
   return *this;
 }
+// pm
+PitchModel* Match::getModel() { return pm; }
+void Match::setModel(PitchModel* pm_) { pm = pm_; }
 
 // sim info
 double Match::getFramerate() const{
@@ -289,12 +299,14 @@ void Match::checkCollisions(Player& iPlyr){
     // for current player, iterate though rest of home team
     for (int j{0}; j < homeTeam.getPlayerCount(); j++){
       auto jPos = homeTeam.getPos(j + 1);
+
+      double radius = iPlyr.getObjectRadius() + homeTeam.getPlayerPtr(j + 1)->getObjectRadius();
       // check distance from two points
-      if (iPos.dist2(jPos) == 0.0 && &homeTeam.getPlayerR(j + 1) != &iPlyr){
+      if (iPos.dist(jPos) <= radius && homeTeam.getPlayerPtr(j + 1) != &iPlyr){
         // collision detected
         no_col = false;
         // scatter players
-        double radius = 0.1;
+        
         double theta = ((double) rand() / RAND_MAX) * 2 * M_PI;
         iPlyr.scatter(radius, theta);
         homeTeam.scatterPlayer(j + 1, radius, M_PI + theta);
@@ -303,15 +315,16 @@ void Match::checkCollisions(Player& iPlyr){
     // then away team
     for (int j{0}; j < awayTeam.getPlayerCount(); j++){
       auto jPos = awayTeam.getPos(j + 1);
+      double radius = iPlyr.getObjectRadius() + awayTeam.getPlayerPtr(j + 1)->getObjectRadius();
+
       // check distance from two points
-      if (iPos.dist2(jPos) == 0.0 && &awayTeam.getPlayerR(j + 1) != &iPlyr){
+      if (iPos.dist2(jPos) <= radius && &awayTeam.getPlayerR(j + 1) != &iPlyr){
         // collision detected
         no_col = false;
         // scatter players
-        double radius = 0.1;
         double theta = ((double) rand() / RAND_MAX) * 2 * M_PI;
         iPlyr.scatter(radius, theta);
-        awayTeam.scatterPlayer(j + 1, radius, M_PI + theta);
+        awayTeam.scatterPlayer(j + 1, radius, (M_PI + theta));
 
         }
       }
@@ -368,6 +381,8 @@ void Match::startSimulation(bool calc_space){
       }
     }
   }
+
+  delete pm;
 }
 // control
 double Match::avgHomeCtrl() const{

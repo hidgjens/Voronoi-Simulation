@@ -16,6 +16,9 @@ private:
   bool* possession; // ptr to teams possession bool (saves updating for individuals)
   Team* team_players;
 
+  
+  double RADIUS = 0.45;
+
 public:
   // default constructor
   Player();
