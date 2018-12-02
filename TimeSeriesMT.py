@@ -5,7 +5,7 @@ from tqdm import tqdm
 import subprocess as s
 import threading
 import time
-from scripts.TimeSeriesPlot import plotBatch
+from scripts.BatchTimeSeries import plotBatch
 
 def MakeBatches(filename):
     processes = 8
@@ -26,9 +26,8 @@ def MakeBatches(filename):
     
     # split remainders between batches
     for i in range(remainder):
-        batch_num = i % 8
-        batches[batch_num].append(datafiles[-i])    
-
+        match_num = num_files - (i+1)
+        batches[i].append(datafiles[match_num])
     return(batches)
 
 def LoadBatch(batch, filename):
@@ -36,31 +35,26 @@ def LoadBatch(batch, filename):
     for datafile in tqdm(batch):
         # load csv
         dat = pd.read_csv('data_files/csvs/%s/%s' % (filename, datafile), sep = '\t', index_col = 0)
-        match_num = datafile.split('.')[1]        
+        match_num = int(datafile.split('.')[0])        
         # assign each match an MID
         dat['MID'] = [match_num] * len(dat.index)
         df = df.append(dat, ignore_index = True)
 
     print('Finished. %i files loaded.' % len(batch))
     return(df)
-
-# get list of MIDs
-def GetBatchMatchList(batch):
-    match_nums = []
-    for datafile in batch:
-        match_nums.append(datafile.split('.')[1]) 
-    
-    return(match_nums)
     
 def main(run_name, date):
     filename = '%s.%s' % (date, run_name)
     batches = MakeBatches(filename)
-    
+    print(batches)
     # create worker function
-    def worker(batch):
+    def worker(batch, filename):
         df = LoadBatch(batch, filename)
-        match_nums = GetBatchMatchList(batch)
-        # worker carries out match-level analysis on batch (time series & vorplots)
+        match_nums = []
+        
+        for datafile in batch:
+            match_nums.append(int(datafile.split('.')[0]))
+        # plot time series for matches in batch
         plotBatch(df, match_nums, run_name, date)
 
     # start threads
@@ -77,8 +71,9 @@ if __name__ == '__main__':
     
     else:
         print('''
-        %s - Plots fitted histograms over a match type.
+        %s - Plots time series (multithreaded) over a match type.
         Args:
-        [1] - filename (DD.MM.MatchConf:HomeTeam:AwayTeam)
+        [1] - Run Name (MatchConf:HomeTeam:AwayTeam)
+        [2] - Date (DD.MM)
         ''' % sys.argv[0])
         exit()

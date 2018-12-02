@@ -27,7 +27,8 @@ def getPossessionRegions(df):
         else:
             print('Why am I here?')
             return('g')
-        
+
+    print(df.loc[df['FID'] == 1])    
     # get possession in first frame, add startpoint and colour
     poss = np.asscalar(df.loc[df['FID'] == 1, 'Possession'].values)
     startpoints.append(1)
@@ -89,7 +90,7 @@ def TimeSeriesPlot(df, var, title, filename):
         patches.append(mpatches.Patch(color = colours[i], label = 'Player %i' % (i + 1)))
 
     # formatting
-    plt.xlim(0,)
+    plt.xlim(0,frames)
     plt.ylim(0,)
     plt.xlabel('Frame')
     plt.ylabel(var)
@@ -128,7 +129,7 @@ def TimeTeam(df, var, title, filename):
     plt.plot(t, tmdata, linestyle = '-', linewidth = 0.75, color = 'k')
 
     # formatting
-    plt.xlim(0,)
+    plt.xlim(0, frames)
     plt.ylim(0,)
     plt.xlabel('Frame')
     plt.ylabel(var)
