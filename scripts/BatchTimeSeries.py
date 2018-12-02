@@ -6,33 +6,10 @@ import sys
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-from os import makedirs, listdir
+from os import makedirs
 from os.path import exists
 from scipy import signal
 from PeakFitting import filter
-
-def LoadByGame(filename):
-    datafiles = [file for file in listdir('data_files/csvs/%s' % filename) if file.split('.')[-1] == 'csv']
-    num_files = len(datafiles)
-    print('%s: %i csv files found' % (filename, num_files))
-
-    df = pd.DataFrame()
-    for i, datafile in enumerate(datafiles):
-        # print every 10%
-        if num_files > 10 and i % (num_files // 10) == 0:
-            print('%i%%: loading %s' % (int(100 * i / num_files), datafile))
-        # load csv
-        dat = pd.read_csv('data_files/csvs/%s/%s' % (filename, datafile), sep = '\t', index_col = 0)
-                
-        # assign each match its unique ID from csv name
-        # split filename by '_' (returns 'X.csv'), then split by '.' to get 'X'
-        match_num = int(datafile.split('.')[0])
-        dat['MID'] = [match_num] * len(dat.index)
-        # append match to dataframe
-        df = df.append(dat, ignore_index = True)
-
-    print('100%: finished.')
-    return(df)
 
 def getPossessionRegions(df):
     # take one player per frame
@@ -67,7 +44,6 @@ def getPossessionRegions(df):
 
     # add final endpoint 
     endpoints.append(Frames)
-    # print(list(zip(startpoints, endpoints, colours)))
     return(list(zip(startpoints, endpoints, colours)))
 
 # computes mean of a variable in a possession region, stores as list
@@ -130,6 +106,7 @@ def TimeSeriesPlot(df, var, title, filename):
     print('Time series saved at: plots/time_series/%s/%s.png' % (filename, title))
     plt.close()
 
+# plots time series of teams spatial control
 def TimeTeam(df, var, title, filename):    
     # define useful quantities
     tmdata = df[var].tolist()
@@ -166,46 +143,26 @@ def TimeTeam(df, var, title, filename):
     plt.close()
 
 # plots time series graphs for all matches in a given run
-def PlotMatches(df, var, title, filename):
-    matches = 1 + df['MID'].max()
+def PlotMatches(df, match_nums, var, title, filename):
     # convert values to percentages
     vars = ['Ctrl', 'dCtrl', 'TmCtrl', 'TmdCtrl']
     for v in vars:
         df[v] = df[v].apply(lambda x: x*100)
 
     # split dataframe into matches
-    for i in range(matches):
+    for i in match_nums:
         mdf = df.loc[df['MID'] == i]
         # pass match to plot
         TimeSeriesPlot(mdf, var, '%s | Match %i' % (title, i), filename)
-        
         # filter out single player for team plot
         mdf = mdf.loc[(mdf['Team'] == 'Home') & (mdf['Num'] == 1)]
         # plot with team variable
         TimeTeam(mdf, 'Tm%s' % var, '%s | Team Plot | Match %i' % (title, i), filename)
         print('Match %i plotted.' % i)
 
-def main(run_name, date):
+def plotBatch(df, match_nums, run_name, date):
     filename = '%s.%s' % (date, run_name)    
     # pre-filter dataframe
-    df = filter(LoadByGame(filename), run_name)
+    df = filter(df, run_name)
     # plot graphs
-    PlotMatches(df, 'Ctrl', '%s | Time Series' % filename, filename)
-
-if __name__ == '__main__':
-    # process sys args
-    if len(sys.argv) == 3:
-        run_name = sys.argv[1]
-        date = sys.argv[2]
-
-        # run main
-        main(run_name, date)
-
-    else:
-        print('''
-        %s - Plots time series over a match type.
-        Args:
-        [1] - Run Type (HomeTeam:smrtcnt:AwayTeam:smrtcnt)
-        [2] - Date (DD.MM)
-        ''' % sys.argv[0])
-        exit()
+    PlotMatches(df, match_nums, 'Ctrl', '%s | Time Series' % filename, filename)

@@ -5,6 +5,7 @@ from tqdm import tqdm
 import subprocess as s
 import threading
 import time
+from scripts.TimeSeriesPlot import plotBatch
 
 def MakeBatches(filename):
     processes = 8
@@ -30,41 +31,49 @@ def MakeBatches(filename):
 
     return(batches)
 
-def LoadBatch(batch):
+def LoadBatch(batch, filename):
     df = pd.DataFrame()
-    for i, datafile in tqdm(enumerate(batch)):
+    for datafile in tqdm(batch):
         # load csv
         dat = pd.read_csv('data_files/csvs/%s/%s' % (filename, datafile), sep = '\t', index_col = 0)
-                
+        match_num = datafile.split('.')[1]        
         # assign each match an MID
-        dat['MID'] = [i] * len(dat.index)
+        dat['MID'] = [match_num] * len(dat.index)
         df = df.append(dat, ignore_index = True)
 
     print('Finished. %i files loaded.' % len(batch))
     return(df)
 
-
-def main(filename, batchsize):
-    batches = MakeBatches(filename, batchsize)
+# get list of MIDs
+def GetBatchMatchList(batch):
+    match_nums = []
+    for datafile in batch:
+        match_nums.append(datafile.split('.')[1]) 
+    
+    return(match_nums)
+    
+def main(run_name, date):
+    filename = '%s.%s' % (date, run_name)
+    batches = MakeBatches(filename)
     
     # create worker function
     def worker(batch):
-        df = LoadBatch(batch)
+        df = LoadBatch(batch, filename)
+        match_nums = GetBatchMatchList(batch)
         # worker carries out match-level analysis on batch (time series & vorplots)
-        cmdlist = ['scripts/TimeSeriesPlot.py', df]
-        s.call(cmdlist)
+        plotBatch(df, match_nums, run_name, date)
 
     # start threads
-    threads = [threading.Thread(target=worker, args=(batch)) for batch in batches]
+    threads = [threading.Thread(target=worker, args=(batch, filename)) for batch in batches]
     for thread in threads:
         thread.start()
 
 if __name__ == '__main__':
     # process sys args
     if len(sys.argv) == 3:
-        filename = sys.argv[1]
-        batchsize = sys.argv[2]
-        main(filename)
+        run_name = sys.argv[1]
+        date = sys.argv[2]
+        main(run_name, date)
     
     else:
         print('''
@@ -73,4 +82,3 @@ if __name__ == '__main__':
         [1] - filename (DD.MM.MatchConf:HomeTeam:AwayTeam)
         ''' % sys.argv[0])
         exit()
-    
