@@ -8,6 +8,7 @@
 #include<utility>
 #include "Team.h"
 #include "vect/Point.h"
+#include "PitchModel.h"
 
 class Match;
 
@@ -17,6 +18,7 @@ private:
   double framerate;
   int frame;
 
+  PitchModel* pm;
 
   // pitch dims
   double pitchX;

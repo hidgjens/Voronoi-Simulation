@@ -50,6 +50,7 @@ Pitch::Pitch(Match& match)
 , pitchY(match.getPitchY())
 , homeCnt(match.getHomeCnt())
 , awayCnt(match.getAwayCnt())
+, pm(match.getModel())
 {
   homePos = std::make_unique<Cart[]>(homeCnt);
   awayPos = std::make_unique<Cart[]>(awayCnt);
@@ -64,7 +65,7 @@ Pitch::Pitch(Match& match)
 }
 
 // copy constructor
-Pitch::Pitch(Pitch& ptch) : homeCnt(ptch.homeCnt), awayCnt(ptch.awayCnt), pitchX(ptch.pitchX), pitchY(ptch.pitchY), framerate(ptch.framerate), frame(ptch.frame), xSamp(ptch.xSamp), ySamp(ptch.ySamp), ball(ptch.ball) {
+Pitch::Pitch(Pitch& ptch) : homeCnt(ptch.homeCnt), awayCnt(ptch.awayCnt), pitchX(ptch.pitchX), pitchY(ptch.pitchY), framerate(ptch.framerate), frame(ptch.frame), xSamp(ptch.xSamp), ySamp(ptch.ySamp), ball(ptch.ball), pm(ptch.pm) {
   homePos = std::make_unique<Cart[]>(homeCnt);
   awayPos = std::make_unique<Cart[]>(awayCnt);
   for (int i{0}; i < homeCnt; i++){
@@ -117,6 +118,7 @@ Pitch& Pitch::operator=(Pitch& ptch){
   framerate = ptch.framerate;
   frame = ptch.frame;
   ball = ptch.ball;
+  pm = ptch.pm;
 
   homePos = std::make_unique<Cart[]>(homeCnt);
   awayPos = std::make_unique<Cart[]>(awayCnt);
@@ -171,6 +173,7 @@ Pitch& Pitch::operator=(Pitch&& ptch){
   framerate = ptch.framerate;
   frame = ptch.frame;
   ball = ptch.ball;
+  pm = ptch.pm;
 
   homePos = std::move(ptch.homePos);
   awayPos = std::move(ptch.awayPos);
@@ -243,6 +246,7 @@ void Pitch::storeFrame(Match& match) {
 }
 
 void Pitch::computeControl() {
+  double total_ctrl = 0.0;
   homeCtrl = 0;
   awayCtrl = 0;
   for (int i{0}; i < homeCnt; i++) { homePlyrCtrl[i] = 0.0; }
@@ -277,23 +281,27 @@ void Pitch::computeControl() {
       control[i + xSamp * j] = temp_player;
       if (temp_player > 0){
         // home player
-        homeCtrl += 1.0;
-        homePlyrCtrl[temp_player - 1] += 1.0;
+        double change = 1.0 * pm->getPitchWeight(loc, this);
+        homeCtrl += change;
+        homePlyrCtrl[temp_player - 1] += change;
+        total_ctrl += change;
 
       } else if (temp_player < 0){
         // away player
-        awayCtrl += 1.0;
-        awayPlyrCtrl[(-1 * temp_player) - 1] += 1.0;
+        double change = 1.0 * pm->getPitchWeight(loc, this);
+        awayCtrl += change;
+        awayPlyrCtrl[(-1 * temp_player) - 1] += change;
+        total_ctrl += change;
       }
     }
   }
-  homeCtrl /= xSamp * ySamp;
-  awayCtrl /= xSamp * ySamp;
+  homeCtrl /= total_ctrl; //xSamp * ySamp;
+  awayCtrl /= total_ctrl; //xSamp * ySamp;
   for (int i{0}; i < homeCnt; i++){
-    homePlyrCtrl[i] /= xSamp * ySamp;
+    homePlyrCtrl[i] /= total_ctrl; //xSamp * ySamp;
   }
   for (int i{0}; i < awayCnt; i++){
-    awayPlyrCtrl[i] /= xSamp * ySamp;
+    awayPlyrCtrl[i] /= total_ctrl; //xSamp * ySamp;
   }
   //std::cout << "homeCtrl ptch " << homeCtrl << "\tawayCtrl " << awayCtrl << "\n";
 }

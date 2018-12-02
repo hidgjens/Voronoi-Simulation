@@ -41,6 +41,12 @@ void MatchConfigFile::parseConfigFile(const std::unordered_map<std::string, std:
     else
         runName = configFileName;
 
+    // PitchModel
+    if (check_key("PitchModel"))
+        pitchMdl = umap.at("PitchModel");
+    else
+        pitchMdl = "Uniform";
+
     // NumberOfFrames
     if (check_key("NumberOfFrames"))
         numberOfFrames = std::stoi(umap.at("NumberOfFrames"));
@@ -136,6 +142,9 @@ std::string MatchConfigFile::getConfigFileName() const { return configFileName; 
 
 void MatchConfigFile::setRunName(std::string rn_){ runName = rn_; }
 std::string MatchConfigFile::getRunName() const { return runName; }
+
+void MatchConfigFile::setMdlName(std::string mdl){ pitchMdl = mdl; }
+std::string MatchConfigFile::getMdlName() const { return pitchMdl; }
 
 void MatchConfigFile::setFramerate(double fr_) { framerate = fr_; }
 double MatchConfigFile::getFramerate() const { return framerate; }

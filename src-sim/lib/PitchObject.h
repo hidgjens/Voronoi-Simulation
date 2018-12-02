@@ -13,13 +13,16 @@ class Match;
 
 class PitchObject {
   // base class for object on pitch
-private:
+protected:
   // object name
   std::string name;
   // position
   Cart pos;
   // velocity
   Cart vel;
+
+  double hitbox_radius;
+
 public:
   // Default constructor
   PitchObject();
@@ -28,6 +31,9 @@ public:
   // name
   std::string getName() const;
   void setName(std::string);
+
+  double getObjectRadius() const;
+  void setObjectRadius(double);
   // position
   double getPosX() const;
   double getPosY() const;
@@ -52,6 +58,8 @@ public:
   void checkSmartLegalPosition(Match&);
 
   void scatter(double, double);
+
+
 
 };
 #endif

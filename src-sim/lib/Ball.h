@@ -5,6 +5,7 @@
 
 class Ball: public PitchObject {
 private:
+  double RADIUS = 0.15;
 
 public:
   // default constructor

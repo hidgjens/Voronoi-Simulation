@@ -3,12 +3,12 @@
 
 #include "AI.h"
 #include "../Player.h"
-#include "DSquared.h"
+#include "DSquaredSTD.h"
 
 
 class ExchDsqrd: public AI {
 private:
-  DSquared dsq;
+  DSquaredSTD dsq;
 
 public:
   // constructors

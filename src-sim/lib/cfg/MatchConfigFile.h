@@ -11,7 +11,7 @@ private:
     std::string configFileName;
     
     // match info
-    std::string runName;
+    std::string runName, pitchMdl;
     int numberOfFrames;
     double framerate; // only necessary if trying to keep things physical
 
@@ -35,6 +35,9 @@ public:
 
     void setRunName(std::string);
     std::string getRunName() const;
+
+    void setMdlName(std::string);
+    std::string getMdlName() const;
 
     void setFramerate(double);
     double getFramerate() const;

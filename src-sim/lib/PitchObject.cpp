@@ -19,6 +19,9 @@ void PitchObject::setName(std::string new_nm){
   name = new_nm;
 }
 
+double PitchObject::getObjectRadius() const { return hitbox_radius; }
+void PitchObject::setObjectRadius(double obj_r) { hitbox_radius = obj_r; }
+
 // position
 double PitchObject::getPosX() const{
   return pos.xComp();
@@ -125,7 +128,7 @@ void PitchObject::checkSmartLegalPosition(Match& match){
   }
   if (getPosY() > match.getPitchY() / 2.0){
     //std::cout << "illegal " << getPosX() << " " << getPosY() << "\n";
-    setPosY(match.getPitchY() / 2.0);
+    setPosY(match.getPitchY() / 2.0); 
   }
   if (getPosY() < -1.0 * match.getPitchY() / 2.0){
     //std::cout << "illegal " << getPosX() << " " << getPosY() << "\n";

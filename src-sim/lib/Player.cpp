@@ -10,6 +10,7 @@ Player::Player()
 {
   setName(team + "Player" + std::to_string(shirtNum));
   setPos(0.0, 0.0);
+  setObjectRadius(RADIUS);
 }
 
 Player::Player(int sh_num)
@@ -20,6 +21,8 @@ Player::Player(int sh_num)
 {
   setName(team + "Player" + std::to_string(shirtNum));
   setPos(0.0, 0.0);
+  setObjectRadius(RADIUS);
+
 }
 Player::Player(int sh_num, std::string tm)
   : shirtNum(sh_num)
@@ -29,6 +32,8 @@ Player::Player(int sh_num, std::string tm)
 {
   setName(team + "Player" + std::to_string(shirtNum));
   setPos(0.0, 0.0);
+  setObjectRadius(RADIUS);
+
 }
 Player::Player(int sh_num, std::string tm, bool smrt)
   : shirtNum(sh_num)
@@ -37,6 +42,7 @@ Player::Player(int sh_num, std::string tm, bool smrt)
   , maxStep(2.5)
 {
   setName(team + "Player" + std::to_string(shirtNum));
+  setObjectRadius(RADIUS);
   setPos(0.0, 0.0);
 }
 
