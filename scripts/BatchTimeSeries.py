@@ -28,7 +28,6 @@ def getPossessionRegions(df):
             print('Why am I here?')
             return('g')
 
-    print(df.loc[df['FID'] == 1])    
     # get possession in first frame, add startpoint and colour
     poss = np.asscalar(df.loc[df['FID'] == 1, 'Possession'].values)
     startpoints.append(1)

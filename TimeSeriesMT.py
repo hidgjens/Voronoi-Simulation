@@ -27,6 +27,7 @@ def MakeBatches(filename):
     for i in range(remainder):
         match_num = num_files - (i+1)
         batches[i].append(datafiles[match_num])
+    print(batches)
     return(batches)
 
 def LoadBatch(batch, filename):
