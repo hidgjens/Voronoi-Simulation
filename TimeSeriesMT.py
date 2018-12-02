@@ -3,8 +3,7 @@ import sys
 from os import listdir
 from tqdm import tqdm
 import subprocess as s
-import threading
-import time
+import multiprocessing
 from scripts.BatchTimeSeries import plotBatch
 
 def MakeBatches(filename):
@@ -57,10 +56,10 @@ def main(run_name, date):
         # plot time series for matches in batch
         plotBatch(df, match_nums, run_name, date)
 
-    # start threads
-    threads = [threading.Thread(target=worker, args=(batch, filename)) for batch in batches]
-    for thread in threads:
-        thread.start()
+    # start processes
+    procs = [multiprocessing.Process(target=worker, args=(batch, filename)) for batch in batches]
+    for p in procs:
+        p.start()
 
 if __name__ == '__main__':
     # process sys args
