@@ -43,7 +43,7 @@ def histogram(strat):
 
 def time_series(strat):
     process_dict = {
-    'cmd' : ['python3', 'TimeSeriesPlot.py', strat, date_str],
+    'cmd' : ['python3', 'TimeSeriesMT.py', strat, date_str],
 
     'task-name' : 'Time series %s' % strat
     }

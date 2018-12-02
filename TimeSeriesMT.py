@@ -20,14 +20,14 @@ def MakeBatches(filename):
     # add files to batches    
     for i in range(processes):
         startpoint = batchsize * i
-        endpoint = batchsize * (i+1) - 1
+        endpoint = batchsize * (i+1)
         batches.append(datafiles[startpoint:endpoint])        
     
     # split remainders between batches
     for i in range(remainder):
         match_num = num_files - (i+1)
         batches[i].append(datafiles[match_num])
-    print(batches)
+
     return(batches)
 
 def LoadBatch(batch, filename):
