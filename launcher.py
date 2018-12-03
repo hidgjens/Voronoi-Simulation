@@ -43,7 +43,7 @@ def histogram(strat):
 
 def time_series(strat):
     process_dict = {
-    'cmd' : ['python3', 'TimeSeriesPlot.py', strat, date_str],
+    'cmd' : ['python3', 'TimeSeriesMT.py', strat, date_str],
 
     'task-name' : 'Time series %s' % strat
     }
@@ -51,7 +51,7 @@ def time_series(strat):
 
 def voronois(strat, vid_num):
     process_dict = {
-    'cmd' : ['python3', 'scripts/VorVids.py', '%s.%s' % (date_str, strat), str(vid_num)],
+    'cmd' : ['python3', 'VorVidsMT.py', strat, date_str, str(vid_num)],
 
     'task-name' : 'Voronois %s' % strat
     }
