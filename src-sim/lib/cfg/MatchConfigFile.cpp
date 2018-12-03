@@ -47,6 +47,17 @@ void MatchConfigFile::parseConfigFile(const std::unordered_map<std::string, std:
     else
         pitchMdl = "Uniform";
 
+    // PitchModel details
+    if (check_key("Wmin"))
+        wmin = std::stod("Wmin");
+    else
+        wmin = 0.5;
+
+    if (check_key("Wmax"))
+        wmin = std::stod("Wmax");
+    else
+        wmax = 1.0;
+
     // NumberOfFrames
     if (check_key("NumberOfFrames"))
         numberOfFrames = std::stoi(umap.at("NumberOfFrames"));
