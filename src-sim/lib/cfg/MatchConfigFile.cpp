@@ -49,12 +49,12 @@ void MatchConfigFile::parseConfigFile(const std::unordered_map<std::string, std:
 
     // PitchModel details
     if (check_key("Wmin"))
-        wmin = std::stod("Wmin");
+        wmin = std::stod(umap.at("Wmin"));
     else
         wmin = 0.5;
 
     if (check_key("Wmax"))
-        wmin = std::stod("Wmax");
+        wmin = std::stod(umap.at("Wmax"));
     else
         wmax = 1.0;
 
