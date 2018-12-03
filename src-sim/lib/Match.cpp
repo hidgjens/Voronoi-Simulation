@@ -52,7 +52,7 @@ Match::Match(MatchConfigFile mcf_)
 , currentframe(0)
 , pitchX(mcf_.getPitchX())
 , pitchY(mcf_.getPitchY())
-, pm(PitchModel::getPitchModel(mcf_.getMdlName()))
+, pm(PitchModel::getPitchModel(mcf_.getMdlName(), mcf_.wmin, mcf_.wmax))
 {
   pitches = std::make_unique<Pitch[]>(frames);
   for (int i{0}; i < frames; i ++ ){
@@ -67,7 +67,7 @@ Match::Match(MatchConfigFile mcf_, TeamConfigFile home_tcf, TeamConfigFile away_
 , pitchY(mcf_.getPitchY()) 
 , homeTeam(home_tcf)
 , awayTeam(away_tcf)
-, pm(PitchModel::getPitchModel(mcf_.getMdlName()))
+, pm(PitchModel::getPitchModel(mcf_.getMdlName(), mcf_.wmin, mcf_.wmax))
 {
   pitches = std::make_unique<Pitch[]>(frames);
   for (int i{0}; i < frames; i ++ ){

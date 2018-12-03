@@ -22,7 +22,7 @@ public:
     double get_wmax() const;
     void set_wmax(double);
 
-    static PitchModel* getPitchModel(std::string);
+    static PitchModel* getPitchModel(std::string, double, double);
 };
 
 #endif

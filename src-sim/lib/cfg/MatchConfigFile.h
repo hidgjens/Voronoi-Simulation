@@ -5,7 +5,7 @@
 #include <unordered_map>
 
 class MatchConfigFile{
-
+    friend class Match;
 private:
     // file info
     std::string configFileName;
@@ -17,6 +17,7 @@ private:
 
     double pitchX, pitchY;
     double decayParam, repelParam, attractParam;
+    double wmin, wmax;
 
 protected:
     void parseConfigFile(const std::unordered_map<std::string, std::string> & );

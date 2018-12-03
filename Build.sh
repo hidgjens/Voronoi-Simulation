@@ -77,7 +77,7 @@ function compile_configsim () {
         lib/Match.cpp lib/Pitch.cpp \
         lib/PitchObject.cpp lib/Player.cpp lib/Team.cpp lib/Ball.cpp \
         lib/vect/Cart.cpp lib/vect/Point.cpp \
-        lib/PitchModel.cpp lib/models/Uniform.cpp lib/models/LinearX.cpp \
+        lib/PitchModel.cpp lib/models/Uniform.cpp lib/models/LinearX.cpp lib/models/Step.cpp lib/models/FourStep.cpp \
         lib/ai/AI.cpp lib/ai/RandomWalk.cpp lib/ai/Stationary.cpp lib/ai/ExchangeAI.cpp lib/ai/MetricAI.cpp \
         lib/ai/TestingAI.cpp lib/ai/Spreading.cpp lib/ai/DSquared.cpp lib/ai/ExchDsqrd.cpp lib/ai/DSquaredSTD.cpp \
         lib/ai/ExchangeAISTD.cpp lib/ai/influences/PitchEdge.cpp \
