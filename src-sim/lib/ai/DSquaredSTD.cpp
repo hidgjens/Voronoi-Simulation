@@ -83,7 +83,7 @@ void DSquaredSTD::updateFrame(Player& player_, Match& match_) {
     auto sce = pb->getSecondClosestEdge(player_position);
     double second_edge_dist = sce.perpendicularDistance(player_position);
 
-    double edge_limit = 10.0;
+    double edge_limit = dscf.edge_limit;
 
 
     if (players_on_pitch[players_to_consider - 1].second > second_edge_dist && second_edge_dist < edge_limit) {
@@ -98,7 +98,7 @@ void DSquaredSTD::updateFrame(Player& player_, Match& match_) {
     if (players_on_pitch[players_to_consider - 1].second > first_edge_dist && first_edge_dist < edge_limit) {
         nearby_edges = 1;
     }
-    int mod_ptc = players_to_consider - nearby_edges;
+    int mod_ptc = dscf.players_to_consider - nearby_edges;
 
     // create vector of player ptrs
     std::vector<Player*> closest_players;
@@ -136,7 +136,7 @@ void DSquaredSTD::updateFrame(Player& player_, Match& match_) {
     // calc edge effects
 
     // check density in every direction based on density samples
-    for (int i{0}; i < density_samples; i++ ) {
+    for (int i{0}; i < dscf.density_samples; i++ ) {
         // calculate direction to check
         double theta_prime = 2 * M_PI * ((double) i / (double) density_samples - 0.5);
         // store density sum from each player
@@ -194,7 +194,7 @@ bool DSquaredSTD::checkLegalMove(Cart pos, Match& match_) {
 double DSquaredSTD::calcD(std::vector<Player*> closest_players, PitchBorder* pb, Cart pos, int edge_){
     double dsquared = 0.0;
     double dist;
-    double scale = 30.0;
+
     for (auto player : closest_players) {
         dsquared += player->getPos().dist(pos);
     }
@@ -203,19 +203,19 @@ double DSquaredSTD::calcD(std::vector<Player*> closest_players, PitchBorder* pb,
         dist = ce.perpendicularDistance(pos);
         // scale = 1.0;
         //scale = 10.0 * (exp(-0.2 * dist));
-        dsquared += scale * (dist);
+        dsquared += dscf.edge_scale * (dist);
     } else
     if (edge_ == 2) {   // get edge effect
         auto ce = pb->getClosestEdge(pos);
         dist = ce.perpendicularDistance(pos);
         // scale = 1.0;
         //scale = 10.0 * (exp(-0.2 * dist));
-        dsquared += scale * (dist);
+        dsquared += dscf.edge_scale * (dist);
         // second closest
         auto sce = pb->getSecondClosestEdge(pos);
         dist = sce.perpendicularDistance(pos);
         //scale = 10.0 * (exp(-0.2 * dist));
-        dsquared += scale * (dist);
+        dsquared += dscf.edge_scale * (dist);
     }
     return dsquared;
 }
