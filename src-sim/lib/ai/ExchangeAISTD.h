@@ -4,7 +4,12 @@
 #include "AI.h"
 #include "../Player.h"
 
+#include "cfgs/ExchangeConfigFile.h"
+
 class ExchangeAISTD: public AI {
+
+private:
+  ExchangeConfigFile ecf;
 
 public:
   // constructors

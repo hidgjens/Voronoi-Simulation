@@ -3,8 +3,11 @@
 
 #include "AI.h"
 #include "../Player.h"
+#include "cfgs/ExchangeConfigFile.h"
 
 class ExchangeAI: public AI {
+private:
+  ExchangeConfigFile ecf;
 
 public:
   // constructors
