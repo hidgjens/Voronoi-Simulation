@@ -350,24 +350,15 @@ void Match::startSimulation(bool calc_space){
   awayCtrl = 0.0;
   homeCtrl2 = 0.0;
   awayCtrl2 = 0.0;
-  if (calc_space){
-    pitches[0].computeControl();
-    homeCtrl += pitches[0].getHomeCtrl();
-    awayCtrl += pitches[0].getAwayCtrl();
-    // pitches[currentframe].computeControl2();
-    // homeCtrl2 += pitches[currentframe].getHomeCtrl2();
-    // awayCtrl2 += pitches[currentframe].getAwayCtrl2();
-  }
 
-
-  for(int i{1}; i < frames; i++){
+  for(int i{0}; i < frames; i++){
     // update frame
     updateFrame();
     if (calc_space){
       pitches[currentframe].computeControl();
       homeCtrl += pitches[currentframe].getHomeCtrl();
       awayCtrl += pitches[currentframe].getAwayCtrl();
-      // pitches[currentframe].computeControl2();
+
       homeCtrl2 += pitches[currentframe].getContHomeCtrl();
       awayCtrl2 += pitches[currentframe].getContAwayCtrl();
     }
