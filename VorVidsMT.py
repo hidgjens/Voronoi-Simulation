@@ -19,6 +19,7 @@ def MakeBatches(df):
     processes = 8
     # split files to load into batches
     frames = 1 + df['FID'].max()
+    print('Frames: %s' % frames)
     framelist = range(1,frames)
 
     batchsize = frames // processes # files per thread
