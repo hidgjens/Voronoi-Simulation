@@ -134,8 +134,12 @@ def TimeTeam(df, var, title, filename):
     plt.title(title)
 
     # better safe than sorry
-    if not exists('plots/time_series/%s' % filename):
-        makedirs('plots/time_series/%s' % filename)
+    try:
+        if not exists('plots/time_series/%s' % filename):
+            makedirs('plots/time_series/%s' % filename)
+    except:
+        pass
+
 
     plt.savefig('plots/time_series/%s/%s.png' % (filename, title))
     plt.close()
