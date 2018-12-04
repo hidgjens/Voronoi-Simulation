@@ -4,7 +4,7 @@ from os import listdir
 from tqdm import tqdm
 import subprocess as s
 import multiprocessing
-from scripts.BatchTimeSeries import plotBatch
+from BatchTimeSeries import plotBatch
 
 def MakeBatches(filename):
     processes = 8

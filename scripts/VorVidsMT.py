@@ -6,7 +6,7 @@ from os.path import exists
 from os import makedirs
 from os import listdir
 from tqdm import tqdm
-from scripts.BatchVorPlot import PlotFrames
+from BatchVorPlot import PlotFrames
 
 
 # split match into batches
@@ -19,6 +19,7 @@ def MakeBatches(df):
     processes = 8
     # split files to load into batches
     frames = 1 + df['FID'].max()
+    print('Frames: %s' % frames)
     framelist = range(1,frames)
 
     batchsize = frames // processes # files per thread

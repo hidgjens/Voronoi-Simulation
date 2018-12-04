@@ -70,9 +70,7 @@ def TimeSeriesPlot(df, var, title, filename):
     colours = cm.plasma(np.linspace(0, 1, players)) 
     patches = []
 
-    print('Frames: %i' % frames)
     plt.figure(figsize = (21, 7), dpi = 300) 
-
     # shade background regions
     for s, e, c in getPossessionRegions(df):
         plt.axvspan(s, e, facecolor = c, alpha = 0.4)
@@ -112,9 +110,7 @@ def TimeTeam(df, var, title, filename):
     frames =  1 + df['FID'].max()
     t = range(1, frames)
 
-    print('Frames: %i' % frames)
-    plt.figure(figsize = (21, 7), dpi = 300) 
-    
+    plt.figure(figsize = (21, 7), dpi = 300)     
     # plot possession regions and mean dCtrl (ie mean gradient over region)
     means = possRegionMean(df, 'TmdCtrl')
     for i, regionlist in enumerate(getPossessionRegions(df)):
@@ -151,6 +147,8 @@ def PlotMatches(df, match_nums, var, title, filename):
     for v in vars:
         df[v] = df[v].apply(lambda x: x*100)
 
+    frames = df['FID'].max() + 1
+    print('Frames: %s' % frames)
     # split dataframe into matches
     for i in match_nums:
         mdf = df.loc[df['MID'] == i]
