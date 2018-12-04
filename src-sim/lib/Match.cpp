@@ -368,16 +368,16 @@ void Match::startSimulation(bool calc_space){
       homeCtrl += pitches[currentframe].getHomeCtrl();
       awayCtrl += pitches[currentframe].getAwayCtrl();
       // pitches[currentframe].computeControl2();
-      // homeCtrl2 += pitches[currentframe].getHomeCtrl2();
-      // awayCtrl2 += pitches[currentframe].getAwayCtrl2();
+      homeCtrl2 += pitches[currentframe].getContHomeCtrl();
+      awayCtrl2 += pitches[currentframe].getContAwayCtrl();
     }
     if (i % 500 == 0 || i + 1 == frames) {
       printPlayers();
       if (calc_space){
         std::cout << "\nHomeCtrl: " << avgHomeCtrl() << "\n";
         std::cout << "AwayCtrl: " << avgAwayCtrl() << "\n";
-        // std::cout << "\nHomeCtrl2: " << avgHomeCtrl2() << "\n";
-        // std::cout << "AwayCtrl2: " << avgAwayCtrl2() << "\n";
+        std::cout << "\nHomeContest: " << avgHomeCtrl2() << "\n"; // sponge 
+        std::cout << "AwayContest: " << avgAwayCtrl2() << "\n"; // sponge
       }
     }
   }

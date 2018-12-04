@@ -2,6 +2,7 @@
 #include "../Match.h"
 #include<fstream>
 #include<cmath>
+#include "influences/PitchEdge.h"
 
 MetricAI::MetricAI() : decay_const(1.0), op_coeff(1.0), sm_coeff(1.0) {
   setDesc("Find nearest opponent with larger area and approach them in attempt to swap positions");
@@ -20,14 +21,37 @@ void MetricAI::updateFrame(Player& plyr, Match& match){
   auto hteam = match.getHomeTeam();
   auto ateam = match.getAwayTeam();
 
+      // before anything else, check if there's a player within 4 meters, if so move directly away from them
+  Player* nearestplayer = plyr.getTeamPtr()->nearestPlayer(plyr);
+  double distance2nearest = nearestplayer->getPos().dist(plyrpos);
+  if (distance2nearest < 3.0 * plyr.getMaxStep()) {
+    Cart unitvector_away = nearestplayer->getPos().unitVect2(plyrpos); // here i have deliberately done this way round, i've worked out the unit vector from ally to player so i can just move in that direction
+    double theta = atan2(unitvector_away.xComp(), unitvector_away.yComp());
+    plyr.scatter(plyr.getMaxStep(), theta);
+    plyr.checkLegalPosition(match);
+    match.checkCollisions(plyr);
+    return;
+  }
+
   // F vector
   Cart F(0.0, 0.0);
   Player curplyr;
 
-  // // open F file
-  // std::ofstream Ffile;
-  // Ffile.open("F-results.txt");
+  // edge effects
+  PitchBorder* pb = new PitchBorder(match.getPitchX(), match.getPitchY());
+  double d0 = sqrt(match.getPitchX() * match.getPitchY());
 
+  if (pb->homeEdge.perpendicularDistance(plyrpos) <= dscf.edge_limit)
+    F += Cart(1.0, 0.0) * dscf.edge_scale * (1.0 / match.getPlayerCnt()) * exp(- 1.0 * pb->homeEdge.perpendicularDistance(plyrpos) / (ecf.decay_coeff * d0)); // 1/22 is roughly the avg. player control
+  
+  if (pb->awayEdge.perpendicularDistance(plyrpos) <= dscf.edge_limit)
+    F += Cart(-1.0, 0.0) * dscf.edge_scale * (1.0 / match.getPlayerCnt()) * exp(- 1.0 * pb->awayEdge.perpendicularDistance(plyrpos) / (ecf.decay_coeff * d0)); // 1/22 is roughly the avg. player control
+  
+  if (pb->leftEdge.perpendicularDistance(plyrpos) <= dscf.edge_limit)
+    F += Cart(0.0, -1.0) * dscf.edge_scale * (1.0 / match.getPlayerCnt()) * exp(- 1.0 * pb->leftEdge.perpendicularDistance(plyrpos) / (ecf.decay_coeff * d0)); // 1/22 is roughly the avg. player control
+  
+  if (pb->rightEdge.perpendicularDistance(plyrpos) <= dscf.edge_limit)
+    F += Cart(0.0, 1.0) * dscf.edge_scale * (1.0 / match.getPlayerCnt()) * exp(- 1.0 * pb->rightEdge.perpendicularDistance(plyrpos) / (ecf.decay_coeff * d0)); // 1/22 is roughly the avg. player control
 
   // iterate through home team
   for (int i{0}; i < (hteam.getPlayerCount() + ateam.getPlayerCount()); i++) {
@@ -123,7 +147,7 @@ Cart MetricAI::metricV(Player& test_plyr, Player& far_plyr, Match& match) {
   auto testplyr_pos = test_plyr.getPos();
   auto farplyr_pos = far_plyr.getPos();
   auto d_ij = testplyr_pos.dist(farplyr_pos);
-  auto d_0 = sqrt(match.getPitchX() * match.getPitchY()) * decay_const;
+  auto d_0 = sqrt(match.getPitchX() * match.getPitchY()) * ecf.decay_coeff;
   double gamma;
 
     // need to check if the player is on the active side of the pitch
@@ -152,12 +176,12 @@ Cart MetricAI::metricV(Player& test_plyr, Player& far_plyr, Match& match) {
       gamma = 0.0;
     } else {
       // both same team
-      gamma = -1.0 * sm_coeff;
+      gamma = -1.0 * ecf.same_coeff;
     }
 
   } else {
     // opposite teams
-    gamma = op_coeff;
+    gamma = 1.0 * ecf.opp_coeff;
   }
   auto scalar = A_j * exp(-1.0 * d_ij / d_0) * gamma;
   auto unitVector = testplyr_pos.unitVect2(farplyr_pos);

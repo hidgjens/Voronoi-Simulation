@@ -18,8 +18,8 @@ Pitch::Pitch()
   //points = std::make_unique<Point[]>(xSamp * ySamp);
   homePlyrCtrl = std::make_unique<double[]>(homeCnt);
   awayPlyrCtrl = std::make_unique<double[]>(awayCnt);
-  //homePlyrCtrl2 = std::make_unique<double[]>(homeCnt);
-  //awayPlyrCtrl2 = std::make_unique<double[]>(awayCnt);
+  contestedHomePlyrCtrl = std::make_unique<double[]>(homeCnt); // sponge
+  contestedAwayPlyrCtrl = std::make_unique<double[]>(awayCnt); // sponge
 }
 
 // parameterised constructors
@@ -39,8 +39,8 @@ Pitch::Pitch(int new_fm)
   //points = std::make_unique<Point[]>(xSamp * ySamp);
   homePlyrCtrl = std::make_unique<double[]>(homeCnt);
   awayPlyrCtrl = std::make_unique<double[]>(awayCnt);
-  //homePlyrCtrl2 = std::make_unique<double[]>(homeCnt);
-  //awayPlyrCtrl2 = std::make_unique<double[]>(awayCnt);
+  contestedHomePlyrCtrl = std::make_unique<double[]>(homeCnt); // sponge
+  contestedAwayPlyrCtrl = std::make_unique<double[]>(awayCnt); // sponge
 }
 // parameterised constructors
 Pitch::Pitch(Match& match)
@@ -60,8 +60,8 @@ Pitch::Pitch(Match& match)
   //points = std::make_unique<Point[]>(xSamp * ySamp);
   homePlyrCtrl = std::make_unique<double[]>(homeCnt);
   awayPlyrCtrl = std::make_unique<double[]>(awayCnt);
-  //homePlyrCtrl2 = std::make_unique<double[]>(homeCnt);
-  //awayPlyrCtrl2 = std::make_unique<double[]>(awayCnt);
+  contestedHomePlyrCtrl = std::make_unique<double[]>(homeCnt); // sponge
+  contestedAwayPlyrCtrl = std::make_unique<double[]>(awayCnt); // sponge
 }
 
 // copy constructor
@@ -92,15 +92,16 @@ Pitch::Pitch(Pitch& ptch) : homeCnt(ptch.homeCnt), awayCnt(ptch.awayCnt), pitchX
     awayPlyrCtrl[i] = ptch.awayPlyrCtrl[i];
   }
 
-  // homePlyrCtrl2 = std::make_unique<double[]>(homeCnt);
-  // awayPlyrCtrl2 = std::make_unique<double[]>(awayCnt);
 
-  // for (int i{0}; i < homeCnt; i++){
-  //   homePlyrCtrl2[i] = ptch.homePlyrCtrl2[i];
-  // }
-  // for (int i{0}; i < awayCnt; i++){
-  //   awayPlyrCtrl2[i] = ptch.awayPlyrCtrl2[i];
-  // }
+  contestedHomePlyrCtrl = std::make_unique<double[]>(homeCnt); // sponge
+  contestedAwayPlyrCtrl = std::make_unique<double[]>(awayCnt); // sponge
+
+  for (int i{0}; i < homeCnt; i++){
+    contestedHomePlyrCtrl[i] = ptch.contestedHomePlyrCtrl[i]; // sponge
+  }
+  for (int i{0}; i < awayCnt; i++){
+    contestedAwayPlyrCtrl[i] = ptch.contestedAwayPlyrCtrl[i]; // sponge
+  }
 }
 
 // deep copy assignments
@@ -146,15 +147,15 @@ Pitch& Pitch::operator=(Pitch& ptch){
     awayPlyrCtrl[i] = ptch.awayPlyrCtrl[i];
   }
 
-  // homePlyrCtrl2 = std::make_unique<double[]>(homeCnt);
-  // awayPlyrCtrl2 = std::make_unique<double[]>(awayCnt);
+  contestedHomePlyrCtrl = std::make_unique<double[]>(homeCnt); // sponge
+  contestedAwayPlyrCtrl = std::make_unique<double[]>(awayCnt); // sponge
 
-  // for (int i{0}; i < homeCnt; i++){
-  //   homePlyrCtrl2[i] = ptch.homePlyrCtrl2[i];
-  // }
-  // for (int i{0}; i < awayCnt; i++){
-  //   awayPlyrCtrl2[i] = ptch.awayPlyrCtrl2[i];
-  // }
+  for (int i{0}; i < homeCnt; i++){
+    contestedHomePlyrCtrl[i] = ptch.contestedHomePlyrCtrl[i]; // sponge
+  }
+  for (int i{0}; i < awayCnt; i++){
+    contestedAwayPlyrCtrl[i] = ptch.contestedAwayPlyrCtrl[i]; // sponge
+  }
 
   return *this;
 }
@@ -181,8 +182,10 @@ Pitch& Pitch::operator=(Pitch&& ptch){
   // points = std::move(ptch.points);
   homePlyrCtrl = std::move(ptch.homePlyrCtrl);
   awayPlyrCtrl = std::move(ptch.awayPlyrCtrl);
-  // homePlyrCtrl2 = std::move(ptch.homePlyrCtrl2);
-  // awayPlyrCtrl2 = std::move(ptch.awayPlyrCtrl2);
+ 
+
+  contestedHomePlyrCtrl = std::move(ptch.contestedHomePlyrCtrl); // sponge
+  contestedAwayPlyrCtrl = std::move(ptch.contestedAwayPlyrCtrl); // sponge
 
   ptch.homeCnt = 0;
   ptch.awayCnt = 0;
@@ -249,6 +252,18 @@ void Pitch::computeControl() {
   double total_ctrl = 0.0;
   homeCtrl = 0;
   awayCtrl = 0;
+  
+  // SPONGE vvv
+  int home_closest_shirtnum; // temps
+  int away_closest_shirtnum;
+  double home_closest;
+  double away_closest;
+
+  contestedHomeControl = 0; // sponge
+  contestedAwayControl = 0; // sponge
+  for (int i{0}; i < homeCnt; i++) { contestedHomePlyrCtrl[i] = 0.0; } // sponge
+  for (int i{0}; i < awayCnt; i++) { contestedAwayPlyrCtrl[i] = 0.0; } // sponge
+
   for (int i{0}; i < homeCnt; i++) { homePlyrCtrl[i] = 0.0; }
   for (int i{0}; i < awayCnt; i++) { awayPlyrCtrl[i] = 0.0; }
   double temp_mindist; // current min dist
@@ -257,25 +272,35 @@ void Pitch::computeControl() {
   // sample the pitch for control
   for (int j{0}; j < ySamp; j++){ // iterate through y
     for (int i{0}; i < xSamp; i++){ // iterate through x
+
       Cart loc = convertIdx2Coords(i, j);
       // calculate the distance from the first homeplayer, for now he controls it
-      temp_mindist = loc.dist2(homePos[0]);
-      temp_player = 1; // index = shirtnum - 1;
+      temp_mindist = home_closest = loc.dist2(homePos[0]); // sponge
+      temp_player = home_closest_shirtnum = 1; // index = shirtnum - 1; // sponge
       // iterate through rest of home team, look for closer player
       for (int num{1}; num < homeCnt; num++){
         temp_dist = loc.dist2(homePos[num]);
         if (temp_dist < temp_mindist){
-          temp_mindist = temp_dist;
-          temp_player = (num + 1);
+          temp_mindist = home_closest = temp_dist;
+          temp_player = home_closest_shirtnum = (num + 1);
         }
       }
       // iterate through away team
       for (int num{0}; num < awayCnt; num++){
         temp_dist = loc.dist2(awayPos[num]);
-        if (temp_dist < temp_mindist){
-          temp_mindist = temp_dist;
-          temp_player = -1 * (num + 1); // -ve for away player
+        // first check if it's the closest away player
+        if (temp_dist < away_closest || num == 0) { // sponge
+          // either first away player or a closer player
+          away_closest = temp_dist;
+          away_closest_shirtnum = (num + 1);
+          
+          // possible that the player is closest player outright:
+          if (temp_dist < temp_mindist){
+            temp_mindist = temp_dist;
+            temp_player = -1 * (num + 1); // -ve for away player
+          }
         }
+
       }
       // set corresponding control array element to
       control[i + xSamp * j] = temp_player;
@@ -293,15 +318,29 @@ void Pitch::computeControl() {
         awayPlyrCtrl[(-1 * temp_player) - 1] += change;
         total_ctrl += change;
       }
+      // contested control // sponge
+      auto weighting = pm->getPitchWeight(loc, this);
+      double home_change = away_closest / (home_closest + away_closest) * weighting;
+      double away_change = home_closest / (home_closest + away_closest) * weighting;
+
+      contestedHomeControl += home_change; // sponge
+      contestedAwayControl += away_change;
+      contestedHomePlyrCtrl[home_closest_shirtnum - 1] += home_change;
+      contestedAwayPlyrCtrl[away_closest_shirtnum - 1] += away_change;
     }
   }
   homeCtrl /= total_ctrl; //xSamp * ySamp;
   awayCtrl /= total_ctrl; //xSamp * ySamp;
+  contestedHomeControl /= total_ctrl; // sponge
+  contestedAwayControl /= total_ctrl; // sponge
+  
   for (int i{0}; i < homeCnt; i++){
     homePlyrCtrl[i] /= total_ctrl; //xSamp * ySamp;
+    contestedHomePlyrCtrl[i] /= total_ctrl; // sponge
   }
   for (int i{0}; i < awayCnt; i++){
     awayPlyrCtrl[i] /= total_ctrl; //xSamp * ySamp;
+    contestedAwayPlyrCtrl[i] /= total_ctrl; // sponge
   }
   //std::cout << "homeCtrl ptch " << homeCtrl << "\tawayCtrl " << awayCtrl << "\n";
 }
@@ -375,12 +414,12 @@ double Pitch::getHomeCtrl() const{
 double Pitch::getAwayCtrl() const{
   return awayCtrl;
 }
-// double Pitch::getHomeCtrl2() const{
-//   return homeCtrl2;
-// }
-// double Pitch::getAwayCtrl2() const{
-//   return awayCtrl2;
-// }
+double Pitch::getContHomeCtrl() const{
+  return contestedHomeControl; // sponge
+}
+double Pitch::getContAwayCtrl() const{
+  return contestedAwayControl; // sponge
+}
 
 Cart Pitch::getHomePos(int shirt_num) const{
   return homePos[shirt_num - 1];
@@ -397,12 +436,12 @@ double Pitch::getHomePlyrCtrl(int shirt_num) const{
 double Pitch::getAwayPlyrCtrl(int shirt_num) const{
   return awayPlyrCtrl[shirt_num - 1];
 }
-// double Pitch::getHomePlyrCtrl2(int shirt_num) const{
-//   return homePlyrCtrl2[shirt_num - 1];
-// }
-// double Pitch::getAwayPlyrCtrl2(int shirt_num) const{
-//   return awayPlyrCtrl2[shirt_num - 1];
-// }
+double Pitch::getContHomePlyrCtrl(int shirt_num) const{
+  return contestedHomePlyrCtrl[shirt_num - 1]; // sponge
+}
+double Pitch::getContAwayPlyrCtrl(int shirt_num) const{
+  return contestedAwayPlyrCtrl[shirt_num - 1]; // sponge
+}
 
 bool Pitch::getHomePossession() const { return homePossession; }
 bool Pitch::getAwayPossession() const { return !homePossession; }
