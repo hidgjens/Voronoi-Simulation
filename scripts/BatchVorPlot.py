@@ -156,8 +156,11 @@ def PlotFrames(df, framelist, filename):
         plt.ylim(-0.5 * PitchY, 0.5 * PitchY)
 
         # check if output folder exists
-        if not exists('plots/vorplots/vorplots_%s' % filename):
-            makedirs('plots/vorplots/vorplots_%s' % filename)
+        try:    
+            if not exists('plots/vorplots/vorplots_%s' % filename):
+                makedirs('plots/vorplots/vorplots_%s' % filename)
+        except:
+            pass
 
         # save plot
         plt.savefig('plots/vorplots/vorplots_%s/voronoi-%04d.png' % (filename, fid))
