@@ -18,9 +18,9 @@ print_date = {
 }
 
 sim_types = {
-    'met' : 'GenerateMetricMatches.py',
-    'team' : 'GenerateTeamMatches.py',
-    'conf' : 'GenerateConfMatches.py'
+    'met' : 'legacy/GenerateMetricMatches.py',
+    'team' : 'legacy/GenerateTeamMatches.py',
+    'conf' : 'scripts/GenerateConfMatches.py'
 }
 
 # functions to generate process dicts for match generation, histogram plotting and Voronoi analysis
@@ -35,7 +35,7 @@ def generate(strat, match_num, frame_num, sim_type = 'team'):
 
 def histogram(strat):
     process_dict = {
-    'cmd' : ['python3', 'PeakFitting.py', strat, date_str],
+    'cmd' : ['python3', 'scripts/PeakFitting.py', strat, date_str],
 
     'task-name' : 'Histogram %s' % strat
     }
@@ -43,7 +43,7 @@ def histogram(strat):
 
 def time_series(strat):
     process_dict = {
-    'cmd' : ['python3', 'TimeSeriesMT.py', strat, date_str],
+    'cmd' : ['python3', 'scripts/TimeSeriesMT.py', strat, date_str],
 
     'task-name' : 'Time series %s' % strat
     }
@@ -51,7 +51,7 @@ def time_series(strat):
 
 def voronois(strat, vid_num):
     process_dict = {
-    'cmd' : ['python3', 'VorVidsMT.py', strat, date_str, str(vid_num)],
+    'cmd' : ['python3', 'scripts/VorVidsMT.py', strat, date_str, str(vid_num)],
 
     'task-name' : 'Voronois %s' % strat
     }

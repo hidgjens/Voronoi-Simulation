@@ -6,7 +6,7 @@ from os.path import exists
 from os import makedirs
 from os import listdir
 from tqdm import tqdm
-from scripts.BatchVorPlot import PlotFrames
+from BatchVorPlot import PlotFrames
 
 
 # split match into batches
