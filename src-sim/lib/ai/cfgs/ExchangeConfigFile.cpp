@@ -37,6 +37,18 @@ void ExchangeConfigFile::parseConfigFile(const std::unordered_map<std::string, s
     else
         decay_coeff = 1.0;
 
+     // same (repel)
+    if (check_key("RepelCoeff"))
+        same_coeff = std::stod(umap.at("RepelCoeff"));
+    else
+        same_coeff = 1.0;
+
+    // opp (attr)
+    if (check_key("AttrCoeff"))
+        opp_coeff = std::stod(umap.at("AttrCoeff"));
+    else
+        opp_coeff = 1.0;
+
 }
 
 

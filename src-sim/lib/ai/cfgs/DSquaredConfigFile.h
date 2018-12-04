@@ -8,6 +8,7 @@ class DSquaredConfigFile {
     friend class DSquared;
     friend class DSquaredSTD;
     friend class ExchDsqrd;
+    friend class MetricAI;
 
     private:
         std::string configFileName = "DSquared";

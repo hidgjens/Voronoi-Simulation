@@ -42,7 +42,7 @@ struct PitchBorder {
 
     void configure(){
         leftEdge = PitchEdge(Cart(0.0, 0.5 * pitchDims.yComp()), Cart(1.0, 0.0), "left edge");
-        rightEdge = PitchEdge(Cart(0.0, - 0.5 * pitchDims.yComp()), Cart(-1.0, 0.0), "right edge");
+        rightEdge = PitchEdge(Cart(0.0, - 0.5 * pitchDims.yComp()), Cart(-1.0, 1.0), "right edge");
         homeEdge = PitchEdge(Cart(-0.5 * pitchDims.xComp(), 0.0), Cart(0.0, 1.0), "home edge");
         awayEdge = PitchEdge(Cart(0.5 * pitchDims.xComp(), 0.0), Cart(0.0, -1.0), "away edge");
     }

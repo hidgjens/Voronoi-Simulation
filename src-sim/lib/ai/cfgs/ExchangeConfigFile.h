@@ -8,11 +8,14 @@ class ExchangeConfigFile {
     friend class ExchangeAI;
     friend class ExchangeAISTD;
     friend class ExchDsqrd;
+    friend class MetricAI;
     
 
     private:
         std::string configFileName = "DSquared";
         double decay_coeff = 1.0; 
+        double same_coeff = 1.0;
+        double opp_coeff = 1.0;
 
     protected:
         void parseConfigFile(const std::unordered_map<std::string, std::string> & );
