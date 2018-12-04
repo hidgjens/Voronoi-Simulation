@@ -54,7 +54,7 @@ void MatchConfigFile::parseConfigFile(const std::unordered_map<std::string, std:
         wmin = 0.5;
 
     if (check_key("Wmax"))
-        wmin = std::stod(umap.at("Wmax"));
+        wmax = std::stod(umap.at("Wmax"));
     else
         wmax = 1.0;
 

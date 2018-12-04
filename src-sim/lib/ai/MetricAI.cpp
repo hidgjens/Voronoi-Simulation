@@ -20,6 +20,18 @@ void MetricAI::updateFrame(Player& plyr, Match& match){
   auto hteam = match.getHomeTeam();
   auto ateam = match.getAwayTeam();
 
+      // before anything else, check if there's a player within 4 meters, if so move directly away from them
+  Player* nearestplayer = plyr.getTeamPtr()->nearestPlayer(plyr);
+  double distance2nearest = nearestplayer->getPos().dist(plyrpos);
+  if (distance2nearest < 3.0 * plyr.getMaxStep()) {
+    Cart unitvector_away = nearestplayer->getPos().unitVect2(plyrpos); // here i have deliberately done this way round, i've worked out the unit vector from ally to player so i can just move in that direction
+    double theta = atan2(unitvector_away.xComp(), unitvector_away.yComp());
+    plyr.scatter(plyr.getMaxStep(), theta);
+    plyr.checkLegalPosition(match);
+    match.checkCollisions(plyr);
+    return;
+  }
+
   // F vector
   Cart F(0.0, 0.0);
   Player curplyr;
