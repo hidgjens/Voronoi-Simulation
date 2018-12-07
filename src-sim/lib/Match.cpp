@@ -353,15 +353,15 @@ void Match::startSimulation(bool calc_space){
 
   for(int i{0}; i < frames; i++){
     // update frame
-    std::cout << "update\n";
+    //std::cout << "update\n";
     if (i != 0)
       updateFrame();
     
     if (calc_space){
-      std::cout << "compute\n";
+      //std::cout << "compute\n";
 
       pitches[currentframe].computeControl();
-      std::cout << "add\n";
+      //std::cout << "add\n";
 
       homeCtrl += pitches[currentframe].getHomeCtrl();
       awayCtrl += pitches[currentframe].getAwayCtrl();
@@ -374,7 +374,7 @@ void Match::startSimulation(bool calc_space){
       //homeCtrl2 += pitches[currentframe].getContHomeCtrl();
       //awayCtrl2 += pitches[currentframe].getContAwayCtrl();
     }
-    if (i % 1 == 0 || i + 1 == frames) {
+    if (i % 500 == 0 || i + 1 == frames) {
       printPlayers();
       if (calc_space){
         std::cout << "\nHomeCtrl: " << avgHomeCtrl() << "\n";
