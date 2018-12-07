@@ -348,27 +348,39 @@ Team& Match::getAwayTeam(){
 void Match::startSimulation(bool calc_space){
   homeCtrl = 0.0;
   awayCtrl = 0.0;
-  homeCtrl2 = 0.0;
-  awayCtrl2 = 0.0;
+  // homeCtrl2 = 0.0;
+  // awayCtrl2 = 0.0;
 
   for(int i{0}; i < frames; i++){
     // update frame
-    updateFrame();
+    std::cout << "update\n";
+    if (i != 0)
+      updateFrame();
+    
     if (calc_space){
+      std::cout << "compute\n";
+
       pitches[currentframe].computeControl();
+      std::cout << "add\n";
+
       homeCtrl += pitches[currentframe].getHomeCtrl();
       awayCtrl += pitches[currentframe].getAwayCtrl();
 
-      homeCtrl2 += pitches[currentframe].getContHomeCtrl();
-      awayCtrl2 += pitches[currentframe].getContAwayCtrl();
+      if (pitches[currentframe].getAwayCtrl() + pitches[currentframe].getHomeCtrl() != 1.0) {
+        std::cout << "p";
+        std::cout << "rang: " << pitches[currentframe].getHomeCtrl() << "\t" << pitches[currentframe].getAwayCtrl() << "\n";
+      }
+
+      //homeCtrl2 += pitches[currentframe].getContHomeCtrl();
+      //awayCtrl2 += pitches[currentframe].getContAwayCtrl();
     }
-    if (i % 500 == 0 || i + 1 == frames) {
+    if (i % 1 == 0 || i + 1 == frames) {
       printPlayers();
       if (calc_space){
         std::cout << "\nHomeCtrl: " << avgHomeCtrl() << "\n";
         std::cout << "AwayCtrl: " << avgAwayCtrl() << "\n";
-        std::cout << "\nHomeContest: " << avgHomeCtrl2() << "\n"; // sponge 
-        std::cout << "AwayContest: " << avgAwayCtrl2() << "\n"; // sponge
+        //std::cout << "\nHomeContest: " << avgHomeCtrl2() << "\n"; // sponge 
+        //std::cout << "AwayContest: " << avgAwayCtrl2() << "\n"; // sponge
       }
     }
   }
