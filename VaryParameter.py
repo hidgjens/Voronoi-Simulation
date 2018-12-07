@@ -2,7 +2,7 @@ import subprocess as s
 import sys
 import matplotlib as mpl
 mpl.use('agg')
-import datetime
+from datetime import datetime
 import numpy as np
 import pandas as pd
 import scripts.PeakFitting as pf
@@ -73,14 +73,13 @@ def VaryParam(config_file: str, parameter: str, run_name: str, lower_power: floa
 
     for x in X:
         # get date of run
-        td = datetime.datetime.today()
-        date: str = '%s.%s' % (str(td.day), str(td.month))
+        date: str = '%s' % datetime.now().strftime('%d.%m')
         
         # x is the new parameter, need to update config.
         ChCFG.change_config_line(config_file, parameter, x)
         # now run sim
-        s.Popen(['python3', 'GenerateConfMatches.py', '100', '0', '0', 'conf', '%s' % run_name]).wait()
-        #print('Popen')
+        s.Popen(['python3', 'scripts/GenerateConfMatches.py', '%s' % run_name, '100', '111', '%s.%s' % (date, run_name), 'no', '8']).wait()
+
   
         # get histogram results
         mean, std = CalcHist(run_name, date)

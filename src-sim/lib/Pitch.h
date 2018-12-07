@@ -38,11 +38,11 @@ private:
   std::unique_ptr<double[]> homePlyrCtrl;
   std::unique_ptr<double[]> awayPlyrCtrl;
   
-  // contested control
-  double contestedHomeControl;
-  double contestedAwayControl;
-  std::unique_ptr<double[]> contestedHomePlyrCtrl;
-  std::unique_ptr<double[]> contestedAwayPlyrCtrl;
+  // // contested control
+  // double contestedHomeControl;
+  // double contestedAwayControl;
+  // std::unique_ptr<double[]> contestedHomePlyrCtrl;
+  // std::unique_ptr<double[]> contestedAwayPlyrCtrl;
 
   // ball
   Cart ball;
@@ -88,8 +88,8 @@ public:
 
   double getHomeCtrl() const;
   double getAwayCtrl() const;
-  double getContHomeCtrl() const;
-  double getContAwayCtrl() const;
+  // double getContHomeCtrl() const;
+  // double getContAwayCtrl() const;
 
   Cart getHomePos(int) const;
   Cart getAwayPos(int) const;
@@ -97,8 +97,8 @@ public:
 
   double getHomePlyrCtrl(int) const;
   double getAwayPlyrCtrl(int) const;
-  double getContHomePlyrCtrl(int) const;
-  double getContAwayPlyrCtrl(int) const;
+  // double getContHomePlyrCtrl(int) const;
+  // double getContAwayPlyrCtrl(int) const;
 
   bool getHomePossession() const;
   bool getAwayPossession() const;
