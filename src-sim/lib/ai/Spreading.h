@@ -3,11 +3,13 @@
 
 #include "AI.h"
 #include "../Player.h"
+#include "cfgs/DSquaredConfigFile.h"
 
 class Spreading: public AI {
 private:
   int players_to_consider; // number of players to sum over
   int density_samples; // number of steps to check 0 -> 360 for p(theta)
+  DSquaredConfigFile dscf;
 
 
 public:

@@ -103,12 +103,12 @@ Cart ExchDsqrd::metricV(Player& test_plyr, Player& far_plyr, Match& match) {
       gamma = 0.0;
     } else {
       // both same team
-      gamma = -1.0;
+      gamma = -1.0 * ecf.same_coeff;
     }
 
   } else {
     // opposite teams
-    gamma = 1.0;
+    gamma = 1.0 * ecf.opp_coeff;
   }
   auto scalar = A_j * exp(-1.0 * d_ij / (ecf.decay_coeff * d_0)) * gamma;
   auto unitVector = testplyr_pos.unitVect2(farplyr_pos);

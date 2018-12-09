@@ -47,12 +47,12 @@ def CalcHist(run_name: str, date: str):
 def plotScatter(results, parameter:str, run_name:str):
     # plot scatter of parameter vs mean
     formatted_results = list(zip(*results))
-    xs = formatted_results[0]; means = formatted_results[1]; stds = formatted_results[2]
+    xs = [np.log10(f) for f in formatted_results[0]]; means = formatted_results[1]; stds = formatted_results[2]
     #print(len(xs), len(means), len(stds))
     plt.errorbar(xs, means, stds, linestyle = '', marker = 'x', c = 'k', ecolor = 'r')
     plt.title('%s\nVarying %s' % (run_name, parameter))
     plt.ylabel('Team Control Distribution Mean')
-    plt.xlabel('%s' % parameter)
+    plt.xlabel('log(%s)' % parameter)
 
     # save
     if not exists('plots/param-opts'):

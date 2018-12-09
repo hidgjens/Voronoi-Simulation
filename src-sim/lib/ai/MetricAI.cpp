@@ -183,7 +183,7 @@ Cart MetricAI::metricV(Player& test_plyr, Player& far_plyr, Match& match) {
     // opposite teams
     gamma = 1.0 * ecf.opp_coeff;
   }
-  auto scalar = A_j * exp(-1.0 * d_ij / d_0) * gamma;
+  auto scalar = A_j * exp(-1.0 * d_ij / (d_0 * ecf.decay_coeff)) * gamma;
   auto unitVector = testplyr_pos.unitVect2(farplyr_pos);
   //std::cout << A_j << "\t" << d_ij << "\t" << d_0 << "\n";
   //std::cout << scalar << "\n";
