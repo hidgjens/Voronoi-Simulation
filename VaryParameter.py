@@ -49,10 +49,14 @@ def plotScatter(results, parameter:str, run_name:str):
     formatted_results = list(zip(*results))
     xs = [np.log10(f) for f in formatted_results[0]]; means = formatted_results[1]; stds = formatted_results[2]
     #print(len(xs), len(means), len(stds))
+    try:
+        plt.clf()
+    except:
+        print('except')
     plt.errorbar(xs, means, stds, linestyle = '', marker = 'x', c = 'k', ecolor = 'r')
     plt.title('%s\nVarying %s' % (run_name, parameter))
     plt.ylabel('Team Control Distribution Mean')
-    plt.xlabel('log(%s)' % parameter)
+    plt.xlabel('log_{10}(%s)' % parameter)
 
     # save
     if not exists('plots/param-opts'):
@@ -78,7 +82,7 @@ def VaryParam(config_file: str, parameter: str, run_name: str, lower_power: floa
         # x is the new parameter, need to update config.
         ChCFG.change_config_line(config_file, parameter, x)
         # now run sim
-        s.Popen(['python3', 'scripts/GenerateConfMatches.py', '%s' % run_name, '100', '111', '%s.%s' % (date, run_name), 'no', '8']).wait()
+        s.Popen(['python3', 'scripts/GenerateConfMatches.py', '%s' % run_name, '400', '111', '%s.%s' % (date, run_name), 'no', '8']).wait()
 
   
         # get histogram results
@@ -126,7 +130,7 @@ if __name__ == '__main__':
         run_name: str = sys.argv[3]
         lower_power: float = -3.0
         upper_power: float = +3.0
-        steps: int = 10
+        steps: int = 25
 
         # check if optional arguments were provided
 
