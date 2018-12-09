@@ -113,7 +113,7 @@ void Spreading::updateFrame(Player& player_, Match& match_) {
         // player_.printPos();
         for (auto weight_direction_pair : edges) {
             // std::cout << "\nVal: " << weight_direction_pair.first << " Theta: " << weight_direction_pair.second << "\n";
-            density_theta += weight_direction_pair.first * filter(weight_direction_pair.second - theta_prime);
+            density_theta += dscf.edge_scale * weight_direction_pair.first * filter(weight_direction_pair.second - theta_prime);
         }
         angles_density.push_back(std::make_pair(theta_prime, density_theta));
 

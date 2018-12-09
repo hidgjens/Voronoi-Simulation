@@ -14,7 +14,7 @@ struct PitchEdgeParams{
     public:
         double x_lim = 20.0;
         double y_lim = 20.0;
-        double rho_0 = 3.0;
+        double rho_0 = 1.0;
         PitchEdgeParams() {}
         PitchEdgeParams(double x, double y, double r) : x_lim(x), y_lim(y), rho_0(r) {}
 } pitch_params;
