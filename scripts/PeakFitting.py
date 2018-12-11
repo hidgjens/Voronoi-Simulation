@@ -123,10 +123,11 @@ class Histogram:
         self.nbins = int(scale * (self.values.max()-self.values.min())) 
 
         # compute histogram data
-        fig, ax = plt.subplots()
-        bins, ranges, patches = ax.hist(self.values, self.nbins)
-        del patches
-        del fig
+        #fig, ax = plt.subplots()
+        #bins, ranges, patches = ax.hist(self.values, self.nbins)
+        bins, ranges = np.histogram(self.values, self.nbins)
+        #del patches
+        #del fig
 
         middles = []
         for lower, upper in zip( ranges[:-1], ranges[1:]):
