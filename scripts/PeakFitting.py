@@ -11,7 +11,7 @@ try:
     from lib.DFFilters import FilterData
 except:
     import scripts.lib.DFFilters as DFF
-    from script.lib.DFFilters import FilterData
+    from scripts.lib.DFFilters import FilterData
 from scipy.signal import find_peaks
 from lmfit import Model
 
