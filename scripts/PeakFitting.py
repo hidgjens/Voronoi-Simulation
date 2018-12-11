@@ -6,8 +6,12 @@ import sys
 import matplotlib.pyplot as plt
 from os import makedirs, listdir
 from os.path import exists
-import lib.DFFilters as DFF
-from lib.DFFilters import FilterData
+try:
+    import lib.DFFilters as DFF
+    from lib.DFFilters import FilterData
+except:
+    import scripts.lib.DFFilters as DFF
+    from script.lib.DFFilters import FilterData
 from scipy.signal import find_peaks
 from lmfit import Model
 
