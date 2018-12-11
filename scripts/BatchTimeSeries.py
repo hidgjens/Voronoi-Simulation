@@ -103,6 +103,10 @@ def TimeSeriesPlot(df, var, title, filename):
     plt.savefig('plots/time_series/%s/%s.png' % (filename, title))
     plt.close()
 
+def WriteGrads(grads, filename, title):
+    with open('plots/grad_files/%s/%s.grd' % (filename, title), 'w') as grad_file:
+        np.savetxt(grad_file, grads)
+    
 # plots time series of teams spatial control
 def TimeTeam(df, var, title, filename):    
     # define useful quantities
@@ -113,15 +117,29 @@ def TimeTeam(df, var, title, filename):
     plt.figure(figsize = (21, 7), dpi = 300)     
     # plot possession regions and mean dCtrl (ie mean gradient over region)
     means = possRegionMean(df, 'TmdCtrl')
-    for i, regionlist in enumerate(getPossessionRegions(df)):
-        s, e, c = regionlist
+    reg = getPossessionRegions(df)
+    
+    home_grad = []
+    away_grad = []
+    
+    for i, x in enumerate(zip(reg, means)):
+        r, mean = x
+        s, e, c = r
         height = 5*(1 + signal.sawtooth(np.pi/2 * i)) 
         plt.axvspan(s, e, facecolor = c, alpha = 0.4)
-        plt.text((s+e)/2, height, "{:.2f}".format(means[i]), fontsize = 10, color = c)
+        plt.text((s+e)/2, height, "{:.2f}".format(mean), fontsize = 10, color = c)
+        if c == 'r':
+            home_grad.append(mean)
+        elif c == 'b':
+            away_grad.append(mean)
+        else:
+            print('shouldn\'t be here')
     
     # plot
     plt.plot(t, tmdata, linestyle = '-', linewidth = 0.75, color = 'k')
-
+    
+    
+    
     # formatting
     plt.xlim(0, frames)
     plt.ylim(0,)
@@ -133,10 +151,13 @@ def TimeTeam(df, var, title, filename):
     try:
         if not exists('plots/time_series/%s' % filename):
             makedirs('plots/time_series/%s' % filename)
+        if not exists('plots/grad_files/%s' % filename):
+            makedirs('plots/grad_files/%s' % filename)
     except:
         pass
 
-
+    WriteGrads(home_grad, filename, title + ' Home')
+    WriteGrads(away_grad, filename, title + ' Away')
     plt.savefig('plots/time_series/%s/%s.png' % (filename, title))
     plt.close()
 

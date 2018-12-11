@@ -82,7 +82,7 @@ def VaryParam(config_file: str, parameter: str, run_name: str, lower_power: floa
         # x is the new parameter, need to update config.
         ChCFG.change_config_line(config_file, parameter, x)
         # now run sim
-        s.Popen(['python3', 'scripts/GenerateConfMatches.py', '%s' % run_name, '400', '111', '%s.%s' % (date, run_name), 'no', '8']).wait()
+        s.Popen(['python3', 'scripts/GenerateConfMatches.py', '%s' % run_name, '200', '111', '%s.%s' % (date, run_name), 'no', '10']).wait()
 
   
         # get histogram results

@@ -27,7 +27,7 @@ sim_types = {
 
 def generate(strat, match_num, frame_num, sim_type = 'team'):
     process_dict = {
-    'cmd' : ['python3', sim_types[sim_type], '%s' % strat, '%i' % match_num, '%i' % frame_num, '%s.%s' % (date_str, strat), 'no', '8'],
+    'cmd' : ['python3', sim_types[sim_type], '%s' % strat, '%i' % match_num, '%i' % frame_num, '%s.%s' % (date_str, strat), 'no', '10'],
 
     'task-name' : 'Generate %s' % strat
     }
@@ -43,7 +43,7 @@ def histogram(strat):
 
 def time_series(strat):
     process_dict = {
-    'cmd' : ['python3', 'scripts/TimeSeriesMT.py', strat, date_str],
+    'cmd' : ['python3.6', 'scripts/TimeSeriesMT.py', strat, date_str],
 
     'task-name' : 'Time series %s' % strat
     }
@@ -51,7 +51,7 @@ def time_series(strat):
 
 def voronois(strat, vid_num):
     process_dict = {
-    'cmd' : ['python3', 'scripts/VorVidsMT.py', strat, date_str, str(vid_num)],
+    'cmd' : ['python3.6', 'scripts/VorVidsMT.py', strat, date_str, str(vid_num)],
 
     'task-name' : 'Voronois %s' % strat
     }
@@ -69,9 +69,9 @@ def makeSchedule(match_num, frame_num, vid_num, sim_type, strategies):
 
     for strat in strategies:
         gen_sched.append(generate(strat, match_num, frame_num, sim_type))
-        hist_sched.append(histogram(strat))
+        #hist_sched.append(histogram(strat))
         time_sched.append(time_series(strat))
-        vor_sched.append(voronois(strat, vid_num))
+        #vor_sched.append(voronois(strat, vid_num))
 
     schedule = gen_sched + hist_sched + time_sched + vor_sched
 
