@@ -14,6 +14,20 @@ from scripts.lib.DFFilters import FilterData
 from os import makedirs
 from os.path import exists
 
+import socket
+
+DEFAULT_PROCESSES = 4
+PROCESSES = DEFAULT_PROCESSES
+
+if socket.gethostname() == 'Lewis-Desktop':
+    print('Code is running on Lewis\' lightning fast (!!) desktop with 6C/12T')
+    print('Unfortunately he uses Windows so he will only give 10 threads\n')
+    PROCESSES = 10 
+elif socket.gethostname() == 'ptcone30':
+    print('Code is running on rickety-old ptcone30, classic FX-8350 with 8 cores to abuse\n')
+    PROCESSES = 8
+else:
+    print('Unknown territory: %s. Playing it safe with %i threads, edit DEFAULT_PROCESSES in %s to change this behaviour' % (socket.gethostname(), DEFAULT_PROCESSES, sys.argv[0]))
 
 # filter df
 def filter(df, run_name: str):
@@ -82,7 +96,7 @@ def VaryParam(config_file: str, parameter: str, run_name: str, lower_power: floa
         # x is the new parameter, need to update config.
         ChCFG.change_config_line(config_file, parameter, x)
         # now run sim
-        s.Popen(['python3', 'scripts/GenerateConfMatches.py', '%s' % run_name, '200', '111', '%s.%s' % (date, run_name), 'no', '10']).wait()
+        s.Popen(['python3', 'scripts/GenerateConfMatches.py', '%s' % run_name, '200', '111', '%s.%s' % (date, run_name), 'no', '%i' % PROCESSES]).wait()
 
   
         # get histogram results

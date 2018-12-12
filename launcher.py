@@ -3,6 +3,23 @@ from datetime import datetime
 import subprocess
 import os
 import sys
+
+import socket
+
+DEFAULT_PROCESSES = 4
+PROCESSES = DEFAULT_PROCESSES
+
+if socket.gethostname() == 'Lewis-Desktop':
+    print('Code is running on Lewis\' lightning fast (!!) desktop with 6C/12T')
+    print('Unfortunately he uses Windows so he will only give 10 threads\n')
+    PROCESSES = 10 
+elif socket.gethostname() == 'ptcone30':
+    print('Code is running on rickety-old ptcone30, classic FX-8350 with 8 cores to abuse\n')
+    PROCESSES = 8
+else:
+    print('Unknown territory: %s. Playing it safe with %i threads, edit DEFAULT_PROCESSES in %s to change this behaviour' % (socket.gethostname(), DEFAULT_PROCESSES, sys.argv[0]))
+
+
 ###########################################################
 # # Variables to set schedule
 
@@ -23,11 +40,13 @@ sim_types = {
     'conf' : 'scripts/GenerateConfMatches.py'
 }
 
+
+
 # functions to generate process dicts for match generation, histogram plotting and Voronoi analysis
 
 def generate(strat, match_num, frame_num, sim_type = 'team'):
     process_dict = {
-    'cmd' : ['python3', sim_types[sim_type], '%s' % strat, '%i' % match_num, '%i' % frame_num, '%s.%s' % (date_str, strat), 'no', '10'],
+    'cmd' : ['python3.6', sim_types[sim_type], '%s' % strat, '%i' % match_num, '%i' % frame_num, '%s.%s' % (date_str, strat), 'no', '%i' % PROCESSES],
 
     'task-name' : 'Generate %s' % strat
     }
@@ -35,7 +54,7 @@ def generate(strat, match_num, frame_num, sim_type = 'team'):
 
 def histogram(strat):
     process_dict = {
-    'cmd' : ['python3', 'scripts/PeakFitting.py', strat, date_str],
+    'cmd' : ['python3.6', 'scripts/PeakFitting.py', strat, date_str],
 
     'task-name' : 'Histogram %s' % strat
     }
@@ -69,8 +88,8 @@ def makeSchedule(match_num, frame_num, vid_num, sim_type, strategies):
 
     for strat in strategies:
         gen_sched.append(generate(strat, match_num, frame_num, sim_type))
-        #hist_sched.append(histogram(strat))
-        time_sched.append(time_series(strat))
+        hist_sched.append(histogram(strat))
+        #time_sched.append(time_series(strat))
         #vor_sched.append(voronois(strat, vid_num))
 
     schedule = gen_sched + hist_sched + time_sched + vor_sched
