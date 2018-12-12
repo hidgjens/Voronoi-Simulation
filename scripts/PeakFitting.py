@@ -187,8 +187,10 @@ class Histogram:
     def plotHistogram(self, data, title, xlabel, ylabel, filename, save):
         # plots histogram of loaded data
         x, y = zip(*data)
+        print(len(x), len(y))
+        print('here')
         plot = plt.bar(x, y, width = self.binwidth, align = 'center', color = '#1f77b4', edgecolor = '#1f77b4')
-
+        print('here')
         # formatting
         plt.ylim(0,)
         plt.xlabel(xlabel)
@@ -197,6 +199,8 @@ class Histogram:
         plt.title('%s\nMean: %.4e | Std: %.4e | Entries: %i | Bins: %i' % (title, self.mean, self.stdev, self.n, self.nbins))
         
         if save:
+            if not exists('plots/histograms/%s' % filename):
+                makedirs('plots/histograms/%s' % filename)
             plt.savefig('plots/histograms/%s/%s.png' % (filename, title))
             print('Histogram saved at: plots/histograms/%s/%s.png' % (filename, title))
             plt.clf()
@@ -265,24 +269,24 @@ def main(run_name, date):
     df = filter(LoadRunName(filename), run_name)
 
     # player-level histograms
-    plyrctrlhist = Histogram(df, 'Ctrl')
-    plyrctrlhist.gaussFitPlot(plyrctrlhist.data, '%s | Player Ctrl' % (filename), 'Ctrl', 'Counts', filename, save = True)
+    #plyrctrlhist = Histogram(df, 'Ctrl')
+    #plyrctrlhist.plotHistogram(plyrctrlhist.data, '%s | Player Ctrl' % (filename), 'Ctrl', 'Counts', filename, save = True)
 
-    plyrdctrlhist = Histogram(df, 'dCtrl')
-    plyrdctrlhist.gaussFitPlot(plyrdctrlhist.data, '%s | Player dCtrl' % (filename), 'dCtrl', 'Counts', filename, save = True)
+    #plyrdctrlhist = Histogram(df, 'dCtrl')
+    #plyrdctrlhist.plotHistogram(plyrdctrlhist.data, '%s | Player dCtrl' % (filename), 'dCtrl', 'Counts', filename, save = True)
 
-    plyrdctrlhist.quadFitPlot(plyrdctrlhist.computeLog(), '%s | Player dCtrl - Log Plot' % (filename), 'dCtrl', 'ln(Counts)', filename, save = True)
+    #plyrdctrlhist.quadFitPlot(plyrdctrlhist.computeLog(), '%s | Player dCtrl - Log Plot' % (filename), 'dCtrl', 'ln(Counts)', filename, save = True)
     
     # team-level histograms
     df = df.loc[(df['Team'] == 'Home') & (df['Num'] == 1)]
 
     tmctrlhist = Histogram(df, 'TmCtrl')
-    tmctrlhist.gaussFitPlot(tmctrlhist.data, '%s | Team Ctrl' % (filename), 'Team Ctrl', 'Counts', filename, save = True)
+    tmctrlhist.plotHistogram(tmctrlhist.data, '%s | Team Ctrl' % (filename), 'Team Ctrl', 'Counts', filename, save = True)
 
-    tmdctrlhist = Histogram(df, 'TmdCtrl')
-    tmdctrlhist.gaussFitPlot(tmdctrlhist.data, '%s | Team dCtrl' % (filename), 'Team dCtrl', 'Counts', filename, save = True)
+    #tmdctrlhist = Histogram(df, 'TmdCtrl')
+    #tmdctrlhist.plotHistogram(tmdctrlhist.data, '%s | Team dCtrl' % (filename), 'Team dCtrl', 'Counts', filename, save = True)
 
-    tmdctrlhist.quadFitPlot(tmdctrlhist.computeLog(), '%s | Team dCtrl - Log Plot' % (filename), 'Team dCtrl', 'Counts', filename, save = True)
+    #tmdctrlhist.quadFitPlot(tmdctrlhist.computeLog(), '%s | Team dCtrl - Log Plot' % (filename), 'Team dCtrl', 'Counts', filename, save = True)
 
 if __name__ == '__main__':
     # process sys args
