@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import matplotlib as mpl
 mpl.use('agg')
+from scipy.signal import find_peaks
+from lmfit import Model
 import sys
 import matplotlib.pyplot as plt
 from os import makedirs, listdir
@@ -12,8 +14,7 @@ try:
 except:
     import scripts.lib.DFFilters as DFF
     from scripts.lib.DFFilters import FilterData
-from scipy.signal import find_peaks
-from lmfit import Model
+
 
 # define Gaussian function to fit
 def gaussian(x, A, mu, sig):

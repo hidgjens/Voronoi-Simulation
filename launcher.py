@@ -46,7 +46,7 @@ sim_types = {
 
 def generate(strat, match_num, frame_num, sim_type = 'team'):
     process_dict = {
-    'cmd' : ['python3', sim_types[sim_type], '%s' % strat, '%i' % match_num, '%i' % frame_num, '%s.%s' % (date_str, strat), 'no', '%i' % PROCESSES],
+    'cmd' : ['python3.6', sim_types[sim_type], '%s' % strat, '%i' % match_num, '%i' % frame_num, '%s.%s' % (date_str, strat), 'no', '%i' % PROCESSES],
 
     'task-name' : 'Generate %s' % strat
     }
@@ -54,7 +54,7 @@ def generate(strat, match_num, frame_num, sim_type = 'team'):
 
 def histogram(strat):
     process_dict = {
-    'cmd' : ['python3', 'scripts/PeakFitting.py', strat, date_str],
+    'cmd' : ['python3.6', 'scripts/PeakFitting.py', strat, date_str],
 
     'task-name' : 'Histogram %s' % strat
     }
@@ -88,8 +88,8 @@ def makeSchedule(match_num, frame_num, vid_num, sim_type, strategies):
 
     for strat in strategies:
         gen_sched.append(generate(strat, match_num, frame_num, sim_type))
-        #hist_sched.append(histogram(strat))
-        time_sched.append(time_series(strat))
+        hist_sched.append(histogram(strat))
+        #time_sched.append(time_series(strat))
         #vor_sched.append(voronois(strat, vid_num))
 
     schedule = gen_sched + hist_sched + time_sched + vor_sched
