@@ -89,8 +89,8 @@ def makeSchedule(match_num, frame_num, vid_num, sim_type, strategies):
     for strat in strategies:
         gen_sched.append(generate(strat, match_num, frame_num, sim_type))
         hist_sched.append(histogram(strat))
-        #time_sched.append(time_series(strat))
-        #vor_sched.append(voronois(strat, vid_num))
+        time_sched.append(time_series(strat))
+        vor_sched.append(voronois(strat, vid_num))
 
     schedule = gen_sched + hist_sched + time_sched + vor_sched
 
