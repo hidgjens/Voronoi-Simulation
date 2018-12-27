@@ -269,8 +269,8 @@ def main(run_name, date):
     df = filter(LoadRunName(filename), run_name)
 
     # player-level histograms
-    #plyrctrlhist = Histogram(df, 'Ctrl')
-    #plyrctrlhist.plotHistogram(plyrctrlhist.data, '%s | Player Ctrl' % (filename), 'Ctrl', 'Counts', filename, save = True)
+    plyrctrlhist = Histogram(df, 'Ctrl')
+    plyrctrlhist.plotHistogram(plyrctrlhist.data, '%s | Player Ctrl' % (filename), 'Ctrl', 'Counts', filename, save = True)
 
     #plyrdctrlhist = Histogram(df, 'dCtrl')
     #plyrdctrlhist.plotHistogram(plyrdctrlhist.data, '%s | Player dCtrl' % (filename), 'dCtrl', 'Counts', filename, save = True)
