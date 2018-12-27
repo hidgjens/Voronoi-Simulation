@@ -13,7 +13,7 @@ class ExchangeConfigFile {
     
 
     private:
-        std::string configFileName = "DSquared";
+        std::string configFileName = "Exchange";
         double decay_coeff = 1.0; 
         double same_coeff = 1.0;
         double opp_coeff = 1.0;
