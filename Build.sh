@@ -80,7 +80,7 @@ function compile_configsim () {
         lib/PitchModel.cpp lib/models/Uniform.cpp lib/models/LinearX.cpp lib/models/Step.cpp lib/models/FourStep.cpp \
         lib/ai/AI.cpp lib/ai/RandomWalk.cpp lib/ai/Stationary.cpp lib/ai/ExchangeAI.cpp lib/ai/MetricAI.cpp \
         lib/ai/TestingAI.cpp lib/ai/Spreading.cpp lib/ai/DSquared.cpp lib/ai/ExchDsqrd.cpp lib/ai/DSquaredSTD.cpp \
-        lib/ai/ExchangeAISTD.cpp lib/ai/influences/PitchEdge.cpp \
+        lib/ai/ExchangeAISTD.cpp lib/ai/NaiveExchange.cpp lib/ai/influences/PitchEdge.cpp \
         lib/ai/cfgs/ExchangeConfigFile.cpp lib/ai/cfgs/DSquaredConfigFile.cpp \
         lib/cfg/MatchConfigFile.cpp lib/cfg/TeamConfigFile.cpp  \
     -lm -std=c++14 -lstdc++

@@ -9,6 +9,7 @@ class ExchangeConfigFile {
     friend class ExchangeAISTD;
     friend class ExchDsqrd;
     friend class MetricAI;
+    friend class NaiveExchange;
     
 
     private:

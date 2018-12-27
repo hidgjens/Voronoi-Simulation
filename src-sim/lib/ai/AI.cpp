@@ -12,6 +12,7 @@
 #include "ExchDsqrd.h"
 #include "DSquaredSTD.h"
 #include "ExchangeAISTD.h"
+#include "NaiveExchange.h"
 
 AI::AI() : desc("unspecified") {}
 
@@ -56,6 +57,9 @@ AI* AI::makeAI(std::string ai_type){
   else
   if (ai_type == "ExchangeSTD")
     return_ai = new ExchangeAISTD();
+  else
+  if (ai_type == "NaiveExch")
+    return_ai = new NaiveExchange();
   /*
     add more here
   */
