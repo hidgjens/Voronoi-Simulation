@@ -13,6 +13,7 @@
 #include "DSquaredSTD.h"
 #include "ExchangeAISTD.h"
 #include "NaiveExchange.h"
+#include "MetricAISTD.h"
 
 AI::AI() : desc("unspecified") {}
 
@@ -60,6 +61,9 @@ AI* AI::makeAI(std::string ai_type){
   else
   if (ai_type == "NaiveExch")
     return_ai = new NaiveExchange();
+  else
+  if (ai_type == "MetricSTD")
+    return_ai = new MetricAISTD();
   /*
     add more here
   */

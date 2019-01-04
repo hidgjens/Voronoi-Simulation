@@ -9,6 +9,7 @@ class DSquaredConfigFile {
     friend class DSquaredSTD;
     friend class ExchDsqrd;
     friend class MetricAI;
+    friend class MetricAISTD;
     friend class Spreading;
 
     private:
