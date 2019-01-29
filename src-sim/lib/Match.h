@@ -106,6 +106,7 @@ public:
 
   // store match
   void saveMatchToFile(std::string, int, bool) const; // file name
+  void saveSummaryToFile(std::string, int) const;
 
   void setHomePossession(bool);
   bool getHomePossession() const;

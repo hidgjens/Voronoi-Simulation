@@ -80,6 +80,14 @@ def plotScatter(results, parameter:str, run_name:str):
 
     plt.savefig('plots/param-opts/%s/%s.png' % (parameter, run_name))
 
+def LoadMeanError(run_name : str, date : str):
+    filename = '%s.%s' % (date, run_name)
+    # load from txt file
+    data = np.loadtxt('results/summaries/%s/teamctrl.sum' % filename)
+    mean = data[0]; std = data[1]
+
+    return (mean, std)
+
 
 def VaryParam(config_file: str, parameter: str, run_name: str, lower_power: float, upper_power: float, steps: int):
     # vary value of parameter (X) s.t. lower_power <= log_10(X) <= upper_power

@@ -407,6 +407,39 @@ double Match::avgAwayCtrl2() const{
   return awayCtrl2 / ((double) currentframe + 1);
 }
 
+void Match::saveSummaryToFile(std::string file_name, int i) const{
+  // save only average control to file
+  
+  // Announce
+  std::cout << "\nSaving Match " << matchID << " to data_files/csv/" + file_name + "/" + std::to_string(i) + ".csv\n\n";
+
+  // check if folder exists
+  struct stat st;
+  if(!stat(("data_files/csvs/" + file_name).c_str(), &st) == 0){
+    // directory doesn't exist, make the folder
+    system(("mkdir data_files/csvs/" + file_name).c_str());
+  }
+  // open file
+  std::ofstream datafile;
+  // no legacy support obviously
+  datafile.open("data_files/csvs/" + file_name + "/" + std::to_string(i) + ".csv");
+
+  /*
+    File formatting:
+    HOME_AVG\tPLAYER1\tPLAYER2\t...PLAYER11\n
+    AWAY_AVG\tPLAYER1\t....PLAYER11\n
+
+    ^^ scratch this too lazy for now
+
+  */
+  datafile << avgHomeCtrl() << "\n" << avgAwayCtrl() << "\n";
+  // for (int i{0}; i < homeTeam.getPlayerCount(); i++){
+  //   datafile << "\t" << homeTeam.getPlyrCtrl
+  // }
+  datafile.close();
+
+}
+
 void Match::saveMatchToFile(std::string file_name, int i, bool legacy) const {
   std::cout << "\nSaving Match " << matchID << " to data_files/csvs/" + file_name + "/" + std::to_string(i) + ".csv\n\n";
   struct stat st;
