@@ -46,7 +46,8 @@ void SimManager::start(std::string filename) {
     Match match = buildMatch();
     match.printPlayers();
     match.startSimulation(!legacy);
-    match.saveMatchToFile(filename, i, legacy);
+    match.saveSummaryToFile(filename, i);
+    //match.saveMatchToFile(filename, i, legacy);
   }
   // finish time
   auto t_fin = std::chrono::high_resolution_clock::now();
