@@ -65,25 +65,31 @@ class Histogram:
 
 
     def SaveResults(self, filename:str, team:str):
-        path:str = 'results/summaries/%s/%s.sum' % (filename, team)
-        results = [self.mean, self.stdev]        
-        np.savetxt(path, results)            
+        path:str = 'results/summaries/%s/' % filename
+        results = [self.mean, self.stdev]
+
+        if not exists(path):
+            makedirs(path)        
+        np.savetxt('%s%s.sum' % (path, team), results)            
 
 
 def LoadMatches(filename:str):
     datafiles:List[str] = [file for file in listdir('data_files/csvs/%s' % filename) if file.split('.')[-1] == 'csv']
     num_files:int = len(datafiles)
     print('%s: %i csv files found' % (filename, num_files))
-    data:np.ndarray = np.empty()
+    data = None
     
     for i, datafile in enumerate(datafiles):
-        dat = np.loadtxt(datafile, dtype=float)
+        dat = np.loadtxt('data_files/csvs/%s/%s' % (filename, datafile), dtype=float)
+        dat = np.reshape(dat, (1,2))
+
         if i == 0:
             data = dat    
         else:
-            data.append(dat)
+            data = np.concatenate((data, dat), 0)
 
     print('%s: %i csv files loaded' % (filename, num_files))
+    print(data.shape)
     return(data)
 
 
