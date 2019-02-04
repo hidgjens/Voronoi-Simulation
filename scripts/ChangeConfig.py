@@ -13,13 +13,13 @@ def print_dict(dictionary):
     for key, value in dictionary.items():
         print('\t%s:\t%s' % (key, value))
 
-def load_config(config_file_dir):
+def load_config(config_file_dir, identifier):
     # open config file which we want to write to
 
     config_dict = {}
     ordered_list = [] # just to put the config back in the same order
 
-    with open('configs/%s.cfg' % config_file_dir, 'r') as config_file:
+    with open('configs/%s%s.cfg' % (config_file_dir, identifier), 'r') as config_file:
         
         # load lines into dict
         for line in config_file.readlines():
@@ -29,10 +29,9 @@ def load_config(config_file_dir):
 
     return(config_dict, ordered_list) # returns config as a dictionary and list with the order they were written in (dicts are unordered maps)
 
-def save_config(config_dict, config_file_dir, fields = None): # fields is a list of the dict keys you want to save and in what order, otherwise any order is chosen
+def save_config(config_dict, config_file_dir, identifier, fields = None): # fields is a list of the dict keys you want to save and in what order, otherwise any order is chosen
 
-
-    with open('configs/%s.cfg' % config_file_dir, 'w') as config_file:
+    with open('configs/%s%s.cfg' % (config_file_dir, identifier), 'w') as config_file:
         if fields is None:
             # no order given, just go with whatever order
             for key, value in config_dict.items():
@@ -42,6 +41,7 @@ def save_config(config_dict, config_file_dir, fields = None): # fields is a list
             # use order given
             for key in fields:
                 config_file.write('%s:%s\n' % (key, config_dict[key]))
+
 
 def check_config_dict(config_file_dir):
     if config_file_dir in config_file_directories.keys():
@@ -57,7 +57,7 @@ def check_config_dict(config_file_dir):
     return dir
 
 
-def change_config_line(config_file_dir, line_name, new_value): 
+def change_config_line(config_file_dir, line_name, new_value, identifier): 
     # config file must also contain any subfolders. This script checks 
     # configs/config_file
 
@@ -66,7 +66,7 @@ def change_config_line(config_file_dir, line_name, new_value):
 
     # open config file which we want to write to
 
-    config_dict, ordered_list = load_config(config_file_dir)
+    config_dict, ordered_list = load_config(config_file_dir, identifier)
 
     # print the config file in its current state
     print('%s has loaded as:\n' % config_file_dir)
@@ -89,7 +89,7 @@ def change_config_line(config_file_dir, line_name, new_value):
     print_dict(config_dict)
     print('\nwith changes:\n\t%s:%s ---> %s:%s' % (line_name, old_value, line_name, new_value))
 
-    save_config(config_dict, config_file_dir, ordered_list)
+    save_config(config_dict, config_file_dir, identifier, ordered_list)
 
 if __name__ == '__main__':
     ARGS_REQUIRED = 3
@@ -128,5 +128,5 @@ if __name__ == '__main__':
 
             dir = sys.argv[1]
 
-        change_config_line(dir, line_to_change, new_val)
+        change_config_line(dir, line_to_change, new_val, identifier='')
         
