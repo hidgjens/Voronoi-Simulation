@@ -141,8 +141,8 @@ if __name__ == '__main__':
         Args:
         [1] - Number of matches to generate per type
         [2] - Frames per match
-        [4] - Sim Type (team/met/conf)
-        [5+] - Match types (HomeTeam:SmrtCnt:AwayTeam:SmrtCnt)/(Decay:Opp:Same)/(MatchConf:HomeConf:AwayConf)
+        [3] - Sim Type (team/met/conf)
+        [4+] - Match types (HomeTeam:SmrtCnt:AwayTeam:SmrtCnt)/(Decay:Opp:Same)/(MatchConf:HomeConf:AwayConf)
         ''' % sys.argv[0])
         exit()
 

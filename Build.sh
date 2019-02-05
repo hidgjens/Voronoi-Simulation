@@ -1,4 +1,6 @@
+#!/bin/bash
 # compile functions
+
 
 function compile_teamsim () {
     FILE="sim"
