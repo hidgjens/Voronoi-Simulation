@@ -13,18 +13,18 @@ from scripts.ChangeConfig import config_file_directories
 
 # parameter tuning
 # save original config file to backup
-def BackupConfig(strategy):
+def BackupConfig(config):
     # find config file directory in dictionary
-    config_file_dir = config_file_directories[strategy]
+    config_file_dir = config_file_directories[config]
     
     # load original config
     config_dict = ChCFG.load_config(config_file_dir, identifier='')[0]
     # save to backup
     ChCFG.save_config(config_dict, config_file_dir, identifier='-Backup')
 
-def OverwriteConfig(strategy):
+def OverwriteConfig(config):
     # find config file directory in dictionary
-    config_file_dir = config_file_directories[strategy]
+    config_file_dir = config_file_directories[config]
     
     # load backup config
     config_dict = ChCFG.load_config(config_file_dir, identifier='-Backup')[0]
@@ -44,7 +44,7 @@ def PlotErrorBar(x, y, e, parameter:str, filename:str):
     plt.xlabel('log(%s)' % parameter)
 
     # save fig
-    path = 'plots/param-opts/%s.%s' % (filename, parameter)
+    path = 'plots/param-opts/%s' % filename
     if not exists(path):
         makedirs(path)
 
@@ -52,7 +52,7 @@ def PlotErrorBar(x, y, e, parameter:str, filename:str):
 
 
 
-def VaryParameter(strategy:str, parameter:str , min_pwr:float, max_pwr:float, N:int, num_matches:int):
+def VaryParameter(strategy:str, config:str, parameter:str , min_pwr:float, max_pwr:float, N:int, num_matches:int):
     run_name:str = 'StdMatch:%s:RandomWalkers' % strategy
     results = []
 
@@ -70,7 +70,7 @@ def VaryParameter(strategy:str, parameter:str , min_pwr:float, max_pwr:float, N:
         
         # change paramter value in config file
         identifier:str = ''
-        config_file_dir = config_file_directories[strategy]
+        config_file_dir = config_file_directories[config]
         ChCFG.change_config_line(config_file_dir, parameter, x, identifier)
         
         # run launcher with this config file
@@ -95,39 +95,40 @@ def VaryParameter(strategy:str, parameter:str , min_pwr:float, max_pwr:float, N:
 
 
 
-def main(strategy:str, parameter:str , min_pwr:float, max_pwr:float, N:int, num_matches:int):
+def main(strategy:str, config:str, parameter:str , min_pwr:float, max_pwr:float, N:int, num_matches:int):
     # backup original config file
-    BackupConfig(strategy)
+    BackupConfig(config)
 
     # run parameter tuning
-    VaryParameter(strategy, parameter, min_pwr, max_pwr, N, num_matches)
+    VaryParameter(strategy, config, parameter, min_pwr, max_pwr, N, num_matches)
     print('Finished!')
 
     # overwrite original config file with backup file
-    OverwriteConfig(strategy)
+    OverwriteConfig(config)
 
 if __name__ == '__main__':
     # sys args
-    if len(sys.argv) == 7:
+    if len(sys.argv) == 8:
         strategy = sys.argv[1]
-        parameter = sys.argv[2]
-        min_pwr = float(sys.argv[3])
-        max_pwr = float(sys.argv[4])
-        N = int(sys.argv[5])
-        num_matches = sys.argv[6]
+        config = sys.argv[2]
+        parameter = sys.argv[3]
+        min_pwr = float(sys.argv[4])
+        max_pwr = float(sys.argv[5])
+        N = int(sys.argv[6])
+        num_matches = sys.argv[7]
     else:
         print('''
     %s - Plots spatial control of a strategy with respect to a changing parameter.
         Args:
         [1] - Strategy containing parameter to vary (Exchange/DSquared etc.)
-        [2] - Parameter to vary (DecayCoeff etc.)
-        [3] - Minimum value of paramter as exponent, eg: -3.0 -> 10^-3
-        [4] - Maximum value of parameter as exponent, eg: 3.0 -> 10^3
-        [5] - Number of steps between min and max values of parameter (inclusive)
-        [6] - Number of matches per run
+        [2] - Config file to change (Exchange etc.)
+        [3] - Parameter to vary (DecayCoeff etc.)
+        [4] - Minimum value of paramter as exponent, eg: -3.0 -> 10^-3
+        [5] - Maximum value of parameter as exponent, eg: 3.0 -> 10^3
+        [6] - Number of steps between min and max values of parameter (inclusive)
+        [7] - Number of matches per run
         ''' % sys.argv[0])
         exit()
 
     # sys args sorted, now run main
-    main(strategy, parameter, min_pwr, max_pwr, N, num_matches)
-
+    main(strategy, config, parameter, min_pwr, max_pwr, N, num_matches)
