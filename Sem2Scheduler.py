@@ -25,8 +25,7 @@ else:
 #
 #   to iterate a task over a list of values, replace argument with list:
 #
-#   python3 task.py arg1 ... [argj(1)...argj(m)] ... argn
-#   
+#   python3 task.py arg1 ... [argj(1)...argj(m)] ... argn   
 
 
 # returns list of positions of a given character in a string
@@ -59,21 +58,17 @@ def ImportSchedule(filename):
 
                 # construct substring lists for edge cases
                 preargs = [x for x in line[:open_brackets[0]].split(' ') if x]
-                print(preargs)
                 postargs = [x for x in line[close_brackets[-1]+1:].split(' ') if x]
-                print(postargs)
 
                 # get substrings inside brackets
                 insides = []
                 for i, j in zip(open_brackets, close_brackets):
                     insides.append([x.strip() for x in line[i+1:j].split(',') if x])
-                print(insides)
 
                 # and those between brackets
                 outsides = []
                 for i, j in zip(open_brackets[1:], close_brackets[:-1]):
                     outsides.append([x for x in line[j+1:i].split(' ') if x])
-                print(outsides)
 
                 # now construct tasks
                 # iterate through all combinations of bracketed arguments 
