@@ -93,6 +93,18 @@ def VaryParameter(strategy:str, config:str, parameter:str , min_pwr:float, max_p
     steps = [float(s) for s in steps]
     PlotErrorBar(steps, means, stdevs, parameter, filename)
 
+    # save results to file
+    path2 = 'results/param_opts' 
+    points = zip(steps, means, stdevs)
+    if not exists(path2):
+        makedirs(path2)
+
+    with open('%s/%s.txt' % (path2, filename), 'w') as f:
+        # file header
+        f.write('# Parameter tuning results, formatted as: (x,y,e)\n')
+        f.write('# x: parameter, y: spatial control, e: standard deviation\n')
+        for point in points:
+            f.write('%s\n' % str(point))
 
 
 def main(strategy:str, config:str, parameter:str , min_pwr:float, max_pwr:float, N:int, num_matches:int):

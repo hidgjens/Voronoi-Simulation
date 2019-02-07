@@ -4,6 +4,7 @@ import subprocess as s
 import os
 import sys
 import socket
+from itertools import product
 
 DEFAULT_PROCESSES = 4
 PROCESSES = DEFAULT_PROCESSES
@@ -24,26 +25,14 @@ else:
 #
 #   to iterate a task over a list of values, replace argument with list:
 #
-#   python3 task.py arg1 ... [argj(1)...argj(m)] ... argn
-#   
-#   Note: only works for one argument per line - cannot iterate over 2 values at once (yet)
-
-def tsplit(string, delimiters):
-    # Behaves as str.split but supports multiple delimiters
-    
-    delimiters = tuple(delimiters)
-    stack = [string,]
-    
-    for delimiter in delimiters:
-        for i, substring in enumerate(stack):
-            substack = substring.split(delimiter)
-            stack.pop(i)
-            for j, _substring in enumerate(substack):
-                stack.insert(i+j, _substring)
-            
-    return(stack)
+#   python3 task.py arg1 ... [argj(1)...argj(m)] ... argn   
 
 
+# returns list of positions of a given character in a string
+def FindChar(string, char):
+    return([i for i, letter in enumerate(string) if letter == char])
+
+# import schedule file and convert to list of tasks
 def ImportSchedule(filename):
     path = 'data_files/schedules'
     tasks = []
@@ -63,18 +52,37 @@ def ImportSchedule(filename):
                 tasks.append(line.split(' '))
 
             else:
-                # extract list of quantities
-                sections = tsplit(line, ('[', ']'))
-                preargs = [x for x in sections[0].split(' ') if x]
-                print(sections[1])
-                quants = [x.strip() for x in sections[1].split(',') if x]
-                postargs = [x for x in sections[2].split(' ') if x]
-                print(quants)
-                # and then create list of tasks
-                for quant in quants:
-                    tasks.append(preargs + [quant] + postargs) 
+                # find all square brackets
+                open_brackets = FindChar(line, '[')
+                close_brackets = FindChar(line, ']')
 
-    print(tasks)    
+                # construct substring lists for edge cases
+                preargs = [x for x in line[:open_brackets[0]].split(' ') if x]
+                postargs = [x for x in line[close_brackets[-1]+1:].split(' ') if x]
+
+                # get substrings inside brackets
+                insides = []
+                for i, j in zip(open_brackets, close_brackets):
+                    insides.append([x.strip() for x in line[i+1:j].split(',') if x])
+
+                # and those between brackets
+                outsides = []
+                for i, j in zip(open_brackets[1:], close_brackets[:-1]):
+                    outsides.append([x for x in line[j+1:i].split(' ') if x])
+
+                # now construct tasks
+                # iterate through all combinations of bracketed arguments 
+                for args in product(*insides): 
+                    # construct intermediate arguments
+                    middle = []
+                    for i in range(len(args)):
+                        # insert strings between brackets in correct order
+                        if not i == 0:
+                            middle.extend(outsides[i-1])
+                        middle.append(args[i])
+                    
+                    task = preargs + middle + postargs
+                    tasks.append(task)
     return(tasks)
 
 
