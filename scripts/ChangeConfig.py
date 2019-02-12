@@ -1,10 +1,8 @@
 config_file_directories = {
-    'Std' : 'matches/Std',
-    'Lin' : 'matches/Lin',
-    'Step' : 'matches/Step',
-    'FourStep' : 'matches/FourStep',
-    'DSquared' : 'parameters/DSquared',
-    'Exchange' : 'parameters/Exchange'
+    'Exchange':'teams/Exchange',
+    'Metric':'teams/Metric',
+    'Spreading':'teams/Spreading',
+    'Random':'teams/Random',
 }
 
 import sys
