@@ -74,7 +74,7 @@ def VaryParameter(strategy:str, config:str, parameter:str , min_pwr:float, max_p
         ChCFG.change_config_line(config_file_dir, parameter, x, identifier)
         
         # run launcher with this config file
-        s.Popen(['python3', 'Sem2Launcher.py', str(num_matches), '2000', 'conf', run_name]).wait()
+        s.Popen(['python3', 'Sem2Launcher.py', str(num_matches), '2000', '0', 'conf', run_name]).wait()
   
         # load results
         path = 'results/summaries/%s.%s' % (date, run_name)

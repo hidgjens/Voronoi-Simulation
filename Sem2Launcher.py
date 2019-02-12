@@ -89,8 +89,9 @@ def makeSchedule(match_num, frame_num, vid_num, sim_type, strategies):
     for strat in strategies:
         gen_sched.append(generate(strat, match_num, frame_num, sim_type))
         hist_sched.append(histogram(strat))
+        vor_sched.append(voronois(strat, vid_num))
         #time_sched.append(time_series(strat))
-        #vor_sched.append(voronois(strat, vid_num))
+        
 
     schedule = gen_sched + hist_sched + time_sched + vor_sched
 
@@ -129,20 +130,22 @@ def main(match_num, frame_num, vid_num, sim_type, strategies):
 
 if __name__ == '__main__':
     # process sys args
-    if len(sys.argv) >= 4:
+    if len(sys.argv) >= 6:
         match_num = int(sys.argv[1])
         frame_num = int(sys.argv[2])
-        vid_num = 0
-        sim_type = sys.argv[3]
-        strategies = sys.argv[4:]
+        vid_num = int(sys.argv[3])
+        sim_type = sys.argv[4]
+        strategies = sys.argv[5:]
+
     else:
         print('''
     %s - Generates and analyses multiple matches.
         Args:
         [1] - Number of matches to generate per type
         [2] - Frames per match
-        [3] - Sim Type (team/met/conf)
-        [4+] - Match types (HomeTeam:SmrtCnt:AwayTeam:SmrtCnt)/(Decay:Opp:Same)/(MatchConf:HomeConf:AwayConf)
+        [3] - Number of matches to visualise
+        [4] - Sim Type (team/met/conf)
+        [5+] - Match types (HomeTeam:SmrtCnt:AwayTeam:SmrtCnt)/(Decay:Opp:Same)/(MatchConf:HomeConf:AwayConf)
         ''' % sys.argv[0])
         exit()
 

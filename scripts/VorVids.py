@@ -24,6 +24,22 @@ def main(run_name, vid_num):
         CreateVid(run_name, str(number))
 
 if __name__ == '__main__':
-    name = sys.argv[1]
-    vid_num = int(sys.argv[2])
-    main(name, vid_num)
+    # sys args
+    if len(sys.argv) == 4:
+        run_name = sys.argv[1]
+        date = sys.argv[2]
+        vid_num = int(sys.argv[3])
+        
+    else:
+        print('''
+        %s - Plots Voronoi diagrams over matches and plots vids
+        Args:
+        [1] - Run name (MatchConf:HomeTeam:AwayTeam)
+        [2] - Date (DD.MM)
+        [3] - Number of matches to plot
+        ''' % sys.argv[0])
+        exit()
+
+    # now run main
+    filename ='%s.%s' % (date, run_name)
+    main(filename, vid_num)
