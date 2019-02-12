@@ -45,14 +45,29 @@ bool sort_samples(std::pair<Cart, double> i, std::pair<Cart, double> j) {
 
 void Spreading::updateTeam(Team& team, Frame frame) {
     for (int i{0}; i < team.getPlayerCount(); i++) {
-        spreadingMethod(team.getPlayer(i), frame);
+        auto plyr = team.getPlayerPtr(i);
+
+        ////////// CHECK NEAREST PLAYER
+        // check if too close to friendly
+        auto player_position = plyr->getPosition();
+        auto nearest_position = frame.getNearestAllyPos(plyr->isHomeTeam(), plyr);
+
+        if (player_position.dist(nearest_position) < min_team_distance * plyr->getStepSize()) {
+            // player is too close to ally, scatter it
+            auto scatter_displacement = nearest_position.unitVect2(player_position); // defined the reverse was round so it points AWAY from "nearest position"
+            scatter_displacement *= plyr->getStepSize(); // distance = max step
+            plyr->changePositionBy(scatter_displacement);
+            return;
+        }
+        //////////// DONE
+        spreadingMethod(plyr, frame);
     }
 }
 
-void Spreading::spreadingMethod(Player& plyr, Frame frame) {
+void Spreading::spreadingMethod(Player* plyr, Frame frame) {
     // get info from player
-    bool home_team = plyr.isHomeTeam();
-    Cart plyr_pos = plyr.getPosition();
+    bool home_team = plyr->isHomeTeam();
+    Cart plyr_pos = plyr->getPosition();
 
     // vector to store all the objects on the pitch to consider 
     std::vector<PlayerInfo> players_on_pitch;
@@ -64,7 +79,7 @@ void Spreading::spreadingMethod(Player& plyr, Frame frame) {
 
     // ally team first
     for (int i{0}; i < frame.getAlliedCount(home_team); i++) {
-        if (i != plyr.getShirtNum()){
+        if (i != plyr->getShirtNum()){
             // calculate info about player
             temp_pos = frame.getAlliedPosition(home_team, i);
             temp_dist = plyr_pos.dist(temp_pos);
@@ -129,8 +144,8 @@ void Spreading::spreadingMethod(Player& plyr, Frame frame) {
     // run samples, and compute D. Store the results
     for (int i{0}; i < samples_to_run; i++) {
         angle = (((double) i )/ samples_to_run) * 2 * M_PI;
-        dx = plyr.getStepSize() * cos(angle);
-        dy = plyr.getStepSize() * sin(angle);
+        dx = plyr->getStepSize() * cos(angle);
+        dy = plyr->getStepSize() * sin(angle);
         
         test_pos = plyr_pos + Cart(dx, dy);
 
@@ -151,7 +166,7 @@ void Spreading::spreadingMethod(Player& plyr, Frame frame) {
 
     // check if best position improves D, if so move there
     if (sample_results[0].second > initial_D) {
-        plyr.changePositionTo(sample_results[0].first);
+        plyr->changePositionTo(sample_results[0].first);
     }
 
 }

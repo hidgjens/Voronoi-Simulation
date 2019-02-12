@@ -22,7 +22,7 @@ class Spreading: public TeamStrategy{
 
         void updateTeam(Team&, Frame);
 
-        void spreadingMethod(Player&, Frame);
+        void spreadingMethod(Player*, Frame);
 
         double distanceToXedge(Cart);
         double distanceToYedge(Cart);

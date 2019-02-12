@@ -10,7 +10,7 @@ class Random: public TeamStrategy{
 
         void updateTeam(Team&, Frame);
 
-        void randomWalk(Player&);
+        void randomWalk(Player*);
 
 };
 

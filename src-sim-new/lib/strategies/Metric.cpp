@@ -12,14 +12,30 @@ Metric::Metric(TeamConfigFile tcf, Pitch* p) {
 
 void Metric::updateTeam(Team& team, Frame frame) {
     for (int i{0}; i < team.getPlayerCount(); i ++ ) {
-        metricMethod(team.getPlayer(i), frame);
+        auto plyr = team.getPlayerPtr(i);
+
+        ////////// CHECK NEAREST PLAYER
+        // check if too close to friendly
+        auto player_position = plyr->getPosition();
+        auto nearest_position = frame.getNearestAllyPos(plyr->isHomeTeam(), plyr);
+
+        if (player_position.dist(nearest_position) < min_team_distance * plyr->getStepSize()) {
+            // player is too close to ally, scatter it
+            auto scatter_displacement = nearest_position.unitVect2(player_position); // defined the reverse was round so it points AWAY from "nearest position"
+            scatter_displacement *= plyr->getStepSize(); // distance = max step
+            plyr->changePositionBy(scatter_displacement);
+            return;
+        }
+        //////////// DONE
+
+        metricMethod(plyr, frame);
     }
 }
 
-void Metric::metricMethod(Player& plyr, Frame frame) {
-    Cart player_position = plyr.getPosition();
-    double player_control = plyr.getControl();
-    bool home_team = plyr.isHomeTeam();
+void Metric::metricMethod(Player* plyr, Frame frame) {
+    Cart player_position = plyr->getPosition();
+    double player_control = plyr->getControl();
+    bool home_team = plyr->isHomeTeam();
 
     Cart temp_src_pos; double temp_src_control;
     Cart f;
@@ -36,7 +52,7 @@ void Metric::metricMethod(Player& plyr, Frame frame) {
     }
 
     for (int ally_shirt_num{0}; ally_shirt_num < frame.getAlliedCount(home_team); ally_shirt_num++){
-        if (ally_shirt_num != plyr.getShirtNum())
+        if (ally_shirt_num != plyr->getShirtNum())
         {
             temp_src_control = frame.getAlliedControl(home_team, ally_shirt_num); // control
 
@@ -48,15 +64,15 @@ void Metric::metricMethod(Player& plyr, Frame frame) {
         }
     }
 
-    Cart dPos = F_vector.unitVect() * plyr.getStepSize();
+    Cart dPos = F_vector.unitVect() * plyr->getStepSize();
 
     // all players have been checked, move towards highest-value source
 
-    plyr.changePositionBy(dPos);
+    plyr->changePositionBy(dPos);
 }
 
-Cart Metric::metricVector(Player& plyr, Cart src_pos, double src_control) {
-    Cart test_plyr_pos = plyr.getPosition();
+Cart Metric::metricVector(Player* plyr, Cart src_pos, double src_control) {
+    Cart test_plyr_pos = plyr->getPosition();
     Cart unit_vector = test_plyr_pos.unitVect2(src_pos);
     double distance = test_plyr_pos.dist(src_pos);
 
