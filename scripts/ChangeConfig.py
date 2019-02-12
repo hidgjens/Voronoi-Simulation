@@ -38,7 +38,7 @@ def save_config(config_dict, config_file_dir, identifier, fields = None): # fiel
         else:
             # use order given
             for key in fields:
-                config_file.write('%s:%s\n' % (key, config_dict[key]))
+                config_file.write('%s=%s\n' % (key, config_dict[key]))
 
 
 def check_config_dict(config_file_dir):
