@@ -6,6 +6,8 @@
 #include "Pitch.h"
 #include "cfg/MatchConfigFile.h"
 #include "cfg/TeamConfigFile.h"
+#include<iostream>
+#include "Team.h"
 
 class Team;
 
@@ -18,7 +20,6 @@ class Match {
         int x_samples;
         int y_samples;
 
-        Pitch pitch_data;
 
         PitchModel* weight_model;
 
@@ -28,10 +29,11 @@ class Match {
         MatchConfigFile mcf;
 
         double possession_flip_reciprocal_probability;
+        double player_radius;
+        double player_scatter_length;
 
         // teams
-        Team* home_team;
-        Team* away_team;
+        
 
         // match data
         int current_frame_number;
@@ -45,6 +47,12 @@ class Match {
         
 
     public:
+
+        Team home_team;
+        Team away_team;
+        
+        Pitch pitch_data;
+
         // constructors
         Match();
         Match(TeamConfigFile, TeamConfigFile, MatchConfigFile);
@@ -79,6 +87,12 @@ class Match {
         void setMatchID(int);
 
         Cart convertIdx2Coords(int, int);
+
+        void appendToFilename(std::string);
+
+        void collisionCheck();
+        void scatterPlayers(Player*, Player*);
+
 
 
 

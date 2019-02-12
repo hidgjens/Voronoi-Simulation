@@ -96,6 +96,24 @@ void MatchConfigFile::parseConfigFile(const std::unordered_map<std::string, std:
     else
         possession_chance = 50;
 
+    // Player radius
+    if (check_key("PlayerRadius"))
+        player_radius = std::stod(umap.at("PlayerRadius"));
+    else
+    {
+        player_radius = 0.4;
+    }
+
+    // Player Scatter Amount
+    if (check_key("CollisionScatter"))
+        player_scatter_length = std::stod(umap.at("CollisionScatter"));
+    else
+    {
+        player_scatter_length = 0.75;
+    }
+    
+    
+
 }
 
 

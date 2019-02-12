@@ -21,6 +21,8 @@ public:
     std::string save_filename;
     bool full_save;
     int sample_x, sample_y;
+    double player_radius;
+    double player_scatter_length;
     double possession_chance;
 
     // match info

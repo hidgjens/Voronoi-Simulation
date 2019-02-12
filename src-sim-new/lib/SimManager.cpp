@@ -27,21 +27,24 @@ int SimManager::getStartNum() const { return start_num; }
 
 Match SimManager::buildMatch() {
     Match match(home_tcf, away_tcf, mcf);
-    match.buildMatch();
+    
     return match;
 }
 
 void SimManager::start(std::string filename) {
+    std::cout << "Samples " << samples << " start num " << start_num << "\n";
       // get starting time
   auto t_start = std::chrono::high_resolution_clock::now();
   // run samples
   for (int i{start_num}; i < samples + start_num; i++){
     std::cout << "Sample " << i << "\n\n";
     // start match
-    Match match = buildMatch();
-    std::cout << "BUILD!\n";
+    Match match(home_tcf, away_tcf, mcf);
+    match.buildMatch();
+    match.appendToFilename(filename);
+    //std::cout << "BUILD!\n";
     match.setMatchID(i);
-    std::cout << "starting\n";
+    //std::cout << "starting\n";
     match.startSimulation();
   }
   // finish time

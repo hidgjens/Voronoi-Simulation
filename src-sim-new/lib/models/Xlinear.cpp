@@ -11,5 +11,5 @@ Xlinear::Xlinear(Pitch pitch, MatchConfigFile mcf) {
 double Xlinear::pitchWeight(Cart pos, Frame frame) {
     double x_ = pos.xComp();
     //                  v rescaling variable to [0,1]
-    return x_min + ((x_ / pitch_data.x_dim) + 0.5) * (x_max - x_min);
+    return x_min + ((x_ / pitch_data.getXdim()) + 0.5) * (x_max - x_min);
 }

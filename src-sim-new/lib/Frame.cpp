@@ -1,8 +1,19 @@
 #include "Frame.h"
 #include "Player.h"
 
-Frame::Frame() {}
-Frame::Frame(int num) : frameNumber(num) {}
+Frame::Frame() {
+    home_player_count = away_player_count = 11;
+    homePositions = std::make_unique<Cart[]>(home_player_count);
+    awayPositions = std::make_unique<Cart[]>(away_player_count);
+    homeControl = std::make_unique<double[]>(home_player_count);
+    awayControl = std::make_unique<double[]>(away_player_count);
+}
+Frame::Frame(int num, int h, int a) : frameNumber(num), home_player_count(h), away_player_count(a) {
+        homePositions = std::make_unique<Cart[]>(home_player_count);
+        awayPositions = std::make_unique<Cart[]>(away_player_count);
+        homeControl = std::make_unique<double[]>(home_player_count);
+        awayControl = std::make_unique<double[]>(away_player_count);
+}
 
 Frame::Frame(Frame& frame) : 
     frameNumber(frame.frameNumber),
@@ -103,17 +114,17 @@ void Frame::setAwayControl(int num, double ctrl) { awayControl[num] = ctrl; }
 double Frame::getAwayControl(int num) const { return awayControl[num]; }
 
 void Frame::printFrame() const {
-    std::cout << "\n------------------------------------\n";
-    std::cout << "Frame " << frameNumber << ":\n";
-    std::cout << "\tHome Team:\n";
+    std::cout << "\n-------------------------------------------------------------------------" << std::endl;
+    std::cout << "Frame " << frameNumber << ":" << std::endl;
+    std::cout << "\tHome Team:" << std::endl;
     for (int i{0}; i < home_player_count; i++){
-        std::cout << "\t\tPlyr " << i << "\t( " << homePositions[i].xComp() << " , " << homePositions[i].yComp() << " )\tCtrl: " << homeControl[i] << "\n";
+        std::cout << "\t\tPlyr " << i << "\t(" << homePositions[i].xComp() << "," << homePositions[i].yComp() << ")\tCtrl: " << homeControl[i] << std::endl;
     }
-    std::cout << "\n\tAway Team:\n";
+    std::cout << "\n\tAway Team:" << std::endl;
     for (int i{0}; i < away_player_count; i++){
-        std::cout << "\t\tPlyr " << i << "\t( " << awayPositions[i].xComp() << " , " << awayPositions[i].yComp() << " )\tCtrl: " << awayControl[i] << "\n";
+        std::cout << "\t\tPlyr " << i << "\t(" << awayPositions[i].xComp() << "," << awayPositions[i].yComp() << ")\tCtrl: " << awayControl[i] << std::endl;
     }
-    std::cout << "\n------------------------------------\n";
+    std::cout << "\n-------------------------------------------------------------------------" << std::endl;
 
 }
 

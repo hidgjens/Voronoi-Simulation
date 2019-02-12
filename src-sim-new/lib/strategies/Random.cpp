@@ -1,6 +1,6 @@
 #include "Random.h"
 
-Random::Random() {}
+Random::Random() { }
 
 void Random::updateTeam(Team& team, Frame frame) {
     for (int i{0}; i < team.getPlayerCount(); i++) {
@@ -14,6 +14,7 @@ void Random::randomWalk(Player& player) {
 
     double dx = step_size * cos(rand_direction);
     double dy = step_size * sin(rand_direction);
+    // std::cout << dx << " " << dy << std::endl;
 
     Cart dPos(dx, dy);
 

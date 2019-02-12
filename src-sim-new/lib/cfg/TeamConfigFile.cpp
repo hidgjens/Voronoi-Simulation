@@ -47,6 +47,11 @@ void TeamConfigFile::parseConfigFile(const std::unordered_map<std::string, std::
         team_strat_raw = umap.at("Strategy");
     else
         throw std::invalid_argument("Team " + configFileName + " has not Strategy!");
+
+    if (check_key("MinDist"))
+        min_team_dist = std::stoi(umap.at("MinDist"));
+    else
+        min_team_dist = 3;
     
     // exchange/metric parameters
     if (check_key("DecayCoeff"))

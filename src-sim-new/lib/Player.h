@@ -2,6 +2,8 @@
 #define PLAYER_H
 
 #include "Cart.h"
+#include<iostream>
+
 
 class Team;
 
@@ -12,7 +14,7 @@ class Player{
         int shirt_number;
         double current_control;
 
-        double max_step_size;
+        double max_step_size = 2.5;
 
         Team* team;
 
@@ -43,6 +45,14 @@ class Player{
         void changePositionTo(Cart);
 
         void setInitialPosition(Cart);
+
+        void printPos() {
+            position.print();
+        }
+
+        void setZeroControl();
+        void addControl(double);
+        void normControl(double);
 
         
 

@@ -2,7 +2,7 @@
 
 function compile_teamsim () {
     FILE="sim"
-    SRCDIR="src-sim"
+    SRCDIR="src-sim-old"
 
     cd $SRCDIR # go into source code folder
 
@@ -35,7 +35,7 @@ function compile_teamsim () {
 
 function compile_metricsim () {
     FILE="metricsim"
-    SRCDIR="src-sim"
+    SRCDIR="src-sim-old"
 
     cd $SRCDIR # go into source code folder
 
@@ -68,7 +68,7 @@ function compile_metricsim () {
 
 function compile_configsim () {
     FILE="confsim"
-    SRCDIR="src-sim"
+    SRCDIR="src-sim-old"
 
     cd $SRCDIR # go into source code folder
 

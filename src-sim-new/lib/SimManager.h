@@ -6,6 +6,8 @@
 #include "Match.h"
 #include "Pitch.h"
 #include "Team.h"
+#include<iostream>
+
 
 class SimManager{
 

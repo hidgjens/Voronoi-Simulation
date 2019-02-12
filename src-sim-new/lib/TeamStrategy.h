@@ -11,12 +11,15 @@
 #include "Player.h"
 #include "Team.h"
 #include "cfg/TeamConfigFile.h"
+#include<iostream>
+
 
 class TeamStrategy{
     
     protected:
         Pitch* pitch_data;
         std::string description;
+        double min_team_distance; // in units of step_size
 
     public:
         TeamStrategy(){}
@@ -30,6 +33,7 @@ class TeamStrategy{
         void setPitch(Pitch* pitch) { pitch_data = pitch; }
 
         virtual void updateTeam(Team&, Frame) {}
+
 
 };
 

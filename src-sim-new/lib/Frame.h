@@ -8,6 +8,8 @@
 
 #include<memory>
 #include "Cart.h"
+#include<iostream>
+
 
 class Player;
 
@@ -32,7 +34,7 @@ class Frame {
     public:
         // constructors
         Frame();
-        Frame(int);
+        Frame(int, int, int);
 
         Frame(Frame&);
         Frame(Frame&& frame) { *this = std::move(frame); }

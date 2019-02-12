@@ -1,6 +1,8 @@
 #include "lib/cfg/MatchConfigFile.h"
 #include "lib/cfg/TeamConfigFile.h"
 #include "lib/SimManager.h"
+#include<iostream>
+
 
 int main(int argc, char* argv[]){
     srand (time(NULL));
@@ -12,7 +14,7 @@ int main(int argc, char* argv[]){
             << "\t[1] - Match Config Filename\n"
             << "\t[2] - HomeTeam Config Filename\n"
             << "\t[3] - AwayTeam Config Filename\n"
-            << "\t[4] - Filename\n"
+            << "\t[4] - Filename prefix\n"
             << "\t[5] - Samples\n"
             << "\t[6] - Starting file number [default: 0]\n"
         ;
@@ -34,14 +36,14 @@ int main(int argc, char* argv[]){
         START_NUM = 0;
 
     // load configs
-    std::cout << "Loading configs...\n";
-    std::cout << "\t-Match cfg\n";
-
+    std::cout << "Loading configs...\n"<< std::flush;
+    
+    std::cout << "\t-Match cfg\n"<< std::flush;
     MatchConfigFile mcf(MCF_name);
-    std::cout << "\t-Home cfg\n";
-
+    
+    std::cout << "\t-Home cfg\n" << std::flush;
     TeamConfigFile htcf(HM_TCF_name);
-    std::cout << "\t-Away cfg\n";
+    std::cout << "\t-Away cfg\n" << std::flush;
     TeamConfigFile atcf(AW_TCF_name);
 
     std::cout << htcf.getConfigFileName() << "\n";

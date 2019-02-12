@@ -23,6 +23,8 @@ public:
     // AI
     std::string team_strat_raw;
 
+    double min_team_dist;
+
     // exchange/metric
     double decay_coefficient;
     double attract_coefficient;
