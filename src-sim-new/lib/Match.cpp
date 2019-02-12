@@ -253,9 +253,11 @@ void Match::saveFullMatch() {
         << hmCtrl << "\t"
         << dHmCtrl << "\t"
         << frame_history[frame_].getHomePossStr() << "\n";
+
+        index++; // increment index
+
       }
 
-      index++; // increment index
     
     // awayplayers
     for (int i{0}; i < away_team.getPlayerCount(); i++){
@@ -279,9 +281,11 @@ void Match::saveFullMatch() {
         << hmCtrl << "\t"
         << dHmCtrl << "\t"
         << frame_history[frame_].getAwayPossStr() << "\n";
+
+        index++; // increment index
+
       }
 
-      index++; // increment index
     }
   
   datafile.close();
