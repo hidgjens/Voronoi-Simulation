@@ -74,7 +74,7 @@ class Histogram:
 
 
 def LoadMatches(filename:str):
-    datafiles:List[str] = [file for file in listdir('data_files/csvs/%s' % filename) if file.split('.')[-1] == 'csv']
+    datafiles:List[str] = [file for file in listdir('data_files/csvs/%s' % filename) if file.split('.')[-1] == 'sum']
     num_files:int = len(datafiles)
     print('%s: %i csv files found' % (filename, num_files))
     data = None
