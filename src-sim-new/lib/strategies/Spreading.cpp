@@ -57,7 +57,7 @@ void Spreading::updateTeam(Team& team, Frame frame) {
             auto scatter_displacement = nearest_position.unitVect2(player_position); // defined the reverse was round so it points AWAY from "nearest position"
             scatter_displacement *= plyr->getStepSize(); // distance = max step
             plyr->changePositionBy(scatter_displacement);
-            return;
+            continue;
         }
         //////////// DONE
         spreadingMethod(plyr, frame);
