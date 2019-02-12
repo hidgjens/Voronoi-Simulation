@@ -27,7 +27,7 @@ class Tether: public TeamStrategy{
 
         void updateTeam(Team&, Frame);
 
-        void exchange_method(Player&, Frame&);
+        void exchange_method(Player*, Frame&);
         double metric(double, double); // distance, control
 
 

@@ -178,9 +178,9 @@ double Frame::getNearestOpponentDist(bool hometeam, Cart pos) {
     return nearestpos.dist(pos);
 }
 
-Cart Frame::getNearestAllyPos(bool hometeam, Player& plyr) {
-    Cart pos = plyr.getPosition();
-    int shirt_num = plyr.getShirtNum();
+Cart Frame::getNearestAllyPos(bool hometeam, Player* plyr) {
+    Cart pos = plyr->getPosition();
+    int shirt_num = plyr->getShirtNum();
 
     double mindist = -10.0, temp_dist;
     Cart closest_position, temp_pos;
@@ -202,9 +202,9 @@ Cart Frame::getNearestAllyPos(bool hometeam, Player& plyr) {
     return closest_position;
 }
 
-double Frame::getNearestAllyDist(bool hometeam, Player& plyr) {
+double Frame::getNearestAllyDist(bool hometeam, Player* plyr) {
     Cart nearestpos = getNearestAllyPos(hometeam, plyr);
-    Cart pos = plyr.getPosition();
+    Cart pos = plyr->getPosition();
     return nearestpos.dist(pos);  
 }
 

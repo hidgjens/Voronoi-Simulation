@@ -75,8 +75,8 @@ class Frame {
         Cart getNearestOpponentPos(bool, Cart);
         double getNearestOpponentDist(bool, Cart);
 
-        Cart getNearestAllyPos(bool, Player&); // need player here to avoid returning the same player
-        double getNearestAllyDist(bool, Player&);
+        Cart getNearestAllyPos(bool, Player*); // need player here to avoid returning the same player
+        double getNearestAllyDist(bool, Player*);
 
         double getHomeTeamControl();
         double getAwayTeamControl();
