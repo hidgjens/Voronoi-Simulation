@@ -25,10 +25,10 @@ def main(run_name, vid_num):
 
 if __name__ == '__main__':
     # sys args
-    if len(sys.argv) == 3:
+    if len(sys.argv) == 4:
         run_name = sys.argv[1]
         date = sys.argv[2]
-        vid_num = int(sys.argv[2])
+        vid_num = int(sys.argv[3])
         
     else:
         print('''
@@ -39,7 +39,7 @@ if __name__ == '__main__':
         [3] - Number of matches to plot
         ''' % sys.argv[0])
         exit()
-        
+
     # now run main
     filename ='%s.%s' % (date, run_name)
     main(filename, vid_num)

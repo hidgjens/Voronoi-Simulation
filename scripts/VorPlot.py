@@ -19,7 +19,7 @@ def importFrame(run_name, number):
     # pull data from csv into dataframe
     df = pd.read_csv('data_files/csvs/%s/%s.csv' % (run_name, number), sep = '\t', index_col = 0)
     # delete excess columns
-    df = df.drop(columns = ['PID','Time'])
+    # df = df.drop(columns = ['PID','Time'])
 
     return(df)
 

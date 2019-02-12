@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib as mpl
+mpl.use('agg')
 import sys
 from matplotlib import pyplot as plt
 from os import listdir, makedirs 
