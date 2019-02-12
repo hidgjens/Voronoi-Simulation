@@ -92,6 +92,8 @@ Frame& Frame::operator=(Frame&& frame) {
     awayControl = std::move(frame.awayControl);
     frame.away_player_count = 0;
 
+    return *this;
+
 }
 
 void Frame::setFrameNumber(int num) { frameNumber = num; }

@@ -5,6 +5,7 @@
 #include "strategies/Exchange.h"
 #include "strategies/Metric.h"
 #include "strategies/Spreading.h"
+#include "strategies/Tether.h"
 
 TeamStrategy* TeamStrategy::CreateStrat(Pitch* pitch, TeamConfigFile tcf_) {
 
@@ -13,13 +14,15 @@ TeamStrategy* TeamStrategy::CreateStrat(Pitch* pitch, TeamConfigFile tcf_) {
     TeamStrategy* return_strat;
 
     if (name == "Random")
-        return_strat = new Random();
+        return_strat = new Random(pitch);
     else if (name == "Exchange")
-        return_strat = new Exchange(tcf_);
+        return_strat = new Exchange(tcf_, pitch);
     else if (name == "Metric")
-        return_strat = new Metric(tcf_);
+        return_strat = new Metric(tcf_, pitch);
     else if (name == "Spreading")
-        return_strat = new Spreading(tcf_);
+        return_strat = new Spreading(tcf_, pitch);
+    else if (name == "Tether")
+        return_strat = new Tether(tcf_ pitch);
     // add more here
     else
     {
@@ -27,7 +30,7 @@ TeamStrategy* TeamStrategy::CreateStrat(Pitch* pitch, TeamConfigFile tcf_) {
         throw std::invalid_argument("Invalid AI type: " + name);
     }
     
-    return_strat->setPitch(pitch);
+    //return_strat->setPitch(pitch);
 
     return return_strat;
 }

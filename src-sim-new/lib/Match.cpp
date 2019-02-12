@@ -602,8 +602,8 @@ void Match::collisionCheck() {
         
     } while (collision_detected);
 
-    if (run_counter != 1)
-        std::cout << "Frame " << current_frame_number << " needed " << run_counter << " collision check(s)" << std::endl;
+    //if (run_counter != 1)
+    //    std::cout << "Frame " << current_frame_number << " needed " << run_counter << " collision check(s)" << std::endl;
 }
 
 void Match::scatterPlayers(Player* plyr1, Player* plyr2) {

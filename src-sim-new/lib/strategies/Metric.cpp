@@ -1,11 +1,12 @@
 #include "Metric.h"
 
 Metric::Metric() {}
-Metric::Metric(TeamConfigFile tcf) {
+Metric::Metric(TeamConfigFile tcf, Pitch* p) {
     decay_coefficient = tcf.decay_coefficient;
     attract_coefficient = tcf.attract_coefficient;
     repel_coefficient = tcf.repel_coefficient; 
     min_team_distance = tcf.min_team_dist;
+    pitch_data = p; 
 
 }
 
