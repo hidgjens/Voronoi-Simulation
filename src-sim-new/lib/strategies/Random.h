@@ -6,6 +6,7 @@
 class Random: public TeamStrategy{
     public:
         Random();
+        Random(Pitch* );
 
         void updateTeam(Team&, Frame);
 

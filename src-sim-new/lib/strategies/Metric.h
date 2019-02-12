@@ -14,7 +14,7 @@ class Metric: public TeamStrategy{
 
     public:
         Metric();
-        Metric(TeamConfigFile);
+        Metric(TeamConfigFile, Pitch*);
 
         void updateTeam(Team&, Frame);
         

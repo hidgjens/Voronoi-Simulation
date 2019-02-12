@@ -12,7 +12,7 @@ class Exchange: public TeamStrategy{
 
     public:
         Exchange();
-        Exchange(TeamConfigFile);
+        Exchange(TeamConfigFile, Pitch*);
 
         void updateTeam(Team&, Frame);
 

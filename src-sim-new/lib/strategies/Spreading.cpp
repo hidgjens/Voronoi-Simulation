@@ -3,12 +3,13 @@
 #include <algorithm> // std::sort
 
 Spreading::Spreading() {}
-Spreading::Spreading(TeamConfigFile tcf) {
+Spreading::Spreading(TeamConfigFile tcf, Pitch* p) {
     players_to_consider = tcf.players_to_consider;
     samples_to_run = tcf.maxi_samples;
     edge_coefficient = tcf.edge_coefficient;
     ally_coefficient = tcf.ally_coefficient;
     min_team_distance = tcf.min_team_dist;
+    pitch_data = p;
 
 }
 
