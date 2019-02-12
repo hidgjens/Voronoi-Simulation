@@ -18,9 +18,9 @@ class Metric: public TeamStrategy{
 
         void updateTeam(Team&, Frame);
         
-        void metricMethod(Player&, Frame);
+        void metricMethod(Player*, Frame);
 
-        Cart metricVector(Player&, Cart, double); // test player, source position, source control
+        Cart metricVector(Player*, Cart, double); // test player, source position, source control
 
 };
 

@@ -108,31 +108,30 @@ void Tether::updateTeam(Team& team, Frame frame){
     // std::cout << "Update," << std::flush;
     for (int i{0}; i < team.getPlayerCount(); i++){
         // get player
-        auto plyr = team.getPlayer(i);
-        auto player_position = plyr.getPosition();
+        auto plyr = team.getPlayerPtr(i);
+        auto player_position = plyr->getPosition();
 
 
         ///////// Check distance to post
         auto post = player_posts[i];
         if (player_position.dist(post) > max_post_distance) {
             // player has moved too far from their post, move back towards it
-            auto dPos = player_position.unitVect2(post) * plyr.getStepSize();
-            plyr.changePositionBy(dPos);
+            auto dPos = player_position.unitVect2(post) * plyr->getStepSize();
+            plyr->changePositionBy(dPos);
             return;
         }
-
         ////////
 
 
         ////////// CHECK NEAREST PLAYER
         // check if too close to friendly
-        auto nearest_position = frame.getNearestAllyPos(plyr.isHomeTeam(), plyr);
+        auto nearest_position = frame.getNearestAllyPos(plyr->isHomeTeam(), plyr);
 
-        if (player_position.dist(nearest_position) == min_team_distance * plyr.getStepSize()) {
+        if (player_position.dist(nearest_position) < min_team_distance * plyr->getStepSize()) {
             // player is too close to ally, scatter it
             auto scatter_displacement = nearest_position.unitVect2(player_position); // defined the reverse was round so it points AWAY from "nearest position"
-            scatter_displacement *= plyr.getStepSize(); // distance = max step
-            plyr.changePositionBy(scatter_displacement);
+            scatter_displacement *= plyr->getStepSize(); // distance = max step
+            plyr->changePositionBy(scatter_displacement);
             return;
         }
         //////////// DONE
@@ -144,16 +143,16 @@ void Tether::updateTeam(Team& team, Frame frame){
     }
 }
 
-void Tether::exchange_method(Player& plyr, Frame& frame){
+void Tether::exchange_method(Player* plyr, Frame& frame){
     // std::cout << "EXCHANGEMETHOD" << std::flush;
     // get player's position and use it to calculate exchange effect
-    Cart player_position = plyr.getPosition();
+    Cart player_position = plyr->getPosition();
     // std::cout << "2EXCHANGEMETHOD" << std::flush;
 
-    double player_control = plyr.getControl();
+    double player_control = plyr->getControl();
     // std::cout << "3EXCHANGEMETHOD" << std::flush;
 
-    bool home_team = plyr.isHomeTeam();
+    bool home_team = plyr->isHomeTeam();
     // std::cout << "5EXCHANGEMETHOD" << std::flush;
 
 
@@ -180,7 +179,7 @@ void Tether::exchange_method(Player& plyr, Frame& frame){
 
     // all players have been checked, move towards highest-value source
     // std::cout << plyr.getShirtNum() << std::endl;
-    plyr.changePositionTo(highest_metric_src);
+    plyr->changePositionTo(highest_metric_src);
  
 }
 

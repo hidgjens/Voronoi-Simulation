@@ -16,44 +16,42 @@ void Exchange::updateTeam(Team& team, Frame frame){
     // std::cout << "Update," << std::flush;
     for (int i{0}; i < team.getPlayerCount(); i++){
         // get player
-        auto plyr = team.getPlayer(i);
-
+        auto plyr = team.getPlayerPtr(i);
 
         ////////// CHECK NEAREST PLAYER
         // check if too close to friendly
-        auto player_position = plyr.getPosition();
-        auto nearest_position = frame.getNearestAllyPos(plyr.isHomeTeam(), plyr);
+        auto player_position = plyr->getPosition();
+        auto nearest_position = frame.getNearestAllyPos(plyr->isHomeTeam(), plyr);
 
-        if (player_position.dist(nearest_position) == min_team_distance * plyr.getStepSize()) {
+        if (player_position.dist(nearest_position) < min_team_distance * plyr->getStepSize()) {
             // player is too close to ally, scatter it
             auto scatter_displacement = nearest_position.unitVect2(player_position); // defined the reverse was round so it points AWAY from "nearest position"
-            scatter_displacement *= plyr.getStepSize(); // distance = max step
-            plyr.changePositionBy(scatter_displacement);
+            scatter_displacement *= plyr->getStepSize(); // distance = max step
+            plyr->changePositionBy(scatter_displacement);
             return;
         }
         //////////// DONE
 
-
         // iterate through players and apply exchange method individually
         exchange_method(plyr, frame);
         // std::cout << plyr.getShirtNum() << std::endl;
-
         
     }
 
 }
 
-void Exchange::exchange_method(Player& plyr, Frame& frame){
+void Exchange::exchange_method(Player* plyr, Frame& frame){
     // std::cout << "EXCHANGEMETHOD" << std::flush;
     // get player's position and use it to calculate exchange effect
-    Cart player_position = plyr.getPosition();
+    Cart player_position = plyr->getPosition();
     // std::cout << "2EXCHANGEMETHOD" << std::flush;
 
-    double player_control = plyr.getControl();
+    double player_control = plyr->getControl();
     // std::cout << "3EXCHANGEMETHOD" << std::flush;
 
-    bool home_team = plyr.isHomeTeam();
+    bool home_team = plyr->isHomeTeam();
     // std::cout << "5EXCHANGEMETHOD" << std::flush;
+    bool better_found = false;
 
 
     double temp_metric, temp_control, temp_dist; Cart temp_pos;
@@ -63,7 +61,7 @@ void Exchange::exchange_method(Player& plyr, Frame& frame){
         // std::cout << ",ctrl," << std::flush;
         temp_control = frame.getOpponentControl(home_team, opp_shirt_num); // control
 
-        if (temp_control > player_control){
+        if (temp_control >= player_control){
             // considered opponent has more control. Calculate their metric
             temp_pos = frame.getOpponentPosition(home_team, opp_shirt_num); // position
             temp_dist = temp_pos.dist(player_position); // distance to player
@@ -71,6 +69,8 @@ void Exchange::exchange_method(Player& plyr, Frame& frame){
             
             // check if better than current metric
             if (temp_metric > highest_metric) {
+                //std::cout << "BETTER FOUND" << std::endl;
+                better_found = true;
                 highest_metric = temp_metric;
                 highest_metric_src = temp_pos;
             }
@@ -79,7 +79,11 @@ void Exchange::exchange_method(Player& plyr, Frame& frame){
 
     // all players have been checked, move towards highest-value source
     // std::cout << plyr.getShirtNum() << std::endl;
-    plyr.changePositionTo(highest_metric_src);
+   
+    plyr->changePositionTo(highest_metric_src);
+  
+    
+    //plyr.changePositionTo(highest_metric_src);
  
 }
 
