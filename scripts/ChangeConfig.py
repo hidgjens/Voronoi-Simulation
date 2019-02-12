@@ -21,7 +21,7 @@ def load_config(config_file_dir, identifier):
         
         # load lines into dict
         for line in config_file.readlines():
-            l = line.split(':') 
+            l = line.split('=') 
             config_dict[l[0]] = l[1].strip()
             ordered_list.append(l[0])
 
