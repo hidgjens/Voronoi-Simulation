@@ -89,7 +89,13 @@ void TeamConfigFile::parseConfigFile(const std::unordered_map<std::string, std::
         maxi_samples = std::stoi(umap.at("MaxiSamples"));
     else
         maxi_samples = 36;
+
+    if (check_key("PostDistance"))
+        max_post_distance = std::stod(umap.at("PostDistance"));
+    else
     
+        max_post_distance = 20.0;
+      
     
 
 }

@@ -109,11 +109,23 @@ void Tether::updateTeam(Team& team, Frame frame){
     for (int i{0}; i < team.getPlayerCount(); i++){
         // get player
         auto plyr = team.getPlayer(i);
+        auto player_position = plyr.getPosition();
+
+
+        ///////// Check distance to post
+        auto post = player_posts[i];
+        if (player_position.dist(post) > max_post_distance) {
+            // player has moved too far from their post, move back towards it
+            auto dPos = player_position.unitVect2(post) * plyr.getStepSize();
+            plyr.changePositionBy(dPos);
+            return;
+        }
+
+        ////////
 
 
         ////////// CHECK NEAREST PLAYER
         // check if too close to friendly
-        auto player_position = plyr.getPosition();
         auto nearest_position = frame.getNearestAllyPos(plyr.isHomeTeam(), plyr);
 
         if (player_position.dist(nearest_position) == min_team_distance * plyr.getStepSize()) {
