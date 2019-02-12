@@ -53,7 +53,7 @@ def PlotErrorBar(x, y, e, parameter:str, filename:str):
 
 
 def VaryParameter(strategy:str, config:str, parameter:str , min_pwr:float, max_pwr:float, N:int, num_matches:int):
-    run_name:str = 'Std:%s:RandomWalkers' % strategy
+    run_name:str = 'Std:%s:Random' % strategy
     results = []
 
     # take parameter limits and number of steps and convert to values
