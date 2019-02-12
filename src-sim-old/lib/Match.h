@@ -113,6 +113,8 @@ public:
   bool getAwayPossession() const;
   void toggleHomePossession();
 
+  void collisionCheck();
+
 
 };
 

@@ -97,7 +97,7 @@ void TeamConfigFile::loadFile(std::string filename_){
     std::string line, field;
 
     // open file
-    std::ifstream CONFIGFILE("configs/teams/" + configFileName + ".cfg");
+    std::ifstream CONFIGFILE("configs-old/teams/" + configFileName + ".cfg");
 
     // iterate over lines of config file
     while(std::getline(CONFIGFILE, line)){
