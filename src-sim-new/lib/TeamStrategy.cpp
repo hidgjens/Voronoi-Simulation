@@ -22,7 +22,7 @@ TeamStrategy* TeamStrategy::CreateStrat(Pitch* pitch, TeamConfigFile tcf_) {
     else if (name == "Spreading")
         return_strat = new Spreading(tcf_, pitch);
     else if (name == "Tether")
-        return_strat = new Tether(tcf_ pitch);
+        return_strat = new Tether(tcf_, pitch);
     // add more here
     else
     {
