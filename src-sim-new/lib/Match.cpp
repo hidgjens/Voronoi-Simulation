@@ -31,7 +31,7 @@ away_team_control_sum(0)
     away_team = Team(at, false, &pitch_data);
     // std::cout << "Home " << home_team.xlim() << "," << home_team.ylim() << " Away " << away_team.pitchptr() << std::endl;
     weight_model = PitchModel::createPitchModel(mcf.pitchMdl, mcf);
-    filename = mcf.save_filename + ":" + ht.getConfigFileName() + ":" + at.getConfigFileName();
+    filename = "";//mcf.save_filename + ":" + ht.getConfigFileName() + ":" + at.getConfigFileName();
     total_frames = mcf.numberOfFrames; 
 
     if (store_frames)
