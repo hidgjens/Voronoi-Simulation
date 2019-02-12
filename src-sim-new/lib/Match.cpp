@@ -31,7 +31,7 @@ away_team_control_sum(0)
     away_team = Team(at, false, &pitch_data);
     // std::cout << "Home " << home_team.xlim() << "," << home_team.ylim() << " Away " << away_team.pitchptr() << std::endl;
     weight_model = PitchModel::createPitchModel(mcf.pitchMdl, mcf);
-    filename = mcf.save_filename;
+    filename = mcf.save_filename + ":" + ht.getConfigFileName() + ":" + at.getConfigFileName();
     total_frames = mcf.numberOfFrames; 
 
     if (store_frames)
@@ -168,7 +168,7 @@ void Match::startSimulation() {
 
 void Match::saveMatchSummary(){
     // Announce
-  std::cout << "\nSaving Match " << matchID << " to data_files/csv/" + filename + "/" + std::to_string(matchID) + ".csv\n\n"<< std::flush;
+  std::cout << "\nSaving summary for Match " << matchID << " to data_files/csv/" + filename + "/" + std::to_string(matchID) + ".sum\n"<< std::flush;
 
   // check if folder exists
   struct stat st;
@@ -199,7 +199,7 @@ void Match::saveMatchSummary(){
 
 void Match::saveFullMatch() {
 
-  std::cout << "\nSaving Match " << matchID << " to data_files/csvs/" + filename + "/" + std::to_string(matchID) + ".csv\n\n"<< std::flush;
+  std::cout << "\nSaving full Match " << matchID << " to data_files/csvs/" + filename + "/" + std::to_string(matchID) + ".csv\n\n"<< std::flush;
   
   struct stat st;
   if(!stat(("data_files/csvs/" + filename).c_str(), &st) == 0)
