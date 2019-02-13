@@ -8,28 +8,23 @@ import sys
 from os import makedirs
 from os.path import exists
 from datetime import datetime
-from scripts.ChangeConfig import config_file_directories
 
+# default config file directory
+config_dir = 'teams'
 
 # parameter tuning
 # save original config file to backup
-def BackupConfig(config):
-    # find config file directory in dictionary
-    config_file_dir = config_file_directories[config]
-    
+def BackupConfig(config_dir, config_file):
     # load original config
-    config_dict = ChCFG.load_config(config_file_dir, identifier='')[0]
-    # save to backup
-    ChCFG.save_config(config_dict, config_file_dir, identifier='-Backup')
+    config_dict, ordered_list = ChCFG.LoadConfig(config_dir, config_file)
+    # save to backup file
+    ChCFG.SaveConfig(config_dir, '%s-Backup' % config_file, config_dict, ordered_list)
 
-def OverwriteConfig(config):
-    # find config file directory in dictionary
-    config_file_dir = config_file_directories[config]
-    
+def OverwriteConfig(config_dir, config_file):
     # load backup config
-    config_dict = ChCFG.load_config(config_file_dir, identifier='-Backup')[0]
+    config_dict, ordered_list = ChCFG.LoadConfig(config_dir, '%s-Backup' % config_file)
     # save to original
-    ChCFG.save_config(config_dict, config_file_dir, identifier='')
+    ChCFG.SaveConfig(config_dir, config_file, config_dict, ordered_list)
 
 # save error bar plot
 def PlotErrorBar(x, y, e, parameter:str, filename:str):
@@ -52,8 +47,7 @@ def PlotErrorBar(x, y, e, parameter:str, filename:str):
 
 
 
-def VaryParameter(strategy:str, config:str, parameter:str , min_pwr:float, max_pwr:float, N:int, num_matches:int):
-    run_name:str = 'Std:%s:Random' % strategy
+def VaryParameter(run_name:str, config_file:str, parameter:str , min_pwr:float, max_pwr:float, N:int, num_matches:int):
     results = []
 
     # take parameter limits and number of steps and convert to values
@@ -69,9 +63,7 @@ def VaryParameter(strategy:str, config:str, parameter:str , min_pwr:float, max_p
         filename = '%s.%s' % (date, run_name)
         
         # change paramter value in config file
-        identifier:str = ''
-        config_file_dir = config_file_directories[config]
-        ChCFG.change_config_line(config_file_dir, parameter, x, identifier)
+        ChCFG.ChangeConfigLine(config_dir, config_file, parameter, x)
         
         # run launcher with this config file
         s.Popen(['python3', 'Sem2Launcher.py', str(num_matches), '2000', '0', 'conf', run_name]).wait()
@@ -107,22 +99,23 @@ def VaryParameter(strategy:str, config:str, parameter:str , min_pwr:float, max_p
             f.write('%s\n' % str(point))
 
 
-def main(strategy:str, config:str, parameter:str , min_pwr:float, max_pwr:float, N:int, num_matches:int):
+def main(run_name:str, config_file:str, parameter:str , min_pwr:float, max_pwr:float, N:int, num_matches:int):
+    
     # backup original config file
-    BackupConfig(config)
+    BackupConfig(config_dir, config_file)
 
     # run parameter tuning
-    VaryParameter(strategy, config, parameter, min_pwr, max_pwr, N, num_matches)
+    VaryParameter(run_name, config_file, parameter, min_pwr, max_pwr, N, num_matches)
     print('Finished!')
 
     # overwrite original config file with backup file
-    OverwriteConfig(config)
+    OverwriteConfig(config_dir, config_file)
 
 if __name__ == '__main__':
     # sys args
     if len(sys.argv) == 8:
-        strategy = sys.argv[1]
-        config = sys.argv[2]
+        run_name = sys.argv[1]
+        config_file = sys.argv[2]
         parameter = sys.argv[3]
         min_pwr = float(sys.argv[4])
         max_pwr = float(sys.argv[5])
@@ -132,15 +125,15 @@ if __name__ == '__main__':
         print('''
     %s - Plots spatial control of a strategy with respect to a changing parameter.
         Args:
-        [1] - Strategy containing parameter to vary (Exchange/DSquared etc.)
-        [2] - Config file to change (Exchange etc.)
-        [3] - Parameter to vary (DecayCoeff etc.)
-        [4] - Minimum value of paramter as exponent, eg: -3.0 -> 10^-3
-        [5] - Maximum value of parameter as exponent, eg: 3.0 -> 10^3
-        [6] - Number of steps between min and max values of parameter (inclusive)
+        [1] - Run name to optimise (MatchType:HomeTeam:AwayTeam)
+        [2] - Config file to modify (Exchange, Tether, etc.)
+        [3] - Parameter to vary (DecayCoeff, AttrCoeff, PostDistance, etc.)
+        [4] - Minimum value of log10(parameter), ie: -3.0 = 10^-3
+        [5] - Maximum value of log10(parameter), ie: 3.0 = 10^3
+        [6] - Number of increments from min to max value, inclusive
         [7] - Number of matches per run
         ''' % sys.argv[0])
         exit()
 
     # sys args sorted, now run main
-    main(strategy, config, parameter, min_pwr, max_pwr, N, num_matches)
+    main(run_name, config_file, parameter, min_pwr, max_pwr, N, num_matches)
