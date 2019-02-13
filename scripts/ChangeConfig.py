@@ -1,78 +1,61 @@
-config_file_directories = {
-    'Exchange':'teams/Exchange',
-    'Metric':'teams/Metric',
-    'Spreading':'teams/Spreading',
-    'Random':'teams/Random',
-}
-
 import sys
+from os.path import exists
 
-def print_dict(dictionary):
+
+def PrintDict(dictionary):
     for key, value in dictionary.items():
         print('\t%s:\t%s' % (key, value))
 
-def load_config(config_file_dir, identifier):
-    # open config file which we want to write to
 
+def CheckConfigDir(config_dir):
+    if not exists(config_dir):
+        print('Error: config directory \'%s\' not found! Exiting now...' % config_dir)         
+        exit()
+    else:
+        print('Config directory \'%s\' found!' % config_dir)
+        return(config_dir)
+
+# open config file which we want to write to
+def LoadConfig(config_dir, config_file):
     config_dict = {}
-    ordered_list = [] # just to put the config back in the same order
+    # just to put the config back in the same order
+    ordered_list = []
 
-    with open('configs/%s%s.cfg' % (config_file_dir, identifier), 'r') as config_file:
-        
+    with open('configs/%s/%s.cfg' % (config_dir, config_file), 'r') as cfg:
         # load lines into dict
-        for line in config_file.readlines():
+        for line in cfg.readlines():
             l = line.split('=') 
             config_dict[l[0]] = l[1].strip()
             ordered_list.append(l[0])
+    # returns config as dict and list with order written (dicts are unordered maps)
+    return(config_dict, ordered_list)
 
-    return(config_dict, ordered_list) # returns config as a dictionary and list with the order they were written in (dicts are unordered maps)
-
-def save_config(config_dict, config_file_dir, identifier, fields = None): # fields is a list of the dict keys you want to save and in what order, otherwise any order is chosen
-
-    with open('configs/%s%s.cfg' % (config_file_dir, identifier), 'w') as config_file:
-        if fields is None:
+# save config file in order (or any order by default)
+def SaveConfig(config_dir, config_file, config_dict, ordered_list = None):
+    
+    with open('configs/%s/%s.cfg' % (config_dir, config_file), 'w') as cfg:
+        if ordered_list is None:
             # no order given, just go with whatever order
             for key, value in config_dict.items():
-                config_file.write('%s:%s\n' % (key, value))
-            #
+                cfg.write('%s=%s\n' % (key, value))
+
         else:
             # use order given
-            for key in fields:
-                config_file.write('%s=%s\n' % (key, config_dict[key]))
+            for key in ordered_list:
+                cfg.write('%s=%s\n' % (key, config_dict[key]))
 
 
-def check_config_dict(config_file_dir):
-    if config_file_dir in config_file_directories.keys():
-        dir = config_file_directories[config_file_dir]
-            
-        print('Key \'%s\' found pointing to %s:\n' % (config_file_dir, dir))     
-
-    else:
-        print('Entry \'%s\' not found, trying dir = %s:\n' % (config_file_dir, config_file_dir))
-
-        dir = config_file_dir
-
-    return dir
-
-
-def change_config_line(config_file_dir, line_name, new_value, identifier): 
-    # config file must also contain any subfolders. This script checks 
-    # configs/config_file
-
-    # config file might be a dict key, check this:
-    config_file_dir = check_config_dict(config_file_dir)
-
+def ChangeConfigLine(config_dir, config_file, line_name, new_value):
     # open config file which we want to write to
-
-    config_dict, ordered_list = load_config(config_file_dir, identifier)
+    config_dict, ordered_list = LoadConfig(config_dir, config_file)
 
     # print the config file in its current state
-    print('%s has loaded as:\n' % config_file_dir)
-    print_dict(config_dict)
+    print('%s has loaded as:\n' % config_file)
+    PrintDict(config_dict)
 
     # check requested field is in config
     if not line_name in config_dict.keys():
-        raise ValueError('%s not in configs/%s.cfg' % (line_name, config_file_dir))
+        raise ValueError('%s not in configs/%s.cfg' % (line_name, config_dir))
 
     # save old value for text output
     old_value = config_dict[line_name]
@@ -83,48 +66,32 @@ def change_config_line(config_file_dir, line_name, new_value, identifier):
         config_dict[line_name] = str(new_value)
 
     # print altered config
-    print('\nSaving %s as:\n' % config_file_dir)
-    print_dict(config_dict)
+    print('\nSaving %s as:\n' % config_file)
+    PrintDict(config_dict)
     print('\nwith changes:\n\t%s:%s ---> %s:%s' % (line_name, old_value, line_name, new_value))
 
-    save_config(config_dict, config_file_dir, identifier, ordered_list)
+    SaveConfig(config_dir, config_file, config_dict, ordered_list)
+
 
 if __name__ == '__main__':
-    ARGS_REQUIRED = 3
-    ARGS_PROVIDED = len(sys.argv) - 1
     # arguments needed:
-    #   scripts name (or key from dict at top)
+    #   config file directory
+    #   config file name
     #   line to change
     #   new value
-    if len(sys.argv) == 1:
+
+    if len(sys.argv) == 5:
+        config_dir = CheckConfigDir(sys.argv[1])
+        config_file = sys.argv[2]
+        line_name = sys.argv[3]
+        new_value = sys.argv[4]
+
+        ChangeConfigLine(config_dir, config_file, line_name, new_value)
+
+    else:
         print('''
         Args:
             [1] - Script name or key (from dict at top of %s)
             [2] - line name to change
             [3] - new value
         ''' % sys.argv[0])
-    elif not len(sys.argv) == ARGS_REQUIRED + 1:
-        print(''' 
-    Wrong number of args.
-        Args:
-            [1] - Script name or key (from dict at top of %s)
-            [2] - line name to change
-            [3] - new value
-        ''' % sys.argv[0])
-    else:
-        line_to_change = sys.argv[2]
-        new_val = sys.argv[3]
-
-        if sys.argv[1] in config_file_directories.keys():
-            dir = config_file_directories[sys.argv[1]]
-            
-            print('Key \'%s\' found pointing to %s:\n' % (sys.argv[1], dir))
-            
-
-        else:
-            print('Entry \'%s\' not found, trying dir = %s:\n' % (sys.argv[1], sys.argv[1]))
-
-            dir = sys.argv[1]
-
-        change_config_line(dir, line_to_change, new_val, identifier='')
-        
