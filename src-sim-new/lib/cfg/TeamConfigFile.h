@@ -34,8 +34,10 @@ public:
     double ally_coefficient;
     int players_to_consider;
     int maxi_samples;
+    // tether
     double max_post_distance;
-    
+    // TeamExchange
+    int targets_to_prioritise;
 
     std::unordered_map<std::string, std::string> raw_parameters;
 

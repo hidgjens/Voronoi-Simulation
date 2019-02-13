@@ -93,8 +93,12 @@ void TeamConfigFile::parseConfigFile(const std::unordered_map<std::string, std::
     if (check_key("PostDistance"))
         max_post_distance = std::stod(umap.at("PostDistance"));
     else
-    
         max_post_distance = 20.0;
+
+    if (check_key("PriTargets"))
+        targets_to_prioritise = std::stoi(umap.at("PriTargets"));
+    else
+        targets_to_prioritise = 2;
       
     
 
