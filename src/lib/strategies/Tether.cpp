@@ -114,7 +114,7 @@ void Tether::updateTeam(Team& team, Frame frame){
 
         ///////// Check distance to post
         auto post = player_posts[i];
-        if (player_position.dist(post) > max_post_distance) {
+        if (player_position.dist(post) >= max_post_distance) {
             // player has moved too far from their post, move back towards it
             auto dPos = player_position.unitVect2(post) * plyr->getStepSize();
             plyr->changePositionBy(dPos);
