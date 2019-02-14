@@ -14,13 +14,14 @@ def LoadMatch(filename, filenum):
     df = pd.read_csv('data_files/csvs/%s/%s.csv' % (filename, filenum), sep = '\t', index_col = 0)
     return(df)
 
+
 # process each batch
 def MakeBatches(df):
     processes = 8
     # split files to load into batches
     frames = 1 + df['FID'].max()
     print('Frames: %s' % frames)
-    framelist = range(1,frames)
+    framelist = list(range(1,frames))
 
     batchsize = frames // processes # files per thread
     remainder = frames % processes # extras
@@ -34,10 +35,12 @@ def MakeBatches(df):
     
     # split remainders between batches
     for i in range(remainder):
+        print(batches[i])
         frame = frames - (i+1)
         batches[i].append(frame)
 
     return(batches)
+
 
 # plot each batch in a subprocess
 def PlotMatchMT(filename, filenum):
@@ -61,6 +64,7 @@ def PlotMatchMT(filename, filenum):
             finished = True
             return(finished)
 
+
 # create vorvids once finished
 def CreateVid(filename, filenum):
     # create video subdirectory
@@ -70,6 +74,7 @@ def CreateVid(filename, filenum):
     # create vid from pngs
     s.call(['ffmpeg','-framerate','5','-i','plots/vorplots/vorplots_%s/voronoi-%%04d.png' % filename,'videos/vorplots_%s/%i.mp4' % (filename,filenum),'-vcodec','mpeg4','-y'])
 
+
 def main(run_name, date, vid_num):
     filename = '%s.%s' % (date, run_name)
     for i in range(vid_num):
@@ -78,6 +83,7 @@ def main(run_name, date, vid_num):
         # make vid when pngs are all plotted
         if finished:
             CreateVid(filename, i)
+
 
 if __name__ == '__main__':
     # process sys args
