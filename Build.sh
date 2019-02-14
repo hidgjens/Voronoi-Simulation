@@ -16,7 +16,7 @@ function compile_configsim () {
         lib/cfg/MatchConfigFile.cpp lib/cfg/TeamConfigFile.cpp \
         lib/PitchModel.cpp lib/models/Uniform.cpp lib/models/Xlinear.cpp \
         lib/TeamStrategy.cpp lib/strategies/Random.cpp lib/strategies/Exchange.cpp lib/strategies/Metric.cpp lib/strategies/Spreading.cpp \
-        lib/strategies/Tether.cpp \
+        lib/strategies/Tether.cpp lib/strategies/TeamExchange.cpp \
     -lm -std=c++14 -lstdc++
 
     RESULT=$?

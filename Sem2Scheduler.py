@@ -15,6 +15,9 @@ if socket.gethostname() == 'Lewis-Desktop':
 elif socket.gethostname() == 'ptcone30':
     print('ptcone30: 8T to abuse')
     PROCESSES = 8
+elif socket.gethostname() == 'lah-ubuntu':
+    print('lah-ubuntu: niggin\'s ubuntu partition, 12 cores for the bois\n')
+    PROCESSES = 12
 else:
     print('Unknown host: 4T (potential normie hardware)')
 

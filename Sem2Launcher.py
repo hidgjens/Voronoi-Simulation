@@ -16,6 +16,9 @@ if socket.gethostname() == 'Lewis-Desktop':
 elif socket.gethostname() == 'ptcone30':
     print('Code is running on rickety-old ptcone30, classic FX-8350 with 8 cores to abuse\n')
     PROCESSES = 8
+elif socket.gethostname() == 'lah-ubuntu':
+    print('Lewis is using his Ubuntu partition. We have 12 threads\n')
+    PROCESSES = 12
 else:
     print('Unknown territory: %s. Playing it safe with %i threads, edit DEFAULT_PROCESSES in %s to change this behaviour' % (socket.gethostname(), DEFAULT_PROCESSES, sys.argv[0]))
 
