@@ -477,8 +477,8 @@ double Match::avgAwayControl(){
 void Match::setMatchID(int mid) { matchID = mid; }
 
 Cart Match::convertIdx2Coords(int i, int j){
-  double X = ((i + 0.5) - x_samples/2) * pitch_data.getXdim()/ x_samples;
-  double Y = ((j + 0.5) - y_samples/2) * pitch_data.getYdim()/ y_samples;
+  double X = ((i + 0.5) - x_samples/2.0) * pitch_data.getXdim()/ x_samples;
+  double Y = ((j + 0.5) - y_samples/2.0) * pitch_data.getYdim()/ y_samples;
   return(Cart(X, Y));
 }
 

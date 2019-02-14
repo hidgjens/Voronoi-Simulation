@@ -10,7 +10,7 @@ def ListSums(filename:str, cutoff:float):
     # find .sums for which team control is below cutoff
     new_sums:List[str] = []
     for sum in sums:
-        with open('%s.sum' % sum, 'r') as f:
+        with open(path + '/' + sum, 'r') as f:
             homectrl:float = float(f.readline().strip('\n'))
             if homectrl < cutoff:
                 new_sums.append(sum)
@@ -20,6 +20,7 @@ def ListSums(filename:str, cutoff:float):
 def main(filename:str, cutoff:str):
     sums:List[str] = ListSums(filename, cutoff)
     print(sums)
+    print('\nFound %i faulty games' % (len(sums)))
 
 if __name__ == '__main__':
     # sys args
