@@ -2,6 +2,7 @@
 *.pyc
 *.o
 *__pycache__*
+src/confsim
 
 bin/
 data_files/
