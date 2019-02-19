@@ -1,77 +1,82 @@
+# variables
+CC=g++
+STD=c++14
+
+# Makefie
 
 confsim: Simulation.o Cart.o Frame.o Match.o Pitch.o PitchModel.o Player.o SimManager.o Team.o TeamStrategy.o MatchConfigFile.o TeamConfigFile.o Uniform.o Xlinear.o Exchange.o Metric.o Random.o Spreading.o TeamExchange.o Tether.o TetherSpreading.o
-	g++ Simulation.o Cart.o Frame.o Match.o Pitch.o PitchModel.o Player.o SimManager.o Team.o TeamStrategy.o MatchConfigFile.o TeamConfigFile.o Uniform.o Xlinear.o Exchange.o Metric.o Random.o Spreading.o TeamExchange.o Tether.o TetherSpreading.o -o confsim -std=c++14
+	${CC} Simulation.o Cart.o Frame.o Match.o Pitch.o PitchModel.o Player.o SimManager.o Team.o TeamStrategy.o MatchConfigFile.o TeamConfigFile.o Uniform.o Xlinear.o Exchange.o Metric.o Random.o Spreading.o TeamExchange.o Tether.o TetherSpreading.o -o confsim -std=${STD}
 
 Simulation.o: Simulation.cpp
-	g++ -c Simulation.cpp -std=c++14
+	${CC} -c Simulation.cpp -std=${STD}
 
 # lib
 
 Cart.o: lib/Cart.cpp lib/Cart.h
-	g++ -c lib/Cart.cpp -std=c++14
+	${CC} -c lib/Cart.cpp -std=${STD}
 
 Frame.o: lib/Frame.cpp lib/Frame.h
-	g++ -c lib/Frame.cpp -std=c++14
+	${CC} -c lib/Frame.cpp -std=${STD}
 
 Match.o: lib/Match.cpp lib/Match.h
-	g++ -c lib/Match.cpp -std=c++14
+	${CC} -c lib/Match.cpp -std=${STD}
 
 Pitch.o: lib/Pitch.cpp lib/Pitch.h
-	g++ -c lib/Pitch.cpp -std=c++14
+	${CC} -c lib/Pitch.cpp -std=${STD}
 
 PitchModel.o: lib/PitchModel.cpp lib/PitchModel.h
-	g++ -c lib/PitchModel.cpp -std=c++14
+	${CC} -c lib/PitchModel.cpp -std=${STD}
 
 Player.o: lib/Player.cpp lib/Player.o
-	g++ -c lib/Player.cpp -std=c++14
+	${CC} -c lib/Player.cpp -std=${STD}
 
 SimManager.o: lib/SimManager.cpp lib/SimManager.h
-	g++ -c lib/SimManager.cpp -std=c++14
+	${CC} -c lib/SimManager.cpp -std=${STD}
 
 Team.o: lib/Team.cpp lib/Team.h
-	g++ -c lib/Team.cpp -std=c++14
+	${CC} -c lib/Team.cpp -std=${STD}
 
 TeamStrategy.o: lib/TeamStrategy.cpp lib/TeamStrategy.h
-	g++ -c lib/TeamStrategy.cpp -std=c++14
+	${CC} -c lib/TeamStrategy.cpp -std=${STD}
 
 # lib/cfg
 
 MatchConfigFile.o: lib/cfg/MatchConfigFile.cpp lib/cfg/MatchConfigFile.h
-	g++ -c lib/cfg/MatchConfigFile.cpp -std=c++14
+	${CC} -c lib/cfg/MatchConfigFile.cpp -std=${STD}
 
 TeamConfigFile.o: lib/cfg/TeamConfigFile.cpp lib/cfg/TeamConfigFile.h
-	g++ -c lib/cfg/TeamConfigFile.cpp -std=c++14
+	${CC} -c lib/cfg/TeamConfigFile.cpp -std=${STD}
 
 # lib/models
 
 Uniform.o: lib/models/Uniform.cpp lib/models/Uniform.h
-	g++ -c lib/models/Uniform.cpp -std=c++14
+	${CC} -c lib/models/Uniform.cpp -std=${STD}
 
 Xlinear.o: lib/models/Xlinear.cpp lib/models/Xlinear.h
-	g++ -c lib/models/Xlinear.cpp -std=c++14
+	${CC} -c lib/models/Xlinear.cpp -std=${STD}
 
 # lib/strategies
 
 Exchange.o: lib/strategies/Exchange.cpp lib/strategies/Exchange.h
-	g++ -c lib/strategies/Exchange.cpp -std=c++14
+	${CC} -c lib/strategies/Exchange.cpp -std=${STD}
 
 Metric.o: lib/strategies/Metric.cpp lib/strategies/Metric.h
-	g++ -c lib/strategies/Metric.cpp -std=c++14
+	${CC} -c lib/strategies/Metric.cpp -std=${STD}
 
 Random.o: lib/strategies/Random.cpp lib/strategies/Random.h
-	g++ -c lib/strategies/Random.cpp -std=c++14
+	${CC} -c lib/strategies/Random.cpp -std=${STD}
 
 Spreading.o: lib/strategies/Spreading.cpp lib/strategies/Spreading.h
-	g++ -c lib/strategies/Spreading.cpp -std=c++14
+	${CC} -c lib/strategies/Spreading.cpp -std=${STD}
 
 TeamExchange.o: lib/strategies/TeamExchange.cpp lib/strategies/TeamExchange.h
-	g++ -c lib/strategies/TeamExchange.cpp -std=c++14
+	${CC} -c lib/strategies/TeamExchange.cpp -std=${STD}
 
 Tether.o: lib/strategies/Tether.cpp lib/strategies/Tether.h
-	g++ -c lib/strategies/Tether.cpp -std=c++14
+	${CC} -c lib/strategies/Tether.cpp -std=${STD}
 
 TetherSpreading.o: lib/strategies/TetherSpreading.cpp lib/strategies/TetherSpreading.h
-	g++ -c lib/strategies/TetherSpreading.cpp -std=c++14
+	${CC} -c lib/strategies/TetherSpreading.cpp -std=${STD}
 
 clean:
 	rm *.o confsim
