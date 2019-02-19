@@ -40,6 +40,5 @@ TeamStrategy* TeamStrategy::CreateStrat(Pitch* pitch, TeamConfigFile tcf_) {
     }
     
     //return_strat->setPitch(pitch);
-
     return return_strat;
 }
