@@ -81,7 +81,7 @@ def VaryParameter(run_name:str, config_file:str, parameter:str , min_pwr:float, 
     # plot errorbar plot using mean and stdev
     means, stdevs = zip(*results)
     means = [float(m) for m in means]
-    stdevs = [float(s) for s in stdevs]
+    stdevs = [float(s)/np.sqrt(num_matches) for s in stdevs]
     steps = [float(s) for s in steps]
     PlotErrorBar(steps, means, stdevs, parameter, filename)
 
@@ -120,7 +120,7 @@ if __name__ == '__main__':
         min_pwr = float(sys.argv[4])
         max_pwr = float(sys.argv[5])
         N = int(sys.argv[6])
-        num_matches = sys.argv[7]
+        num_matches = int(sys.argv[7])
     else:
         print('''
     %s - Plots spatial control of a strategy with respect to a changing parameter.
