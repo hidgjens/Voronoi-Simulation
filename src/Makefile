@@ -4,8 +4,8 @@ STD=c++14
 
 # Makefie
 
-confsim: Simulation.o Cart.o Frame.o Match.o Pitch.o PitchModel.o Player.o SimManager.o Team.o TeamStrategy.o MatchConfigFile.o TeamConfigFile.o Uniform.o Xlinear.o Exchange.o Metric.o Random.o Spreading.o TeamExchange.o Tether.o TetherSpreading.o
-	${CC} Simulation.o Cart.o Frame.o Match.o Pitch.o PitchModel.o Player.o SimManager.o Team.o TeamStrategy.o MatchConfigFile.o TeamConfigFile.o Uniform.o Xlinear.o Exchange.o Metric.o Random.o Spreading.o TeamExchange.o Tether.o TetherSpreading.o -o confsim -std=${STD}
+confsim: Simulation.o Cart.o Frame.o Match.o Pitch.o PitchModel.o Player.o SimManager.o Team.o TeamStrategy.o MatchConfigFile.o TeamConfigFile.o Uniform.o Xlinear.o Exchange.o Metric.o Random.o Spreading.o TeamExchange.o Tether.o TetherSpreading.o TetherCounter.o
+	${CC} Simulation.o Cart.o Frame.o Match.o Pitch.o PitchModel.o Player.o SimManager.o Team.o TeamStrategy.o MatchConfigFile.o TeamConfigFile.o Uniform.o Xlinear.o Exchange.o Metric.o Random.o Spreading.o TeamExchange.o Tether.o TetherSpreading.o TetherCounter.o -o confsim -std=${STD}
 
 Simulation.o: Simulation.cpp
 	${CC} -c Simulation.cpp -std=${STD}
@@ -77,6 +77,9 @@ Tether.o: lib/strategies/Tether.cpp lib/strategies/Tether.h
 
 TetherSpreading.o: lib/strategies/TetherSpreading.cpp lib/strategies/TetherSpreading.h
 	${CC} -c lib/strategies/TetherSpreading.cpp -std=${STD}
+
+TetherCounter.o: lib/strategies/TetherCounter.cpp lib/strategies/TetherCounter.h
+	${CC} -c lib/strategies/TetherCounter.cpp -std=${STD}
 
 clean:
 	rm *.o confsim

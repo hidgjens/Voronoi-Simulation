@@ -31,7 +31,7 @@ TeamStrategy* TeamStrategy::CreateStrat(Pitch* pitch, TeamConfigFile tcf_) {
     else if (name == "TetherSpreading")
         return_strat = new TetherSpreading(tcf_, pitch);
     else if (name == "TetherCounter")
-        return_strat = new TetherSpreading(tcf_, pitch);
+        return_strat = new TetherCounter(tcf_, pitch);
     // add more here
     else
     {

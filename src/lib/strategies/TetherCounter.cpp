@@ -1,6 +1,6 @@
 #include "TetherCounter.h"
 
-TetherCounter::TetherCounter() {}
+TetherCounter::TetherCounter() { }
 
 TetherCounter::TetherCounter(TetherCounter& t) : 
 player_count(t.player_count),
