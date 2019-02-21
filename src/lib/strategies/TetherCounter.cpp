@@ -63,62 +63,22 @@ player_count(tcf.player_count)
     // create player posts array
     player_posts = std::make_unique<Cart[]>(player_count);
 
-    int n; int m; int j{0}; // temporary indices
     double t_dx, t_dy; // temp x,y
 
-    // need to compute post positions (in units of pitch dims [-0.5, 0.5])
-    for (int i{0}; i<4; i++) { // i = 0,1,2,3 -> n = 1,3,5,7 => n = 2*i + 1
-        // map to n
-        n = 2*i + 1;
+    // player positions in units of pitchX/8 or pitchY/8
+    int xs[10] = {2,6,3,5,1,7,3,5,2,6};
+    int ys[10] = {1,1,3,3,4,4,5,5,7,7};
+        
+    for (int i{0}; i<10; i++) {
+        // convert to pitch coords
+        t_dx = xs[i]*0.125 - 0.5; t_dy = ys[i]*0.125 - 0.5;
 
-        // generate y component of position
-        t_dy = n*0.125 - 0.5;
-
-        for (int i{0}; i<2; i++) { // i = 0,1 -> m = 2,6 (if n = 1,7), m = 3,5 (if n = 3,5) 
-            // generate x components 
-            if (n == 1 || n == 7) {
-                m = 2; t_dx = m*0.125 - 0.5;
-
-                // store position
-                player_posts[j] = Cart(t_dx * pitch_data->getXdim(), t_dy * pitch_data->getYdim());
-                j++;
-
-                m = 6; t_dx = m*0.125 - 0.5;
-
-                // store position
-                player_posts[j] = Cart(t_dx * pitch_data->getXdim(), t_dy * pitch_data->getYdim());
-                j++;
-            }
-
-            if (n == 3 || n == 5) {
-                m = 3; t_dx = m*0.125 - 0.5;
-
-                // store position
-                player_posts[j] = Cart(t_dx * pitch_data->getXdim(), t_dy * pitch_data->getYdim());
-                j++;
-
-                m = 5; t_dx = m*0.125 - 0.5;
-
-                // store position
-                player_posts[j] = Cart(t_dx * pitch_data->getXdim(), t_dy * pitch_data->getYdim());
-                j++;
-            }
-        }
+        // store coordinates
+        player_posts[i] = Cart(t_dx * pitch_data->getXdim(), t_dy * pitch_data->getYdim());
     }
     
-    // and now the extra cases where n = 4
-    n = 4; t_dy = n*0.125 - 0.5;
-    for (int i{0}; i<2; i++) { // i = 0,1 -> m = 1,7 => m = 6*i + 1
-        // map i to m
-        m = 6*i + 1; t_dx = m*0.125 - 0.5;
-
-        // store position
-        player_posts[j] = Cart(t_dx * pitch_data->getXdim(), t_dy * pitch_data->getYdim());
-        j++;
-    }
-
     // free agent has a post in the centre that is ignored
-    player_posts[j] = Cart(0,0); 
+    player_posts[10] = Cart(0,0); 
 }
 
 void TetherCounter::updateTeam(Team& team, Frame frame){
