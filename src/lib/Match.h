@@ -7,6 +7,7 @@
 #include "cfg/MatchConfigFile.h"
 #include "cfg/TeamConfigFile.h"
 #include<iostream>
+#include<memory>
 #include "Team.h"
 
 class Team;

@@ -21,6 +21,8 @@ class PitchModel{
         static PitchModel* createPitchModel(std::string, MatchConfigFile);
         virtual double pitchWeight(Cart, Frame) { return 1.0; }
 
+        void compute_model_dist();
+
 };
 
 #endif
