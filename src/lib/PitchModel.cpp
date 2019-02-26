@@ -16,3 +16,7 @@ PitchModel* PitchModel::createPitchModel(std::string pm, MatchConfigFile mcf){
 
     return model;
 }
+
+void PitchModel::compute_model_dist(){
+    
+}

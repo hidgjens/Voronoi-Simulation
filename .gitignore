@@ -1,6 +1,7 @@
 *.pyo
 *.pyc
 *.o
+*.png
 *__pycache__*
 src/confsim
 
