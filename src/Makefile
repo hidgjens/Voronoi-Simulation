@@ -4,8 +4,8 @@ CFLAGS=-std=c++14
 
 # Makefile
 
-confsim: Simulation.o Cart.o Frame.o Match.o Pitch.o PitchModel.o Player.o SimManager.o Team.o TeamStrategy.o MatchConfigFile.o TeamConfigFile.o Uniform.o Xlinear.o Exchange.o Metric.o Random.o Spreading.o TeamExchange.o Tether.o TetherSpreading.o TetherCounter.o
-	${CC} Simulation.o Cart.o Frame.o Match.o Pitch.o PitchModel.o Player.o SimManager.o Team.o TeamStrategy.o MatchConfigFile.o TeamConfigFile.o Uniform.o Xlinear.o Exchange.o Metric.o Random.o Spreading.o TeamExchange.o Tether.o TetherSpreading.o TetherCounter.o -o confsim ${CFLAGS}
+confsim: Simulation.o Cart.o Frame.o Match.o Pitch.o PitchModel.o Player.o SimManager.o Team.o TeamStrategy.o MatchConfigFile.o TeamConfigFile.o Uniform.o Xlinear.o Exchange.o Metric.o Random.o Spreading.o TeamExchange.o Tether.o TetherSpreading.o TetherCounter.o Metric1.o
+	${CC} Simulation.o Cart.o Frame.o Match.o Pitch.o PitchModel.o Player.o SimManager.o Team.o TeamStrategy.o MatchConfigFile.o TeamConfigFile.o Uniform.o Xlinear.o Exchange.o Metric.o Random.o Spreading.o TeamExchange.o Tether.o TetherSpreading.o TetherCounter.o Metric1.o -o confsim ${CFLAGS}
 
 
 Simulation.o: Simulation.cpp
@@ -80,7 +80,10 @@ TetherSpreading.o: lib/strategies/TetherSpreading.cpp lib/strategies/TetherSprea
 	${CC} -c lib/strategies/TetherSpreading.cpp ${CFLAGS}
 
 TetherCounter.o: lib/strategies/TetherCounter.cpp lib/strategies/TetherCounter.h
-	${CC} -c lib/strategies/TetherCounter.cpp -std=${STD}
+	${CC} -c lib/strategies/TetherCounter.cpp ${CFLAGS}
+
+Metric1.o: lib/strategies/Metric1.cpp lib/strategies/Metric1.h
+	${CC} -c lib/strategies/Metric1.cpp ${CFLAGS}
 
 clean:
 	-rm *.o 

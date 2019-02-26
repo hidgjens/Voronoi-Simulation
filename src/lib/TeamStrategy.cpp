@@ -9,6 +9,7 @@
 #include "strategies/TeamExchange.h"
 #include "strategies/TetherSpreading.h"
 #include "strategies/TetherCounter.h"
+#include "strategies/Metric1.h"
 
 TeamStrategy* TeamStrategy::CreateStrat(Pitch* pitch, TeamConfigFile tcf_) {
 
@@ -32,6 +33,8 @@ TeamStrategy* TeamStrategy::CreateStrat(Pitch* pitch, TeamConfigFile tcf_) {
         return_strat = new TetherSpreading(tcf_, pitch);
     else if (name == "TetherCounter")
         return_strat = new TetherCounter(tcf_, pitch);
+    else if (name == "Metric1")
+        return_strat = new Metric1(tcf_, pitch);
     // add more here
     else
     {
