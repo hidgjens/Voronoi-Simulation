@@ -3,11 +3,13 @@
 
 
 Exchange::Exchange() : decay_coefficient(1) {}
-Exchange::Exchange(TeamConfigFile tcf_, Pitch* p) {
+Exchange::Exchange(TeamConfigFile tcf_, PitchModel* p) {
+    pm = p;
+    pitch_data = p->getPitchData();
     // load values from config file
     decay_coefficient = tcf_.decay_coefficient;
     min_team_distance = tcf_.min_team_dist;
-    pitch_data = p; 
+     
     
 }
 
@@ -89,6 +91,6 @@ void Exchange::exchange_method(Player* plyr, Frame& frame){
 
 double Exchange::metric(double dist, double ctrl) {
     // std::cout << "Here " << pitch_data->getXlim() << std::endl;
-    return ctrl * exp( - 1.0 * dist / (pitch_data->getPitchLength() * decay_coefficient));
+    return ctrl * exp( - 1.0 * dist / (pitch_data.getPitchLength() * decay_coefficient));
     
 }

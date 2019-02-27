@@ -17,7 +17,7 @@ class Tether: public TeamStrategy{
 
     public:
         Tether();
-        Tether(TeamConfigFile, Pitch*);
+        Tether(TeamConfigFile, PitchModel*);
 
         Tether(Tether&);
         Tether(Tether&& t) { *this = std::move(t); }

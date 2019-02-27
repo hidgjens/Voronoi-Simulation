@@ -1,21 +1,22 @@
 #include "Team.h"
 #include "TeamStrategy.h"
 #include "Pitch.h"
+#include "PitchModel.h"
 
 Team::Team() { 
     players = std::make_unique<Player[]>(11);
 
 }
 
-Team::Team(TeamConfigFile tcf_, bool home, Pitch* pitch)
+Team::Team(TeamConfigFile tcf_, bool home, PitchModel* pm, Pitch p)
 : tcf(tcf_)
 , player_count(tcf_.player_count)
 , home_team(home) {
     // create strategy
-    teamstrat = TeamStrategy::CreateStrat(pitch, tcf);
-    pitch_data = pitch;
+    teamstrat = TeamStrategy::CreateStrat(pm, tcf);
+    pitch_data = p; 
     // std::cout << &pitch_data << "\t" << &pitch << std::endl;
-    // std::cout << pitch_data->getXlim() << "\t" << pitch_data->getYlim() << "\t" << pitch_data->getPitchLength() << std::endl;
+    // std::cout << "Team " << pitch_data.getXlim() << "\t" << pitch_data.getYlim() << "\t" << pitch_data.getPitchLength() << std::endl;
     
 
     players = std::make_unique<Player[]>(player_count);
@@ -24,8 +25,9 @@ Team::Team(TeamConfigFile tcf_, bool home, Pitch* pitch)
         // create players and give random positions
         players[i] = Player(i);
         players[i].setTeamPtr(this);
-        double randx = (((double) rand() / RAND_MAX) - 0.5) * pitch_data->getXdim();
-        double randy = (((double) rand() / RAND_MAX) - 0.5) * pitch_data->getYdim();
+        double randx = (((double) rand() / RAND_MAX) - 0.5) * pitch_data.getXdim();
+        double randy = (((double) rand() / RAND_MAX) - 0.5) * pitch_data.getYdim();
+        // std::cout << randx << "\t" << randy << std::endl;
         players[i].setInitialPosition(Cart(randx, randy));
         players[i].setZeroControl();
         
@@ -106,17 +108,17 @@ void Team::normControl(double norm) {
     }
 }
 
-Pitch* Team::getPitchData() {
+Pitch Team::getPitchData() {
     return pitch_data;
 }
 
 double Team::xlim() {
     // std::cout << pitch_data->getXlim() << std::endl;
-    return pitch_data->getXlim();
+    return pitch_data.getXlim();
 }
 
 double Team::ylim() {
     // std::cout << pitch_data->getYlim() << std::endl;
 
-    return pitch_data->getYlim();
+    return pitch_data.getYlim();
 }

@@ -9,6 +9,7 @@
 #include "Cart.h"
 #include "Frame.h"
 #include "Pitch.h"
+#include "PitchGrid.h"
 #include "cfg/MatchConfigFile.h"
 #include <unordered_map>
 #include <vector>
@@ -18,11 +19,9 @@
 
 class PitchModel{
     protected:
-        double convert_x_idx_to_coord(int);
-        double convert_y_idx_to_coord(int);
+
         Pitch pitch_data;
-        Cart mean_position;
-        double dx_plus, dx_minus, dy_plus, dy_minus;
+        PitchGrid home_possession_grid, away_possession_grid;
 
     public:
         PitchModel() {}
@@ -30,6 +29,10 @@ class PitchModel{
         virtual double pitchWeight(Cart, Frame) { return 1.0; }
 
         void compute_model_dist();
+
+        PitchGrid getHomeGrid() const { return home_possession_grid; }
+        PitchGrid getAwayGrid() const { return away_possession_grid; }
+        Pitch getPitchData() { return pitch_data; }
 
 };
 

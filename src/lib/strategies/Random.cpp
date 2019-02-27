@@ -1,7 +1,7 @@
 #include "Random.h"
 
 Random::Random() { }
-Random::Random(Pitch* p) { pitch_data = p;  }
+Random::Random(PitchModel* p) { pitch_data = p->getPitchData(); pm = p; }
 
 void Random::updateTeam(Team& team, Frame frame) {
     for (int i{0}; i < team.getPlayerCount(); i++) {

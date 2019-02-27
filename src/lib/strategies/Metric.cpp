@@ -1,12 +1,13 @@
 #include "Metric.h"
 
 Metric::Metric() {}
-Metric::Metric(TeamConfigFile tcf, Pitch* p) {
+Metric::Metric(TeamConfigFile tcf, PitchModel* p) {
+    pm = p;
+    pitch_data = p->getPitchData();
     decay_coefficient = tcf.decay_coefficient;
     attract_coefficient = tcf.attract_coefficient;
     repel_coefficient = tcf.repel_coefficient; 
     min_team_distance = tcf.min_team_dist;
-    pitch_data = p; 
 
 }
 
@@ -76,6 +77,6 @@ Cart Metric::metricVector(Player* plyr, Cart src_pos, double src_control) {
     Cart unit_vector = test_plyr_pos.unitVect2(src_pos);
     double distance = test_plyr_pos.dist(src_pos);
 
-    return unit_vector * (src_control * exp( - 1.0 * distance / (decay_coefficient * pitch_data->getPitchLength())));
+    return unit_vector * (src_control * exp( - 1.0 * distance / (decay_coefficient * pitch_data.getPitchLength())));
 
 }

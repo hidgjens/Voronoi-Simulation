@@ -99,6 +99,16 @@ void TeamConfigFile::parseConfigFile(const std::unordered_map<std::string, std::
         targets_to_prioritise = std::stoi(umap.at("PriTargets"));
     else
         targets_to_prioritise = 2;
+
+    if (check_key("SigmaScale"))
+        sigma_scale = std::stod(umap.at("SigmaScale"));
+    else
+        sigma_scale = 0.75;
+
+    if (check_key("FreeAgents"))
+        free_agents = std::stoi(umap.at("FreeAgents"));
+    else
+        free_agents = 2;
       
     
 

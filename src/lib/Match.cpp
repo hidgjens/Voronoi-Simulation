@@ -24,13 +24,13 @@ away_team_control_sum(0)
     player_scatter_length = mcf.player_scatter_length;
     possession_flip_reciprocal_probability = mcf.possession_chance;
     pitch_data = Pitch(mcf.pitchX, mcf.pitchY);
-    // std::cout << pitch_data.getXlim() << "\t" << pitch_data.getYlim() << "\t" << pitch_data.getPitchLength() <<  "\t" << &pitch_data << std::endl;
+    // std::cout << "match " << pitch_data.getXlim() << "\t" << pitch_data.getYlim() << "\t" << pitch_data.getPitchLength() <<  "\t" << &pitch_data << std::endl;
 
-
-    home_team = Team(ht, true, &pitch_data);
-    away_team = Team(at, false, &pitch_data);
-    // std::cout << "Home " << home_team.xlim() << "," << home_team.ylim() << " Away " << away_team.pitchptr() << std::endl;
     weight_model = PitchModel::createPitchModel(mcf.pitchMdl, mcf);
+    home_team = Team(ht, true, weight_model, pitch_data);
+    away_team = Team(at, false, weight_model, pitch_data);
+    // std::cout << "Home " << home_team.xlim() << "," << home_team.ylim() << " Away " << away_team.pitchptr() << std::endl;
+    
     filename = "";//mcf.save_filename + ":" + ht.getConfigFileName() + ":" + at.getConfigFileName();
     total_frames = mcf.numberOfFrames; 
 
@@ -136,6 +136,7 @@ void Match::buildMatch() {
     //std::cout << "Match::buildMatch()\n"<< std::flush;
     //std::cout << "not even here\n"<< std::flush;
     // determine initial possession
+    home_possession = true;
     randomPossession();
 
     current_frame = createFrame();
@@ -163,7 +164,9 @@ void Match::startSimulation() {
     }
     
     if (store_frames) saveFullMatch();
-    saveMatchSummary(); 
+    saveMatchSummary();
+    saveHeatmap();
+    std::cout << "Match finished" << std::endl;
 }
 
 void Match::saveMatchSummary(){
@@ -454,7 +457,8 @@ Frame Match::createFrame() {
     return thisframe;
 }
 
-void Match::togglePossession() {
+void Match::togglePossession() {\
+
     home_possession = !home_possession;
     current_frame.togglePossession();
 }
@@ -464,7 +468,8 @@ void Match::randomPossession() {
 }
 void Match::tryPossessionFlip() {
     int flip = (rand()%((int) possession_flip_reciprocal_probability))+ 1 ;
-    if (flip == 1) togglePossession();
+
+    if (flip == 1) {togglePossession();}
 }
 
 double Match::avgHomeControl(){
@@ -637,4 +642,23 @@ void Match::scatterPlayers(Player* plyr1, Player* plyr2) {
     // std::cout << plyr1->isHomeTeam() << "." << plyr1->getShirtNum() << " (" << pos1.xComp() << "," << pos1.yComp() << ")\t" << plyr2->isHomeTeam() << "." << plyr2->getShirtNum() << " (" << pos2.xComp() << "," << pos2.yComp() << ")" << std::endl; 
     // std::cout << std::endl;
     
+}
+
+void Match::saveHeatmap() {
+  std::ofstream datafile;
+  datafile.open("heatmap.csv");
+
+  double weight;
+  auto f = Frame(); f.setPossession(true);
+
+
+  for (int j{0}; j < y_samples; j++) {
+    for (int i{0}; i < x_samples; i++) {
+        weight = weight_model->pitchWeight(convertIdx2Coords(i,j), f);
+
+        datafile << weight << "\t";
+    }
+    datafile << "\n";
+  }
+
 }
