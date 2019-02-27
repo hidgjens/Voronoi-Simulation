@@ -10,6 +10,10 @@
 #include "strategies/TetherSpreading.h"
 #include "strategies/TetherGrid.h"
 
+#include "strategies/TetherCounter.h"
+#include "strategies/Metric1.h"
+
+
 TeamStrategy* TeamStrategy::CreateStrat(PitchModel* pm, TeamConfigFile tcf_) {
 
     std::string name = tcf_.team_strat_raw;
@@ -32,6 +36,11 @@ TeamStrategy* TeamStrategy::CreateStrat(PitchModel* pm, TeamConfigFile tcf_) {
         return_strat = new TetherSpreading(tcf_, pm);
     else if (name == "TetherGrid")
         return_strat = new TetherGrid(tcf_, pm);
+    else if (name == "TetherCounter")
+        return_strat = new TetherCounter(tcf_, pm);
+    else if (name == "Metric1")
+        return_strat = new Metric1(tcf_, pm);
+ 
     // add more here
     else
     {
@@ -40,6 +49,5 @@ TeamStrategy* TeamStrategy::CreateStrat(PitchModel* pm, TeamConfigFile tcf_) {
     }
     
     //return_strat->setPitch(pitch);
-
     return return_strat;
 }
