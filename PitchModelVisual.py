@@ -138,11 +138,11 @@ def create_heatmap_info(model_function):
     sum_w_xsquared_above /= Zx_above ; sum_w_xsquared_below /= Zx_below
     sum_w_ysquared_above /= Zy_above ; sum_w_ysquared_below /= Zy_below
 
-    x_sigma_above : float = np.sqrt(sum_w_xsquared_above -  - (v_sum_wx ** 2 + v_sum_wy ** 2))
-    x_sigma_below : float = np.sqrt(sum_w_xsquared_below -  - (v_sum_wx ** 2 + v_sum_wy ** 2))
+    x_sigma_above : float = np.sqrt(sum_w_xsquared_above - (v_sum_wx ** 2 + v_sum_wy ** 2))
+    x_sigma_below : float = np.sqrt(sum_w_xsquared_below - (v_sum_wx ** 2 + v_sum_wy ** 2))
 
-    y_sigma_above : float = np.sqrt(sum_w_ysquared_above -  - (v_sum_wx ** 2 + v_sum_wy ** 2))
-    y_sigma_below : float = np.sqrt(sum_w_ysquared_below -  - (v_sum_wx ** 2 + v_sum_wy ** 2))
+    y_sigma_above : float = np.sqrt(sum_w_ysquared_above - (v_sum_wx ** 2 + v_sum_wy ** 2))
+    y_sigma_below : float = np.sqrt(sum_w_ysquared_below - (v_sum_wx ** 2 + v_sum_wy ** 2))
     
 
     return(heatmap, WAC, sigma, [x_sigma_above, x_sigma_below], [y_sigma_above, y_sigma_below])
