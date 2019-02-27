@@ -1,12 +1,15 @@
 #include "Metric1.h"
 
 Metric1::Metric1() {}
-Metric1::Metric1(TeamConfigFile tcf, Pitch* p) {
+Metric1::Metric1(TeamConfigFile tcf, PitchModel* p) {
     decay_coefficient = tcf.decay_coefficient;
     attract_coefficient = tcf.attract_coefficient;
     repel_coefficient = tcf.repel_coefficient; 
     min_team_distance = tcf.min_team_dist;
-    pitch_data = p; 
+    pm = p;
+    pitch_data = p->getPitchData();
+    
+
 
 }
 
@@ -95,5 +98,5 @@ Cart Metric1::Metric1Vector(Player* plyr, Cart src_pos, double src_control) {
     Cart unit_vector = test_plyr_pos.unitVect2(src_pos);
     double distance = test_plyr_pos.dist(src_pos);
 
-    return unit_vector * (src_control * exp( - 1.0 * distance / (decay_coefficient * pitch_data->getPitchLength())));
+    return unit_vector * (src_control * exp( - 1.0 * distance / (decay_coefficient * pitch_data.getPitchLength())));
 }

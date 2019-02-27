@@ -17,7 +17,7 @@ class TetherCounter: public TeamStrategy{
 
     public:
         TetherCounter();
-        TetherCounter(TeamConfigFile, Pitch*);
+        TetherCounter(TeamConfigFile, PitchModel*);
 
         TetherCounter(TetherCounter&);
         TetherCounter(TetherCounter&& t) { *this = std::move(t); }

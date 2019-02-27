@@ -9,6 +9,8 @@ decay_coefficient(t.decay_coefficient) {
     pitch_data = t.pitch_data;
     min_team_distance = t.min_team_distance;
     description = t.description; 
+    pm = t.pm;
+
 
     player_posts = std::make_unique<Cart[]>(player_count);
     for (int i{0}; i < player_count; i++) {
@@ -20,7 +22,7 @@ TetherCounter& TetherCounter::operator=(TetherCounter& t) {
     if (&t == this) {
         return *this;
     }
-
+    pm = t.pm;
     player_count = t.player_count;
     max_post_distance = t.max_post_distance;
     decay_coefficient = t.decay_coefficient;
@@ -46,6 +48,8 @@ TetherCounter& TetherCounter::operator=(TetherCounter&& t) {
     pitch_data = t.pitch_data;
     min_team_distance = t.min_team_distance;
     description = t.description;
+    pm = t.pm;
+
 
     player_posts = std::move(t.player_posts);
     t.player_count = 0;
@@ -54,11 +58,12 @@ TetherCounter& TetherCounter::operator=(TetherCounter&& t) {
     
 }
 
-TetherCounter::TetherCounter(TeamConfigFile tcf, Pitch* p) : 
+TetherCounter::TetherCounter(TeamConfigFile tcf, PitchModel* p) : 
 decay_coefficient(tcf.decay_coefficient),
 player_count(tcf.player_count)
 {
-    pitch_data = p;
+    pm = p;
+    pitch_data = p->getPitchData();
     
     // create player posts array
     player_posts = std::make_unique<Cart[]>(player_count);
@@ -74,7 +79,7 @@ player_count(tcf.player_count)
         t_dx = xs[i]*0.125 - 0.5; t_dy = ys[i]*0.125 - 0.5;
 
         // store coordinates
-        player_posts[i] = Cart(t_dx * pitch_data->getXdim(), t_dy * pitch_data->getYdim());
+        player_posts[i] = Cart(t_dx * pitch_data.getXdim(), t_dy * pitch_data.getYdim());
     }
     
     // free agent has a post in the centre that is ignored
@@ -163,6 +168,6 @@ void TetherCounter::exchange_method(Player* plyr, Frame& frame){
 
 double TetherCounter::metric(double dist, double ctrl) {
     // std::cout << "Here " << pitch_data->getXlim() << std::endl;
-    return ctrl * exp( - 1.0 * dist / (pitch_data->getPitchLength() * decay_coefficient));
+    return ctrl * exp( - 1.0 * dist / (pitch_data.getPitchLength() * decay_coefficient));
     
 }
