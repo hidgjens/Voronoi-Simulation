@@ -1,8 +1,9 @@
 #include "TeamExchange.h"
 
 TeamExchange::TeamExchange() {}
-TeamExchange::TeamExchange(TeamConfigFile tcf, Pitch* p) {
-    pitch_data = p;
+TeamExchange::TeamExchange(TeamConfigFile tcf, PitchModel* p) {
+    pm = p;
+    pitch_data = p->getPitchData();
     targets_to_prioritise = tcf.targets_to_prioritise;
     min_team_distance = tcf.min_team_dist;
 }

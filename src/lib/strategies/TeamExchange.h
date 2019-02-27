@@ -11,7 +11,7 @@ class TeamExchange: public TeamStrategy{
 
     public:
         TeamExchange();
-        TeamExchange(TeamConfigFile, Pitch*);
+        TeamExchange(TeamConfigFile, PitchModel*);
 
         void updateTeam(Team&, Frame);
 

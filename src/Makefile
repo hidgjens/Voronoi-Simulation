@@ -4,9 +4,8 @@ CFLAGS=-std=c++14
 
 # Makefile
 
-confsim: Simulation.o Cart.o Frame.o Match.o Pitch.o PitchModel.o Player.o SimManager.o Team.o TeamStrategy.o MatchConfigFile.o TeamConfigFile.o Uniform.o Xlinear.o Exchange.o Metric.o Random.o Spreading.o TeamExchange.o Tether.o TetherSpreading.o TetherCounter.o Metric1.o
-	${CC} Simulation.o Cart.o Frame.o Match.o Pitch.o PitchModel.o Player.o SimManager.o Team.o TeamStrategy.o MatchConfigFile.o TeamConfigFile.o Uniform.o Xlinear.o Exchange.o Metric.o Random.o Spreading.o TeamExchange.o Tether.o TetherSpreading.o TetherCounter.o Metric1.o -o confsim ${CFLAGS}
-
+confsim: Simulation.o Cart.o Frame.o Match.o Pitch.o PitchModel.o PitchGrid.o Player.o SimManager.o Team.o TeamStrategy.o MatchConfigFile.o TeamConfigFile.o Uniform.o Xlinear.o XlinYquad.o Exchange.o Metric.o Random.o Spreading.o TeamExchange.o Tether.o TetherSpreading.o TetherGrid.o TetherCounter.o Metric1.o
+	${CC} Simulation.o Cart.o Frame.o Match.o Pitch.o PitchModel.o PitchGrid.o Player.o SimManager.o Team.o TeamStrategy.o MatchConfigFile.o TeamConfigFile.o Uniform.o Xlinear.o XlinYquad.o Exchange.o Metric.o Random.o Spreading.o TeamExchange.o Tether.o TetherSpreading.o TetherGrid.o TetherCounter.o Metric1.o -o confsim ${CFLAGS}
 
 Simulation.o: Simulation.cpp
 	${CC} -c Simulation.cpp ${CFLAGS}
@@ -27,6 +26,9 @@ Pitch.o: lib/Pitch.cpp lib/Pitch.h
 
 PitchModel.o: lib/PitchModel.cpp lib/PitchModel.h
 	${CC} -c lib/PitchModel.cpp ${CFLAGS}
+
+PitchGrid.o: lib/PitchGrid.cpp lib/PitchGrid.h
+	${CC} -c lib/PitchGrid.cpp ${CFLAGS}
 
 Player.o: lib/Player.cpp lib/Player.o
 	${CC} -c lib/Player.cpp ${CFLAGS}
@@ -56,6 +58,9 @@ Uniform.o: lib/models/Uniform.cpp lib/models/Uniform.h
 Xlinear.o: lib/models/Xlinear.cpp lib/models/Xlinear.h
 	${CC} -c lib/models/Xlinear.cpp ${CFLAGS}
 
+XlinYquad.o: lib/models/XlinYquad.cpp lib/models/XlinYquad.h
+	${CC} -c lib/models/XlinYquad.cpp ${CFLAGS}
+
 # lib/strategies
 
 Exchange.o: lib/strategies/Exchange.cpp lib/strategies/Exchange.h
@@ -78,6 +83,9 @@ Tether.o: lib/strategies/Tether.cpp lib/strategies/Tether.h
 
 TetherSpreading.o: lib/strategies/TetherSpreading.cpp lib/strategies/TetherSpreading.h
 	${CC} -c lib/strategies/TetherSpreading.cpp ${CFLAGS}
+
+TetherGrid.o: lib/strategies/TetherGrid.cpp lib/strategies/TetherGrid.h
+	${CC} -c lib/strategies/TetherGrid.cpp ${CFLAGS}
 
 TetherCounter.o: lib/strategies/TetherCounter.cpp lib/strategies/TetherCounter.h
 	${CC} -c lib/strategies/TetherCounter.cpp ${CFLAGS}

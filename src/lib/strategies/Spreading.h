@@ -18,7 +18,7 @@ class Spreading: public TeamStrategy{
 
     public:
         Spreading();
-        Spreading(TeamConfigFile, Pitch*);
+        Spreading(TeamConfigFile, PitchModel*);
 
         void updateTeam(Team&, Frame);
 

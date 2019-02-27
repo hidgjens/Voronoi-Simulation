@@ -72,6 +72,16 @@ void MatchConfigFile::parseConfigFile(const std::unordered_map<std::string, std:
     else
         x_max = 1.0;
 
+    if (check_key("ymin"))
+        y_min = std::stod(umap.at("ymin"));
+    else
+        y_min = 0.5;
+
+    if (check_key("ymax"))
+        y_max = std::stod(umap.at("ymax"));
+    else
+        y_max = 1.0;
+
     // NumberOfFrames
     if (check_key("NumberOfFrames"))
         numberOfFrames = std::stoi(umap.at("NumberOfFrames"));

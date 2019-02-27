@@ -12,6 +12,8 @@ class Match;
 
 class TeamStrategy;
 
+class PitchModel;
+
 class Team{
     private:
         bool home_team;
@@ -22,12 +24,12 @@ class Team{
 
         TeamConfigFile tcf;
 
-        Pitch* pitch_data;
+        Pitch pitch_data;
 
 
     public:
         Team();
-        Team(TeamConfigFile, bool, Pitch*);
+        Team(TeamConfigFile, bool, PitchModel*, Pitch);
         
         Team(Team&);
         Team(Team&& team) { *this = std::move(team); for (int i{0}; i < player_count; i++) players[i].setTeamPtr(this); }
@@ -48,12 +50,12 @@ class Team{
         double getControl(int);
         void normControl(double);
 
-        Pitch* getPitchData();
+        Pitch getPitchData();
         double xlim();
         double ylim();
 
         Pitch* pitchptr() {
-            return pitch_data;
+            return &pitch_data;
         }
         
 

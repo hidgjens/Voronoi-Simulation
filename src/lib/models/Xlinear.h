@@ -7,7 +7,6 @@
 class Xlinear: public PitchModel {
     private:
         double x_min, x_max;
-        Pitch pitch_data;
 
     public:
         Xlinear();
