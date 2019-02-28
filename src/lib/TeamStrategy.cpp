@@ -9,7 +9,7 @@
 #include "strategies/TeamExchange.h"
 #include "strategies/TetherSpreading.h"
 #include "strategies/TetherGrid.h"
-
+#include "strategies/MetricN.h"
 #include "strategies/TetherCounter.h"
 #include "strategies/Metric1.h"
 
@@ -40,7 +40,9 @@ TeamStrategy* TeamStrategy::CreateStrat(PitchModel* pm, TeamConfigFile tcf_) {
         return_strat = new TetherCounter(tcf_, pm);
     else if (name == "Metric1")
         return_strat = new Metric1(tcf_, pm);
- 
+    else if (name == "MetricN")
+        return_strat = new MetricN(tcf_, pm);
+            
     // add more here
     else
     {

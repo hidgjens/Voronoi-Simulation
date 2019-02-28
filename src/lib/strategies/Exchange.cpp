@@ -9,7 +9,6 @@ Exchange::Exchange(TeamConfigFile tcf_, PitchModel* p) {
     // load values from config file
     decay_coefficient = tcf_.decay_coefficient;
     min_team_distance = tcf_.min_team_dist;
-     
     
 }
 

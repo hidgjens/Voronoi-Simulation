@@ -5,7 +5,6 @@
 
 Team::Team() { 
     players = std::make_unique<Player[]>(11);
-
 }
 
 Team::Team(TeamConfigFile tcf_, bool home, PitchModel* pm, Pitch p)
@@ -14,7 +13,7 @@ Team::Team(TeamConfigFile tcf_, bool home, PitchModel* pm, Pitch p)
 , home_team(home) {
     // create strategy
     teamstrat = TeamStrategy::CreateStrat(pm, tcf);
-    pitch_data = p; 
+    pitch_data = p;
     // std::cout << &pitch_data << "\t" << &pitch << std::endl;
     // std::cout << "Team " << pitch_data.getXlim() << "\t" << pitch_data.getYlim() << "\t" << pitch_data.getPitchLength() << std::endl;
     

@@ -1,4 +1,5 @@
 #include "Pitch.h"
+#include <iostream>
 
 Pitch::Pitch() {}
 Pitch::Pitch(double x, double y) : x_dim(x), y_dim(y) {
