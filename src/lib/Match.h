@@ -7,6 +7,7 @@
 #include "cfg/MatchConfigFile.h"
 #include "cfg/TeamConfigFile.h"
 #include<iostream>
+#include<memory>
 #include "Team.h"
 
 class Team;
@@ -22,6 +23,7 @@ class Match {
 
 
         PitchModel* weight_model;
+        Pitch pitch_data;
 
         std::string filename;
         int matchID;
@@ -51,7 +53,7 @@ class Match {
         Team home_team;
         Team away_team;
         
-        Pitch pitch_data;
+        
 
         // constructors
         Match();
@@ -70,6 +72,7 @@ class Match {
         void startSimulation();
         void saveFullMatch();
         void saveMatchSummary();
+        void saveHeatmap();
 
         void togglePossession();
         void randomPossession();

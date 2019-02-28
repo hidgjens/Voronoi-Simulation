@@ -10,6 +10,7 @@
 #include "Frame.h"
 #include "Player.h"
 #include "Team.h"
+#include "PitchModel.h"
 #include "cfg/TeamConfigFile.h"
 #include<iostream>
 
@@ -17,20 +18,21 @@
 class TeamStrategy{
     
     protected:
-        Pitch* pitch_data;
+        Pitch pitch_data;
+        PitchModel* pm;
         std::string description;
         double min_team_distance; // in units of step_size
 
     public:
         TeamStrategy(){}
-        TeamStrategy(Pitch* pitch) : pitch_data(pitch) {}
+        TeamStrategy(Pitch pitch) : pitch_data(pitch) {}
 
-        static TeamStrategy* CreateStrat(Pitch*, TeamConfigFile);
+        static TeamStrategy* CreateStrat(PitchModel*, TeamConfigFile);
 
         void setDescription(std::string s) { description = s; }
         std::string getDescription() const { return description; }
 
-        void setPitch(Pitch* pitch) { pitch_data = pitch; }
+        void setPitch(Pitch pitch) { pitch_data = pitch; }
 
         virtual void updateTeam(Team&, Frame) {}
 

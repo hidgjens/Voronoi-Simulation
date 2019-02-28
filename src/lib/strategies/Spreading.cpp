@@ -3,13 +3,14 @@
 #include <algorithm> // std::sort
 
 Spreading::Spreading() {}
-Spreading::Spreading(TeamConfigFile tcf, Pitch* p) {
+Spreading::Spreading(TeamConfigFile tcf, PitchModel* p) {
+    pm = p;
+    pitch_data = p->getPitchData();
     players_to_consider = tcf.players_to_consider;
     samples_to_run = tcf.maxi_samples;
     edge_coefficient = tcf.edge_coefficient;
     ally_coefficient = tcf.ally_coefficient;
     min_team_distance = tcf.min_team_dist;
-    pitch_data = p;
 
 }
 
@@ -150,7 +151,7 @@ void Spreading::spreadingMethod(Player* plyr, Frame frame) {
         test_pos = plyr_pos + Cart(dx, dy);
 
         // check if position is allowed
-        if (fabs(test_pos.xComp()) > pitch_data->getXlim() || fabs(test_pos.yComp()) > pitch_data->getYlim()){
+        if (fabs(test_pos.xComp()) > pitch_data.getXlim() || fabs(test_pos.yComp()) > pitch_data.getYlim()){
             // out of range
             continue;
         }
@@ -172,10 +173,10 @@ void Spreading::spreadingMethod(Player* plyr, Frame frame) {
 }
 
 double Spreading::distanceToXedge(Cart pos) {
-    return pitch_data->getXlim() - fabs(pos.xComp());
+    return pitch_data.getXlim() - fabs(pos.xComp());
 }
 double Spreading::distanceToYedge(Cart pos) {
-    return pitch_data->getYlim() - fabs(pos.yComp());
+    return pitch_data.getYlim() - fabs(pos.yComp());
 }
 
 Cart Spreading::XedgePosition(Cart pos) {
@@ -183,10 +184,10 @@ Cart Spreading::XedgePosition(Cart pos) {
 
     if (pos.xComp() >= 0) {
         // positive x quadrant
-        x_edge_pos = Cart(pitch_data->getXlim(), pos.yComp());
+        x_edge_pos = Cart(pitch_data.getXlim(), pos.yComp());
     } else {
         // negative x quadrant
-        x_edge_pos = Cart( -1.0 * pitch_data->getXlim(), pos.yComp());
+        x_edge_pos = Cart( -1.0 * pitch_data.getXlim(), pos.yComp());
     }
 
     return x_edge_pos;
@@ -197,10 +198,10 @@ Cart Spreading::YedgePosition(Cart pos) {
 
     if (pos.yComp() >= 0) {
         // positive y quadrant
-        y_edge_pos = Cart(pos.xComp(), pitch_data->getYlim());
+        y_edge_pos = Cart(pos.xComp(), pitch_data.getYlim());
     } else {
         // negative y quadrant
-        y_edge_pos = Cart(pos.xComp(), -1.0 * pitch_data->getYlim());
+        y_edge_pos = Cart(pos.xComp(), -1.0 * pitch_data.getYlim());
     }
 
     return y_edge_pos;

@@ -33,7 +33,8 @@ public:
     double pitchY;
 
     std::string pitchMdl;
-    double x_min, x_max; // min max for linear x model
+    double x_min, x_max; // min max for linear x model]
+    double y_min, y_max;
 
     // raw parameters, incase we missed anything here
     std::unordered_map<std::string, std::string> raw_parameters;

@@ -178,6 +178,41 @@ double Frame::getNearestOpponentDist(bool hometeam, Cart pos) {
     return nearestpos.dist(pos);
 }
 
+double Frame::getNearestOpponentCtrl(bool hometeam, Cart pos) {
+    double mindist = -10.0, temp_dist;
+    double closest_control; Cart temp_pos;
+
+    for (int i{0}; i < getOpponentCount(hometeam); i++) {
+        temp_pos = getOpponentPosition(hometeam, i);
+        temp_dist = temp_pos.dist(pos);
+
+        if (temp_dist < mindist || mindist < 0) {
+            mindist = temp_dist;
+            closest_control = getOpponentControl(hometeam, i);
+        }
+    }
+
+    return closest_control;
+}
+
+int Frame::getNearestOpponentShirtNum(bool hometeam, Cart pos) {
+    double mindist = -10.0, temp_dist;
+    int closest_sn; Cart temp_pos;
+
+    for (int i{0}; i < getOpponentCount(hometeam); i++) {
+        temp_pos = getOpponentPosition(hometeam, i);
+        temp_dist = temp_pos.dist(pos);
+
+        if (temp_dist < mindist || mindist < 0) {
+            mindist = temp_dist;
+            closest_sn = i;
+        }
+    }
+
+    return closest_sn;
+}
+
+
 Cart Frame::getNearestAllyPos(bool hometeam, Player* plyr) {
     Cart pos = plyr->getPosition();
     int shirt_num = plyr->getShirtNum();
@@ -206,6 +241,54 @@ double Frame::getNearestAllyDist(bool hometeam, Player* plyr) {
     Cart nearestpos = getNearestAllyPos(hometeam, plyr);
     Cart pos = plyr->getPosition();
     return nearestpos.dist(pos);  
+}
+
+double Frame::getNearestAllyCtrl(bool hometeam, Player* plyr){
+    Cart pos = plyr->getPosition();
+    int shirt_num = plyr->getShirtNum();
+
+    double mindist = -10.0, temp_dist;
+    double closest_control; Cart temp_pos;
+
+    for (int i{0}; i < getAlliedCount(hometeam); i++) {
+        if (i != shirt_num){
+            // dont want to include the same player
+            temp_pos = getAlliedPosition(hometeam, i);
+            temp_dist = temp_pos.dist(pos);
+
+            if (temp_dist < mindist || mindist < 0) {
+                mindist = temp_dist;
+                closest_control = getAlliedControl(hometeam, i);
+            }
+        }
+        
+    }
+
+    return closest_control;
+}
+
+int Frame::getNearestAllyShirtNum(bool hometeam, Player* plyr) {
+    Cart pos = plyr->getPosition();
+    int shirt_num = plyr->getShirtNum();
+
+    double mindist = -10.0, temp_dist;
+    int closest_sn; Cart temp_pos;
+
+    for (int i{0}; i < getAlliedCount(hometeam); i++) {
+        if (i != shirt_num){
+            // dont want to include the same player
+            temp_pos = getAlliedPosition(hometeam, i);
+            temp_dist = temp_pos.dist(pos);
+
+            if (temp_dist < mindist || mindist < 0) {
+                mindist = temp_dist;
+                closest_sn = i;
+            }
+        }
+        
+    }
+
+    return closest_sn;    
 }
 
 double Frame::getHomeTeamControl() {

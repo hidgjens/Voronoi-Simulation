@@ -36,6 +36,9 @@ public:
     int maxi_samples;
     // tether
     double max_post_distance;
+    int free_agents;
+    // grid
+    double sigma_scale;
     // TeamExchange
     int targets_to_prioritise;
 

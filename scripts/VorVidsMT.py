@@ -35,7 +35,7 @@ def MakeBatches(df):
     
     # split remainders between batches
     for i in range(remainder):
-        print(batches[i])
+        # print(batches[i])
         frame = frames - (i+1)
         batches[i].append(frame)
 

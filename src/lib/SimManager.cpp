@@ -46,6 +46,7 @@ void SimManager::start(std::string filename) {
     match.setMatchID(i);
     //std::cout << "starting\n";
     match.startSimulation();
+    // std::cout << "end of for loop " << i << "/" << samples + start_num << std::endl;
   }
   // finish time
   auto t_fin = std::chrono::high_resolution_clock::now();

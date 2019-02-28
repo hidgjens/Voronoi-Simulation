@@ -24,7 +24,7 @@ class TetherSpreading: public TeamStrategy{
 
     public:
         TetherSpreading();
-        TetherSpreading(TeamConfigFile, Pitch*);
+        TetherSpreading(TeamConfigFile, PitchModel*);
 
         TetherSpreading(TetherSpreading&);
         TetherSpreading(TetherSpreading&& t) { *this = std::move(t); }

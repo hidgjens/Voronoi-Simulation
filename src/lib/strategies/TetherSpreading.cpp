@@ -10,6 +10,7 @@ max_post_distance(t.max_post_distance) {
     pitch_data = t.pitch_data;
     min_team_distance = t.min_team_distance;
     description = t.description;
+    pm = t.pm;
 
     player_posts = std::make_unique<Cart[]>(player_count);
     for (int i{0}; i < player_count; i++) {
@@ -22,6 +23,7 @@ TetherSpreading& TetherSpreading::operator=(TetherSpreading& t) {
         return *this;
     }
 
+    pm = t.pm;
     player_count = t.player_count;
     max_post_distance = t.max_post_distance;
     pitch_data = t.pitch_data;
@@ -44,6 +46,7 @@ TetherSpreading& TetherSpreading::operator=(TetherSpreading&& t) {
     if (&t == this) {
         return *this;
     }
+    pm = t.pm;
     player_count = t.player_count;
     max_post_distance = t.max_post_distance;
     pitch_data = t.pitch_data;
@@ -62,7 +65,7 @@ TetherSpreading& TetherSpreading::operator=(TetherSpreading&& t) {
     
 }
 
-TetherSpreading::TetherSpreading(TeamConfigFile tcf, Pitch* p) :  
+TetherSpreading::TetherSpreading(TeamConfigFile tcf, PitchModel* p) :  
 player_count(tcf.player_count)
 {
     players_to_consider = tcf.players_to_consider;
@@ -70,7 +73,8 @@ player_count(tcf.player_count)
     edge_coefficient = tcf.edge_coefficient;
     ally_coefficient = tcf.ally_coefficient;
     min_team_distance = tcf.min_team_dist;
-    pitch_data = p;
+    pm = p;
+    pitch_data = p->getPitchData();
     
     // create player posts array
     player_posts = std::make_unique<Cart[]>(player_count);
@@ -88,7 +92,7 @@ player_count(tcf.player_count)
         t_dx = n * 0.125 - 0.5; t_dy = 0.25 - 0.5; // use -0.5 to map [0, 1] to [-0.5, 0.5]
 
         // store
-        player_posts[i] = Cart(t_dx * pitch_data->getXdim(), t_dy * pitch_data->getYdim());
+        player_posts[i] = Cart(t_dx * pitch_data.getXdim(), t_dy * pitch_data.getYdim());
 
     }
     // middle row
@@ -100,7 +104,7 @@ player_count(tcf.player_count)
         t_dx = n * 0.125 - 0.5; t_dy = 0.5 - 0.5;
 
         // store
-        player_posts[i] = Cart(t_dx * pitch_data->getXdim(), t_dy * pitch_data->getYdim());
+        player_posts[i] = Cart(t_dx * pitch_data.getXdim(), t_dy * pitch_data.getYdim());
     }
     // top row
     for (int i{7}; i < 11; i++) { // i = 7,8,9,10 -> n = 1,3,5,7    =>    n = 2*(i - 7) + 1
@@ -111,7 +115,7 @@ player_count(tcf.player_count)
         t_dx = n * 0.125 - 0.5; t_dy = 0.75 - 0.5;
 
         // store 
-        player_posts[i] = Cart(t_dx * pitch_data->getXdim(), t_dy * pitch_data->getYdim());
+        player_posts[i] = Cart(t_dx * pitch_data.getXdim(), t_dy * pitch_data.getYdim());
     }
 }
 
@@ -275,7 +279,7 @@ void TetherSpreading::spreadingMethod(Player* plyr, Frame frame) {
         test_pos = plyr_pos + Cart(dx, dy);
 
         // check if position is allowed
-        if (fabs(test_pos.xComp()) > pitch_data->getXlim() || fabs(test_pos.yComp()) > pitch_data->getYlim()){
+        if (fabs(test_pos.xComp()) > pitch_data.getXlim() || fabs(test_pos.yComp()) > pitch_data.getYlim()){
             // out of range
             continue;
         }
@@ -297,10 +301,10 @@ void TetherSpreading::spreadingMethod(Player* plyr, Frame frame) {
 }
 
 double TetherSpreading::distanceToXedge(Cart pos) {
-    return pitch_data->getXlim() - fabs(pos.xComp());
+    return pitch_data.getXlim() - fabs(pos.xComp());
 }
 double TetherSpreading::distanceToYedge(Cart pos) {
-    return pitch_data->getYlim() - fabs(pos.yComp());
+    return pitch_data.getYlim() - fabs(pos.yComp());
 }
 
 Cart TetherSpreading::XedgePosition(Cart pos) {
@@ -308,10 +312,10 @@ Cart TetherSpreading::XedgePosition(Cart pos) {
 
     if (pos.xComp() >= 0) {
         // positive x quadrant
-        x_edge_pos = Cart(pitch_data->getXlim(), pos.yComp());
+        x_edge_pos = Cart(pitch_data.getXlim(), pos.yComp());
     } else {
         // negative x quadrant
-        x_edge_pos = Cart( -1.0 * pitch_data->getXlim(), pos.yComp());
+        x_edge_pos = Cart( -1.0 * pitch_data.getXlim(), pos.yComp());
     }
 
     return x_edge_pos;
@@ -322,10 +326,10 @@ Cart TetherSpreading::YedgePosition(Cart pos) {
 
     if (pos.yComp() >= 0) {
         // positive y quadrant
-        y_edge_pos = Cart(pos.xComp(), pitch_data->getYlim());
+        y_edge_pos = Cart(pos.xComp(), pitch_data.getYlim());
     } else {
         // negative y quadrant
-        y_edge_pos = Cart(pos.xComp(), -1.0 * pitch_data->getYlim());
+        y_edge_pos = Cart(pos.xComp(), -1.0 * pitch_data.getYlim());
     }
 
     return y_edge_pos;
