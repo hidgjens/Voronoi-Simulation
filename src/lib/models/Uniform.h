@@ -6,7 +6,11 @@
 class Uniform: public PitchModel{
     public:
         Uniform();
+        Uniform(Pitch, MatchConfigFile);
+        
         double pitchWeight(Cart, Frame);
+
+
 };
 
 #endif

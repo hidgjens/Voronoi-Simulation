@@ -12,7 +12,7 @@ PitchModel* PitchModel::createPitchModel(std::string pm, MatchConfigFile mcf){
 
 
     if (pm == "Uniform") {
-        model = new Uniform();
+        model = new Uniform(pitch_data, mcf);
     } else if (pm == "Xlinear"){
         model = new Xlinear(pitch_data, mcf);
     } else if (pm == "XlinYquad") {

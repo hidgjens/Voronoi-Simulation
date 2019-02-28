@@ -8,7 +8,6 @@ Metric::Metric(TeamConfigFile tcf, PitchModel* p) {
     attract_coefficient = tcf.attract_coefficient;
     repel_coefficient = tcf.repel_coefficient; 
     min_team_distance = tcf.min_team_dist;
-
 }
 
 void Metric::updateTeam(Team& team, Frame frame) {

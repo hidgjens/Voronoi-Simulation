@@ -27,6 +27,7 @@ away_team_control_sum(0)
     // std::cout << "match " << pitch_data.getXlim() << "\t" << pitch_data.getYlim() << "\t" << pitch_data.getPitchLength() <<  "\t" << &pitch_data << std::endl;
 
     weight_model = PitchModel::createPitchModel(mcf.pitchMdl, mcf);
+
     home_team = Team(ht, true, weight_model, pitch_data);
     away_team = Team(at, false, weight_model, pitch_data);
     // std::cout << "Home " << home_team.xlim() << "," << home_team.ylim() << " Away " << away_team.pitchptr() << std::endl;
