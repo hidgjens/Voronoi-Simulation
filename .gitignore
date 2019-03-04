@@ -3,6 +3,7 @@
 *.o
 *.png
 *.csv
+*.mp4
 *__pycache__*
 src/confsim
 

@@ -66,7 +66,9 @@ def main():
 
     fig, ax = plt.subplots()
 
-    for i in range(2000):
+    steps = 100000
+
+    for i in range(steps):
         #print('Restore ', restoring_displacement(old_R), "\n", np.multiply(np.divide(player.position, player.getR()), -1.0 * restoring_displacement(old_R)))
         rw = random_walk()
         if not old_R == 0:
@@ -117,8 +119,12 @@ def main():
         ax.set_aspect('equal')
         fig.savefig('elastic/%06d.png' % (i))
         ax.clear()
+        ax.set_aspect('auto')
+
 
     plt.plot(Is, Rs)
+    plt.xlim(0, steps)
+    plt.ylim(0, R)
     plt.xlabel('Steps')
     plt.ylabel('Distance from post')
     plt.savefig('elastic_tether.png')
