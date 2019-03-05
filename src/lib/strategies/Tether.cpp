@@ -58,7 +58,8 @@ Tether& Tether::operator=(Tether&& t) {
 
 Tether::Tether(TeamConfigFile tcf, PitchModel* p) : 
 decay_coefficient(tcf.decay_coefficient),
-player_count(tcf.player_count)
+player_count(tcf.player_count),
+max_post_distance(tcf.max_post_distance)
 {
     pm = p;
     pitch_data = p->getPitchData();
