@@ -66,7 +66,13 @@ max_post_distance(tcf.max_post_distance)
 {
     pm = p;
     pitch_data = p->getPitchData();
+    //std::cout << "max_post " << max_post_distance << std::endl;
+    if (max_post_distance < 1.0) {
+        max_post_distance = 1.0; // prevent divide by zero error, pitch is discretised to 1m^2 anyway
+    }
     spring_constant = 2.5 / max_post_distance;
+    //std::cout << "spring " << spring_constant << std::endl;
+
     
     // create player posts array
     player_posts = std::make_unique<Cart[]>(player_count);
@@ -123,8 +129,22 @@ void TetherElastic::updateTeam(Team& team, Frame frame){
         ///////// Check distance to post
         auto post = player_posts[i];
         auto dist2post = post.dist(player_position);
-        auto unit_vect_to_post = player_position.unitVect2(post); // unit vector towards post
-        plyr->changePositionBy(unit_vect_to_post * KR(dist2post));
+        if (dist2post != 0.0){
+            //std::cout << "TetherElasticUpdate" << std::endl;
+            //std::cout << "Dist2Post " << dist2post << std::endl;
+
+            auto unit_vect_to_post = player_position.unitVect2(post); // unit vector towards post
+            //unit_vect_to_post.print();
+
+            auto kr = KR(dist2post);
+            //std::cout << "KR " << kr << std::endl;
+
+            auto dPos = unit_vect_to_post * kr;
+            //dPos.print();
+
+            plyr->changePositionBy(dPos);
+        }
+        
         ////////
 
 
