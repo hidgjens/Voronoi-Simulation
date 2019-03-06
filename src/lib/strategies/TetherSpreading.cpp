@@ -66,7 +66,8 @@ TetherSpreading& TetherSpreading::operator=(TetherSpreading&& t) {
 }
 
 TetherSpreading::TetherSpreading(TeamConfigFile tcf, PitchModel* p) :  
-player_count(tcf.player_count)
+player_count(tcf.player_count),
+max_post_distance(tcf.max_post_distance)
 {
     players_to_consider = tcf.players_to_consider;
     samples_to_run = tcf.maxi_samples;
