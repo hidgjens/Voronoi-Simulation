@@ -75,7 +75,8 @@ TetherGrid::TetherGrid(TeamConfigFile tcf, PitchModel* p) :
 decay_coefficient(tcf.decay_coefficient),
 player_count(tcf.player_count),
 free_agents(tcf.free_agents),
-sigma_scale(tcf.sigma_scale)
+sigma_scale(tcf.sigma_scale),
+max_post_distance(tcf.max_post_distance)
 {
 
     pm = p;
