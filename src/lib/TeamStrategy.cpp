@@ -12,6 +12,7 @@
 #include "strategies/MetricN.h"
 #include "strategies/TetherCounter.h"
 #include "strategies/Metric1.h"
+#include "strategies/Metric3.h"
 #include "strategies/TetherElastic.h"
 
 
@@ -43,9 +44,10 @@ TeamStrategy* TeamStrategy::CreateStrat(PitchModel* pm, TeamConfigFile tcf_) {
         return_strat = new Metric1(tcf_, pm);
     else if (name == "MetricN")
         return_strat = new MetricN(tcf_, pm);
+    else if (name == "Metric3")
+        return_strat = new Metric3(tcf_, pm);        
     else if (name == "TetherElastic")
         return_strat = new TetherElastic(tcf_, pm);
-            
     // add more here
     else
     {
