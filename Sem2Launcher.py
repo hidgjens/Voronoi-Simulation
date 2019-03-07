@@ -19,6 +19,9 @@ elif socket.gethostname() == 'ptcone30':
 elif socket.gethostname() == 'lah-ubuntu':
     print('Lewis is using his Ubuntu partition. We have 10 threads (he wants to use it too)\n')
     PROCESSES = 10
+elif socket.gethostname() == 'brendleberry-desktop':
+    print('brendleberry-desktop: bentleywurst\'s ubuntu partition, 12 cores for the bois\n')
+    PROCESSES = 12
 else:
     print('Unknown territory: %s. Playing it safe with %i threads, edit DEFAULT_PROCESSES in %s to change this behaviour' % (socket.gethostname(), DEFAULT_PROCESSES, sys.argv[0]))
 
@@ -73,7 +76,7 @@ def time_series(strat):
 
 def voronois(strat, vid_num):
     process_dict = {
-    'cmd' : ['python3.6', 'scripts/VorVidsMT.py', strat, date_str, str(vid_num)],
+    'cmd' : ['python3.6', 'scripts/VoronoiAnimation.py', '%s.%s' % (date_str, strat), str(vid_num)],
 
     'task-name' : 'Voronois %s' % strat
     }

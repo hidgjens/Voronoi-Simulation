@@ -55,9 +55,12 @@ def VaryParameter(run_name:str, config_file:str, parameter:str , min_pwr:float, 
     steps = [(min_pwr + n*step_size) for n in range(N)]
     # want values such that min_pwr < log10(x) < max_pwr
     vals = np.power(10.0 * np.ones(N), steps)
+    
+    #vals = list(range(int(min_pwr), int(max_pwr)+1))
+    #steps = vals
 
     # loop over each value of the parameter
-    for x in vals:
+    for x, i in enumerate(vals):
         # get date of run
         date: str = '%s' % datetime.now().strftime('%d.%m')
         filename = '%s.%s' % (date, run_name)
@@ -81,7 +84,7 @@ def VaryParameter(run_name:str, config_file:str, parameter:str , min_pwr:float, 
     # plot errorbar plot using mean and stdev
     means, stdevs = zip(*results)
     means = [float(m) for m in means]
-    stdevs = [float(s) for s in stdevs]
+    stdevs = [float(s)/np.sqrt(num_matches) for s in stdevs]
     steps = [float(s) for s in steps]
     PlotErrorBar(steps, means, stdevs, parameter, filename)
 
@@ -120,7 +123,7 @@ if __name__ == '__main__':
         min_pwr = float(sys.argv[4])
         max_pwr = float(sys.argv[5])
         N = int(sys.argv[6])
-        num_matches = sys.argv[7]
+        num_matches = int(sys.argv[7])
     else:
         print('''
     %s - Plots spatial control of a strategy with respect to a changing parameter.
