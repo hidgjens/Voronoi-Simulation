@@ -76,7 +76,7 @@ def time_series(strat):
 
 def voronois(strat, vid_num):
     process_dict = {
-    'cmd' : ['python3.6', 'scripts/VorVidsMT.py', strat, date_str, str(vid_num)],
+    'cmd' : ['python3.6', 'scripts/VoronoiAnimation.py', '%s.%s' % (date_str, strat), str(vid_num)],
 
     'task-name' : 'Voronois %s' % strat
     }

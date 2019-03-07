@@ -6,10 +6,10 @@ import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import sys
 import time
+from multiprocessing import Process
 from matplotlib import animation
 from os.path import exists
 from os import makedirs, listdir
-from tqdm import tqdm
 from scipy.spatial import Voronoi, voronoi_plot_2d
 
 
@@ -142,7 +142,7 @@ def UpdateFrame(df, matchnum, framenum, filename):
         # write spatial control (in %) of each player near them
         plt.text(pos_array[j,0] + 0.8, pos_array[j,1] + 0.8,  '%.1f' % (100 * pos_array[j,2]), fontsize = 8)
 
-        # write current possession state on plot
+        # write current possession state and ctrl info on plot
         if poss:
             poss_state = 'Home'
         else:
@@ -150,8 +150,8 @@ def UpdateFrame(df, matchnum, framenum, filename):
 
         posstext = 'Possession: %s\nHome: %.1f%% Away: %.1f%%' % (poss_state, home_ctrl, away_ctrl)
         info = '%s\nMatch: %i Frame: %i' % (filename, matchnum, framenum)
-        plt.text((-PitchX/2)+1, (PitchY/2)+2, posstext, fontsize=11)
-        plt.text(0, (PitchY/2)+2, info, fontsize=11)
+        plt.text((-PitchX/2)+1, (PitchY/2)+3, posstext, fontsize=11)
+        plt.text(0, (PitchY/2)+3, info, fontsize=11)
 
 
 # load data from csv
@@ -160,62 +160,67 @@ def LoadMatch(filename, matchnum):
     return(df)
 
 
-def CreateAnimation(filename, matchnum, quality):
+def CreateAnimation(filename, matchnum):
+    # get start time and define useful quantities
+    start_time = time.time()
+    
     fig, ax = plt.subplots()
     df = LoadMatch(filename, matchnum)
-    #frames = df['FID'].max() + 1 
-    frames = 30
+    frames = df['FID'].max() + 1 
 
     def UpdateFigure(i):
+        # give some progress updates
+        if frames > 10 and i % (frames // 10) == 0:
+            print('Frame: %i (of %i)' % (i, frames))
+
+        # compute frame
         fig.clear()
-        print('Frame: %i' % i)
         UpdateFrame(df, matchnum, i, filename)
+        
+        # formatting
         plt.gca().set_aspect('equal')
         plt.xlim(-0.5 * PitchX, 0.5 * PitchX)
-        plt.ylim(-0.5 * PitchY, 0.5 * PitchY) 
+        plt.ylim(-0.5 * PitchY, 0.5 * PitchY)
         plt.xlabel('x, m')
         plt.ylabel('y, m')
-        
-    path = "videos/test"
-    name = "test"
+   
+    # output file path and name    
+    path = "videos/vorplots/%s" % filename
+    name = "%i" % matchnum
 
     if not exists(path):
         makedirs(path)
     
     anim = animation.FuncAnimation(fig, UpdateFigure, frames)
  
-    if quality == 'high':
-        anim.save("%s/%s.mp4" % (path, name), dpi=300, writer='ffmpeg', bitrate=8192, codec='mpeg4', fps=5)   
-    elif quality == 'medium':
-        anim.save("%s/%s.mp4" % (path, name), dpi=200, writer='ffmpeg', bitrate=4096, codec='mpeg4', fps=5)   
-    elif quality == 'low':
-        anim.save("%s/%s.mp4" % (path, name), dpi=100, writer='ffmpeg', bitrate=2048, codec='mpeg4', fps=5)   
-    else:
-        print('Unrecognised quality setting - defaulting to low quality')
-        anim.save("%s/%s.mp4" % (path, name), dpi=100, writer='ffmpeg', bitrate=2048, codec='mpeg4', fps=5)   
+    # medium quality is fine
+    anim.save("%s/%s.mp4" % (path, name), dpi=200, writer='ffmpeg', bitrate=4096, codec='mpeg4', fps=5)   
+    print('Video file saved to: %s/%s.mp4' % (path, name))
 
-def main(filename, matchnum, quality):
-    # create vid and time
-    start_time = time.time()
-    CreateAnimation(filename, matchnum, quality)
+    # output performance info
     elapsed_time = time.time() - start_time
-    print(elapsed_time)
+    print('Time taken: %.1f s' % elapsed_time)
+
+
+def main(filename, num_matches):
+    # create vid
+    for i in range(num_matches):
+        p = Process(target=CreateAnimation, args=(filename, i))
+        p.start()
 
 if __name__ == '__main__':
     # sys args
-    if len(sys.argv) == 4:
+    if len(sys.argv) == 3:
         filename = sys.argv[1]
-        matchnum = int(sys.argv[2])
-        quality = sys.argv[3]
+        num_matches = int(sys.argv[2])
 
     else:
         print('''
         %s - Generates Voronoi animation from file. Args:
         [1] - Filename (name of folder in /csvs/)
-        [2] - Match number (X.csv)
-        [3] - Quality setting (low/medium/high)
+        [2] - Number of matches to plot (starts at 0.csv)
         ''' % sys.argv[0])
         exit()
     
     # args sorted now run main
-    main(filename, matchnum, quality)
+    main(filename, num_matches)
