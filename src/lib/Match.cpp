@@ -11,11 +11,12 @@
 
 Match::Match() {}
 
-Match::Match(TeamConfigFile ht, TeamConfigFile at, MatchConfigFile m) :
+Match::Match(TeamConfigFile ht, TeamConfigFile at, MatchConfigFile m, int mid, std::string filename) :
 mcf(m),
 home_team_control_sum(0),
 away_team_control_sum(0)
 {
+    appendToFilename(filename);
     current_frame_number = 0;
     store_frames = mcf.full_save;
     x_samples = mcf.sample_x;
@@ -24,6 +25,12 @@ away_team_control_sum(0)
     player_scatter_length = mcf.player_scatter_length;
     possession_flip_reciprocal_probability = mcf.possession_chance;
     pitch_data = Pitch(mcf.pitchX, mcf.pitchY);
+    matchID = mid;
+
+    //std::string match_name = filename + "." + mcf.configFileName + ":" + ht.getConfigFileName() + ":" + at.getConfigFileName();
+    std::string match_name = filename;
+    pitch_data.setMatchName(match_name);
+    pitch_data.setMatchID(matchID);
     // std::cout << "match " << pitch_data.getXlim() << "\t" << pitch_data.getYlim() << "\t" << pitch_data.getPitchLength() <<  "\t" << &pitch_data << std::endl;
 
     weight_model = PitchModel::createPitchModel(mcf.pitchMdl, mcf);

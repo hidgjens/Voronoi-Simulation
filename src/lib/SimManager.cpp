@@ -25,11 +25,11 @@ int SimManager::getNumberOfSamples() const { return samples; }
 void SimManager::setStartNum(int sn_) { start_num = sn_; }
 int SimManager::getStartNum() const { return start_num; }
 
-Match SimManager::buildMatch() {
-    Match match(home_tcf, away_tcf, mcf);
-    
-    return match;
-}
+//Match SimManager::buildMatch() {
+//    Match match(home_tcf, away_tcf, mcf);
+//    
+//    return match;
+//}
 
 void SimManager::start(std::string filename) {
     std::cout << "Samples " << samples << " start num " << start_num << "\n";
@@ -39,11 +39,9 @@ void SimManager::start(std::string filename) {
   for (int i{start_num}; i < samples + start_num; i++){
     std::cout << "Sample " << i << "\n\n";
     // start match
-    Match match(home_tcf, away_tcf, mcf);
+    Match match(home_tcf, away_tcf, mcf, i, filename);
     match.buildMatch();
-    match.appendToFilename(filename);
     //std::cout << "BUILD!\n";
-    match.setMatchID(i);
     //std::cout << "starting\n";
     match.startSimulation();
     // std::cout << "end of for loop " << i << "/" << samples + start_num << std::endl;

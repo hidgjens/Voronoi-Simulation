@@ -14,6 +14,7 @@ Team::Team(TeamConfigFile tcf_, bool home, PitchModel* pm, Pitch p)
     // create strategy
     teamstrat = TeamStrategy::CreateStrat(pm, tcf);
     pitch_data = p;
+    teamstrat->setPitch(p);
     // std::cout << &pitch_data << "\t" << &pitch << std::endl;
     // std::cout << "Team " << pitch_data.getXlim() << "\t" << pitch_data.getYlim() << "\t" << pitch_data.getPitchLength() << std::endl;
     

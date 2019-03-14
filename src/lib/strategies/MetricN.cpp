@@ -1,6 +1,8 @@
 #include "MetricN.h"
 #include <vector>
 #include <algorithm> // std::sort
+#include <fstream>
+#include <sys/stat.h>
 
 MetricN::MetricN() {}
 MetricN::MetricN(TeamConfigFile tcf, PitchModel* p) {
@@ -109,7 +111,31 @@ void MetricN::MetricNMethod(Player* plyr, Frame frame) {
     for (int i{0}; i < num_nearest_neighbours; i++){
         nearest_neighbours.push_back(players[i]);
     }
-   
+    
+    // print out status of each player considered to file
+    std::ofstream outfile;
+    std::string filepath = "data_files/csvs/" + pitch_data.getMatchName();
+    std::string filename = std::to_string(pitch_data.getMatchID()) + ".met";
+    std::string outpath = filepath + "/" + filename;
+    
+    // check if folder exists
+    struct stat st;
+    if(!stat(filepath.c_str(), &st) == 0){
+        // directory doesn't exist, make the folder
+        system(("mkdir " + filepath).c_str());
+    }
+    
+    // open file
+    outfile.open(outpath, std::ios::app);
+    
+    // write to file
+    // format is ally(bool), shirtnum(int), distance(double)
+    for (int i{0}; i < num_nearest_neighbours; i++){
+        outfile << nearest_neighbours[i].ally << ", " << nearest_neighbours[i].shirt_num << ", " << nearest_neighbours[i].distance << '\n'; 
+        //std::cout << nearest_neighbours[i].ally << ',' << nearest_neighbours[i].shirt_num << ',' << nearest_neighbours[i].distance << '\n' << std::endl;
+    }
+
+
     // get metric vectors
     for (int i{0}; i < num_nearest_neighbours; i++){
         PlayerInfo temp_player = nearest_neighbours[i];
