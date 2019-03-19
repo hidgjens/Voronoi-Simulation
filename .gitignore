@@ -12,7 +12,7 @@ data_files/
 plots/
 videos/
 
-results/
+results/*
 .vscode/
 __pycache__/
 scripts/__pycache__/
