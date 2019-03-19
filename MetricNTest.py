@@ -50,10 +50,10 @@ sim_types = {
 
 # functions to generate process dicts for match generation, histogram plotting and Voronoi analysis
 
-def generate(strat, match_num, iteration_number):
+def generate(strat, filename, match_num):
     frame_num = 3 # meaningless
     process_dict = {
-    'cmd' : ['python3', 'scripts/GenerateConfMatches.py', '%s' % strat, '%i' % match_num, '%i' % frame_num, '%s.%s-%i.' % (date_str, strat, iteration_number), 'no', '%i' % PROCESSES],
+    'cmd' : ['python3', 'scripts/GenerateConfMatches.py', '%s' % strat, '%i' % match_num, '%i' % frame_num, filename, 'no', '%i' % PROCESSES],
 
     'task-name' : 'Generate %s' % strat
     }
@@ -61,9 +61,16 @@ def generate(strat, match_num, iteration_number):
 
 def histogram(strat, iteration_number):
     process_dict = {
-    'cmd' : ['python3', 'scripts/Sem2MatchAnalysis.py', strat, date_str],
+    'cmd' : ['python3', 'scripts/MetAnalysis.py', strat, '%i' % iteration_number],
 
     'task-name' : 'Histogram %s' % strat
+    }
+    return(process_dict)
+
+def change_N(N):
+    process_dict = {
+        'cmd' : ['python3', 'scripts/ChangeN.py', '%i' % N],
+        'task-name' : 'Changed N'
     }
     return(process_dict)
 
@@ -74,13 +81,22 @@ def makeSchedule(match_num, start_num, end_num, strategies):
     schedule = []
     gen_sched = []
     hist_sched = []
+    change_sched = []
     for strat in strategies:
         for i in range(start_num, end_num + 1):
-            gen_sched.append(generate(strat, match_num, i))
-            hist_sched.append(histogram(strat, i))
+            FILENAME = '%s.%i.%s' % (date_str, i, strat)
+            change_sched.append(change_N(i))
+
+            gen_sched.append(generate(strat, FILENAME, match_num))
+            
+            hist_sched.append(histogram(FILENAME, i))
         
 
-    for g, h in zip(gen_sched, hist_sched):
+    for g, h, c in zip(gen_sched, hist_sched, change_sched):
+        print(g['cmd'])
+        print(h['cmd'])
+        print(c['cmd'])
+        schedule.append(c)
         schedule.append(g)
         schedule.append(h)
 
@@ -103,6 +119,8 @@ def runTasks(schedule):
             subprocess.Popen(tsk['cmd']).wait()
         except Exception as e:
             #gen_failed_message(tsk['task-name'], tsk['start-time'], str(e))
+            tsk['end-time'] = get_time()
+
             print('Failed %s: %s\n' % (tsk['task-name'], str(e)))
             pass
         else:
@@ -119,7 +137,7 @@ def main(match_num, start_num, end_num, strategies):
 
 if __name__ == '__main__':
     # process sys args
-    if len(sys.argv) >= 6:
+    if len(sys.argv) >= 5:
         match_num = int(sys.argv[1])
         start_num = int(sys.argv[2])
         end_num = int(sys.argv[3])

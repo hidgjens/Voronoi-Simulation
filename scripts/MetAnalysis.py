@@ -84,6 +84,27 @@ def LoadFiles(filename):
     
     return data
 
+def LoadList(filename):
+    path = 'data_files/csvs/%s' % filename
+    datafiles = [file for file in listdir(path) if file.split('.')[-1] == 'met']
+
+    return_data = []
+
+    for d in datafiles:
+        with open('%s/%s' % (path, d), 'r') as dfile:
+            # raw_data = np.loadtxt(dfile)
+            ally_player = []
+
+            for line in dfile.readlines():
+                split_line = line.split(',')
+                ally_player.append(float(split_line[0].strip()))
+
+            # frmt_ally_player = [float(f) for f in ally_player]
+            return_data.extend(ally_player)
+
+    return return_data
+
+
 
 def CalcAllyRatio(df):
     players = [int(x) for x in df['Ally'].tolist()]
@@ -99,6 +120,66 @@ def CalcAllyRatio(df):
     print('Proportion of opponents: %.1f%%' % (100 * opp_ratio))
     return ally_ratio, opp_ratio
 
+def breaklistup(N, list_to_split):
+    return_list = []
+
+    len_of_list = len(list_to_split)
+    # print(len_of_list)
+
+    for i in range(0,len_of_list,N):
+        # print(i)
+        sublist = []
+        for j in range(0, N):
+            idx = i + j
+            if (idx < 0):
+                print('p r a n g')
+                exit()
+            # print('%i/%i' % (idx, len_of_list))
+            sublist.append(list_to_split[idx])
+
+        return_list.append(sublist)
+
+    # print(return_list)
+
+    return return_list
+
+def CalcAllyRatioFromList(l):
+    N = len(l)
+    
+    ratio_of_allies = sum(l) / N
+    return(ratio_of_allies)
+
+def CalcMeanFromListofList(lol):
+    samples = len(lol)
+
+    sum_of_x = 0
+    sum_of_x_squared = 0
+
+    for l in lol:
+        x = CalcAllyRatioFromList(l)
+        sum_of_x += x
+        sum_of_x_squared += x ** 2
+
+    mean_of_x = sum_of_x / samples
+    variance_of_x = sum_of_x_squared / samples - (mean_of_x ** 2)
+
+    std_of_x = np.sqrt(variance_of_x)
+
+    return(mean_of_x, std_of_x)
+
+def LauncherAnalysis(N, filename, df):
+    big_list = df
+    lol = breaklistup(N, big_list)
+    mean, std = CalcMeanFromListofList(lol)
+
+    print('N: %i | Mean: %.3f - Std: %.3f' % (N, mean, std))
+
+    if not exists('results/MetricN/%s' % filename):
+        makedirs('results/MetricN/%s' % filename)
+
+    with open('results/MetricN/%s/%s.mnr' % (filename, filename), 'w') as result_file:
+        result_file.write('%.4f\n%.4f\n' % (mean, std))
+
 
 def CalcMeanDist(df):
     distances = [float(d) for d in df['Distance'].tolist()]
@@ -109,51 +190,66 @@ def CalcMeanDist(df):
 
   
 
-def main(filename):
+def main(filename, N):
     # get start time
     start_time = time.time()
 
-    # load data
-    df = LoadFiles(filename)
-    ally_ratio, opp_ratio = CalcAllyRatio(df)
-    mean_dist = CalcMeanDist(df)
-    dist_data = list(df['Distance'])
+    # # load data
+    # df = LoadFiles(filename)
 
-    # save results to text file
-    savepath = 'results/metricN/%s' % filename
-    if not exists(savepath):
-        makedirs(savepath)
+    # print(df)
 
-    f = open('%s/%s.mnr' % (savepath, filename), 'w')
-    f.write('# Lines are: 1) Ally ratio 2) Opponent ratio 3) Mean distance to players\n')
-    f.write('%f\n%f\n%f\n' % (ally_ratio, opp_ratio, mean_dist))
-    f.close()
-    print('Results saved at: %s/%s.mnr' % (savepath, filename))
+    df = LoadList(filename)
 
-    # plot for all players
-    path = 'plots/histograms/%s' % filename
-    title = 'Distance to considered players in MetricN'
-    xlabel = 'Distance'; ylabel = 'Counts'
-    hist = Histogram(dist_data)
-    hist.PlotHistogram(path, title, title, xlabel, ylabel)
+    print(len(df))
 
-    # for allies
-    dist_data = list(df.loc[df['Ally'] == 1, 'Distance'])
-    hist = Histogram(dist_data)
-    hist.PlotHistogram(path, '%s-Allies' % title, '%s: Allies' % title, xlabel, ylabel)
+    LauncherAnalysis(N, filename, df)
+
+
+
+
+
+    # ally_ratio, opp_ratio = CalcAllyRatio(df)
+    # mean_dist = CalcMeanDist(df)
+    # dist_data = list(df['Distance'])
+
+    # # save results to text file
     
-    # for opponents
-    dist_data = list(df.loc[df['Ally'] == 0, 'Distance'])
-    hist = Histogram(dist_data)
-    hist.PlotHistogram(path, '%s-Opponents' % title, '%s: Opponents' % title, xlabel, ylabel)
+    # savepath = 'results/metricN/%s' % filename
+    # if not exists(savepath):
+    #     makedirs(savepath)
+
+    # # f = open('%s/%s.mnr' % (savepath, filename), 'w')
+    # # f.write('# Lines are: 1) Ally ratio 2) Opponent ratio 3) Mean distance to players\n')
+    # # f.write('%f\n%f\n%f\n' % (ally_ratio, opp_ratio, mean_dist))
+    # # f.close()
+    # # print('Results saved at: %s/%s.mnr' % (savepath, filename))
+
+    # # plot for all players
+    # path = 'plots/histograms/%s' % filename
+    # title = 'Distance to considered players in MetricN'
+    # xlabel = 'Distance'; ylabel = 'Counts'
+    # hist = Histogram(dist_data)
+    # hist.PlotHistogram(path, title, title, xlabel, ylabel)
+
+    # # for allies
+    # dist_data = list(df.loc[df['Ally'] == 1, 'Distance'])
+    # hist = Histogram(dist_data)
+    # hist.PlotHistogram(path, '%s-Allies' % title, '%s: Allies' % title, xlabel, ylabel)
+    
+    # # for opponents
+    # dist_data = list(df.loc[df['Ally'] == 0, 'Distance'])
+    # hist = Histogram(dist_data)
+    # hist.PlotHistogram(path, '%s-Opponents' % title, '%s: Opponents' % title, xlabel, ylabel)
 
     time_elapsed = time.time() - start_time
     print('Time taken: %.2fs' % time_elapsed)
 
 if __name__ == '__main__':
     # sys args
-    if len(sys.argv) == 2:
+    if len(sys.argv) == 3:
         filename = sys.argv[1]
+        N = int(sys.argv[2])
 
     else:
         print('''
@@ -163,4 +259,4 @@ if __name__ == '__main__':
         ''' % sys.argv[0])
         exit()
 
-    main(filename)
+    main(filename, N)
