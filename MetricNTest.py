@@ -74,6 +74,13 @@ def change_N(N):
     }
     return(process_dict)
 
+def plot_strat(StartN, EndN, strat):
+    process_dict = {
+        'cmd' : ['python3', 'scripts/PlotMetricN.py', '%i' % StartN, '%i' % EndN, date_str, strat],
+        'task-name' : 'Plot N'
+    }
+    return(process_dict)
+
 ##############################################################################################################################################################################
 # creates list of processes to run, in order (generates matches for all strategies, then plots all histograms, then does all visualisation)
 
@@ -82,23 +89,28 @@ def makeSchedule(match_num, start_num, end_num, strategies):
     gen_sched = []
     hist_sched = []
     change_sched = []
+    
     for strat in strategies:
         for i in range(start_num, end_num + 1):
             FILENAME = '%s.%i.%s' % (date_str, i, strat)
-            change_sched.append(change_N(i))
+            schedule.append(change_N(i))
 
-            gen_sched.append(generate(strat, FILENAME, match_num))
+            schedule.append(generate(strat, FILENAME, match_num))
             
-            hist_sched.append(histogram(FILENAME, i))
+            schedule.append(histogram(FILENAME, i))
+        
+        schedule.append(plot_strat(start_num, end_num, strat))
         
 
-    for g, h, c in zip(gen_sched, hist_sched, change_sched):
-        print(g['cmd'])
-        print(h['cmd'])
-        print(c['cmd'])
-        schedule.append(c)
-        schedule.append(g)
-        schedule.append(h)
+        
+
+    # for g, h, c in zip(gen_sched, hist_sched, change_sched):
+    #     print(g['cmd'])
+    #     print(h['cmd'])
+    #     print(c['cmd'])
+    #     schedule.append(c)
+    #     schedule.append(g)
+    #     schedule.append(h)
 
     return(schedule)
 
