@@ -35,7 +35,7 @@ public:
     void setStartNum(int);
     int getStartNum() const;
 
-    Match buildMatch();
+    //Match buildMatch();
     void start(std::string);
     
 

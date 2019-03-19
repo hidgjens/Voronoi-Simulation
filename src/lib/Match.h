@@ -57,7 +57,7 @@ class Match {
 
         // constructors
         Match();
-        Match(TeamConfigFile, TeamConfigFile, MatchConfigFile);
+        Match(TeamConfigFile, TeamConfigFile, MatchConfigFile, int, std::string);
 
         Match(Match&);
         Match(Match&& match)  { *this = std::move(match); }
