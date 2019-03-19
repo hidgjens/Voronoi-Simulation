@@ -107,6 +107,7 @@ def CalcMeanDist(df):
     print('Mean distance of players considered: %.1fm' % (mean_dist))
     return mean_dist
 
+  
 
 def main(filename):
     # get start time
@@ -117,7 +118,18 @@ def main(filename):
     ally_ratio, opp_ratio = CalcAllyRatio(df)
     mean_dist = CalcMeanDist(df)
     dist_data = list(df['Distance'])
-    
+
+    # save results to text file
+    savepath = 'results/metricN/%s' % filename
+    if not exists(savepath):
+        makedirs(savepath)
+
+    f = open('%s/%s.mnr' % (savepath, filename), 'w')
+    f.write('# Lines are: 1) Ally ratio 2) Opponent ratio 3) Mean distance to players\n')
+    f.write('%f\n%f\n%f\n' % (ally_ratio, opp_ratio, mean_dist))
+    f.close()
+    print('Results saved at: %s/%s.mnr' % (savepath, filename))
+
     # plot for all players
     path = 'plots/histograms/%s' % filename
     title = 'Distance to considered players in MetricN'
