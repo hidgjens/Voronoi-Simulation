@@ -153,32 +153,47 @@ def CalcMeanFromListofList(lol):
     samples = len(lol)
 
     sum_of_x = 0
-    sum_of_x_squared = 0
+    sum_of_x_squared_above = 0
+    sum_of_x_squared_below = 0
+    samples_above = 0
+    samples_below = 0
 
     for l in lol:
         x = CalcAllyRatioFromList(l)
         sum_of_x += x
-        sum_of_x_squared += x ** 2
 
     mean_of_x = sum_of_x / samples
-    variance_of_x = sum_of_x_squared / samples - (mean_of_x ** 2)
+        
+    for l in lol:
+        x = CalcAllyRatioFromList(l)
+        if x > mean_of_x:
+            sum_of_x_squared_above += x ** 2
+            samples_above += 1
+        else:
+            sum_of_x_squared_below += x ** 2
+            samples_below += 1
+        
 
-    std_of_x = np.sqrt(variance_of_x)
+    variance_of_x_above = sum_of_x_squared_above / samples_above - (mean_of_x ** 2)
+    variance_of_x_below = sum_of_x_squared_below / samples_below - (mean_of_x ** 2)
 
-    return(mean_of_x, std_of_x)
+    std_of_x_above = np.sqrt(variance_of_x_above)
+    std_of_x_below = np.sqrt(variance_of_x_below)
+
+    return(mean_of_x, [std_of_x_above, std_of_x_below])
 
 def LauncherAnalysis(N, filename, df):
     big_list = df
     lol = breaklistup(N, big_list)
-    mean, std = CalcMeanFromListofList(lol)
+    mean, stds = CalcMeanFromListofList(lol)
 
-    print('N: %i | Mean: %.3f - Std: %.3f' % (N, mean, std))
+    print('N: %i | Mean: %.3f - Std: +%.3f/-%.3f' % (N, mean, *stds))
 
     if not exists('results/MetricN/%s' % filename):
         makedirs('results/MetricN/%s' % filename)
 
     with open('results/MetricN/%s/%s.mnr' % (filename, filename), 'w') as result_file:
-        result_file.write('%.4f\n%.4f\n' % (mean, std))
+        result_file.write('%.4f\n%.4f\n%.4f\n' % (mean, *stds))
 
 
 def CalcMeanDist(df):

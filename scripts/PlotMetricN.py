@@ -13,25 +13,35 @@ def load_file(N, date_str, run_name):
         lines = dfile.readlines()
     
     mean = float(lines[0].strip())
-    std = float(lines[1].strip())
+    if lines[1].strip() == 'nan':
+        std_a = 0
+    else:
+        std_a = float(lines[1].strip())
 
-    return(mean, std)
+    if lines[2].strip() == 'nan':
+        std_b = 0
+    else:
+        std_b = float(lines[2].strip())
+
+    return(mean, std_a, std_b)
 
 
 def main(start_N, end_N, date_str, run_name):
     Xs = []
     Ys = []
-    eYs = []
+    eYs_a = []
+    eYs_b = []
 
     name = '%s.%s' % (date_str, run_name)
 
     for N in range(start_N, end_N + 1):
-        mean, std = load_file(N, date_str, run_name)
+        mean, std_a, std_b = load_file(N, date_str, run_name)
         Xs.append(N)
         Ys.append(mean)
-        eYs.append(std)
+        eYs_a.append(std_a)
+        eYs_b.append(std_b)
 
-    plt.errorbar(Xs, Ys, eYs)
+    plt.errorbar(Xs, Ys, [eYs_b, eYs_a], ecolor='r', elinewidth=1, capsize=5, capthick=1, marker='x', linestyle='')
     plt.xlabel('Number of players considered by MetricN')
     plt.ylabel('Mean proportion of Allied Players')
     plt.title('Metric N - %s' % run_name)
