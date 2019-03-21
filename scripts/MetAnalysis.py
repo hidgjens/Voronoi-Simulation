@@ -120,6 +120,8 @@ def CalcAllyRatio(df):
     print('Proportion of opponents: %.1f%%' % (100 * opp_ratio))
     return ally_ratio, opp_ratio
 
+
+# split list into list of sublists of length N
 def breaklistup(N, list_to_split):
     return_list = []
 
@@ -170,6 +172,35 @@ def CalcMeanFromListofList(lol):
 
     return(mean_of_x, err, samples)
 
+# takes list of sublists
+def PlotPlyrConfigs(l, filename, N):
+    data = []
+    ally_count_list = []
+
+    # count number of allied players per metricN call
+    for sublist in l:
+        num_allies = sum(sublist)
+        ally_count_list.append(num_allies)
+        #print(max(ally_count_list))
+    
+    # now count occurrences of num_allies from 0 to N
+    for i in range(int(max(ally_count_list))+1):
+        counts = ally_count_list.count(i)
+        data.append((i, counts))
+    
+    path = 'plots/histograms/MetricN/%s' % filename
+    if not exists(path):
+        makedirs(path)
+
+    x,y = zip(*data)
+    plt.bar(x, y, width=0.5)
+    plt.xlabel('Number of allies')
+    plt.ylabel('Counts')
+    plt.title('Player configuration in MetricN (N=%i)' % N)
+    plt.savefig('%s/%s(N=%i).png' % (path, filename, N))
+    print('Plot saved to: %s/%s(N=%i).png' % (path, filename, N))
+
+
 def LauncherAnalysis(N, filename, df):
     big_list = df
     lol = breaklistup(N, big_list)
@@ -203,14 +234,10 @@ def main(filename, N):
     # print(df)
 
     df = LoadList(filename)
-
-    print(len(df))
-
+    l = breaklistup(N, df)
+    PlotPlyrConfigs(l, filename, N)
+    #print(len(df))
     LauncherAnalysis(N, filename, df)
-
-
-
-
 
     # ally_ratio, opp_ratio = CalcAllyRatio(df)
     # mean_dist = CalcMeanDist(df)
