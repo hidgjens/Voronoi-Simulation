@@ -68,8 +68,11 @@ def main(date_string, script_name):
 
     for result_dict in list_of_result_dicts:
         home_team = result_dict['home_strategy']
+        away_team = result_dict['away_strategy']
         if home_team not in home_teams:
             home_teams.append(home_team)
+        if away_team not in home_teams:
+            home_teams.append(away_team)
 
     # home_teams will state the order of the table
     table = {}
