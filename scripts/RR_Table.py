@@ -88,6 +88,25 @@ def main(date_string, script_name):
         print(key)
         print(item)
 
+    with open('table_file.tab', 'w') as t_file:
+        # header
+        t_file.write('Teams')
+        
+        for at in home_teams:
+            t_file.write('\t%s' % at)
+        t_file.write('\n')
+
+        for ht in home_teams:
+            t_file.write('%s' % ht)
+            for at in home_teams:
+                result = table[ht][at]
+                if result is None:
+                    t_file.write('\tNone')
+                else:
+                    t_file.write('\t%.3f,%.3f' % (*result))
+            t_file.write('\n')
+
+
 
     
 
