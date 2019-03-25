@@ -103,7 +103,7 @@ def main(date_string, script_name):
                 if result is None:
                     t_file.write('\tNone')
                 else:
-                    t_file.write('\t%.3f,%.3f' % (*result))
+                    t_file.write('\t%.3f,%.3f' % (result[0], result[1]))
             t_file.write('\n')
 
 
