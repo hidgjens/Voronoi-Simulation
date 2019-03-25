@@ -16,7 +16,9 @@ def load_script(script_file_name):
     return(run_types, number_of_games)
 
 def load_summary(date_string, run_name, number_of_games):
+    print(run_name)
     run_name_split = run_name.split()
+    print(run_name_split)
 
     home_strategy = run_name_split[1]
     away_strategy = run_name_split[2]
