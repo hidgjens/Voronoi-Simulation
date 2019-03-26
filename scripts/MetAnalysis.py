@@ -105,6 +105,48 @@ def LoadList(filename):
     return return_data
 
 
+# return list of lists - each sublist corresponds to column of file
+def LoadData(filename):
+    path = 'data_files/csvs/%s' % filename
+    datafiles = [file for file in listdir(path) if file.split('.')[-1] == 'met']
+
+    return_data = []
+
+    for d in datafiles:
+        with open('%s/%s' % (path, d), 'r') as dfile:
+            
+            for line in dfile.readlines():
+                split_line = line.split(',')            
+                return_data.append(split_line)
+
+    return_data = list(zip(*return_data))
+    print(len(return_data))
+    return return_data
+
+
+def Metric3Analysis(data):
+    ally1, shirt1, dist1, ally2, shirt2, dist2 = data
+    
+    # remove shirt number degeneracy between opponents and allies
+    #for a1, s1, a2, s2 in zip(ally1, shirt1, ally2, shirt2):
+    #    if a1 == 0:
+    #        s1 = s1*-1
+    #    if a2 == 0:
+    #        s2 = s2*-1
+    
+
+    # now find proportion of players that match
+    num_players = len(ally1)
+    num_matched_players = 0
+    for s1, s2 in zip(shirt1, shirt2):
+        if s1 == s2:
+            num_matched_players += 1    
+
+    matched_ratio = num_matched_players / num_players
+    print('Ratio of matched players: %.2f%% (2 highest metric vs. 2 lowest distance opponents)' % (100*matched_ratio))
+
+
+
 
 def CalcAllyRatio(df):
     players = [int(x) for x in df['Ally'].tolist()]
@@ -228,16 +270,17 @@ def main(filename, N):
     # get start time
     start_time = time.time()
 
-    # # load data
-    # df = LoadFiles(filename)
+    if filename.split(':')[1] == 'Metric3':
+        data = LoadData(filename)
+        Metric3Analysis(data)
 
-    # print(df)
+    elif filename.split(':')[1] == 'MetricN':
+        df = LoadList(filename)
+        l = breaklistup(N, df)
+        PlotPlyrConfigs(l, filename, N)
+        LauncherAnalysis(N, filename, df)
 
-    df = LoadList(filename)
-    l = breaklistup(N, df)
-    PlotPlyrConfigs(l, filename, N)
-    #print(len(df))
-    LauncherAnalysis(N, filename, df)
+
 
     # ally_ratio, opp_ratio = CalcAllyRatio(df)
     # mean_dist = CalcMeanDist(df)
