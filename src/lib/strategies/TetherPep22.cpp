@@ -216,11 +216,12 @@ void TetherPep22::updateTeam(Team& team, Frame frame) {
 
         //std::cout << "check post distance" << std::endl;
         // Check distance to post
+        // if in possession, AWAY half is weighted more -> use AWAY posts
         Cart post;
         if (frame.getPossession())
-            post = home_player_posts[i];
-        else
             post = away_player_posts[i];
+        else
+            post = home_player_posts[i];
         double dist2post = plyr_position.dist(post);
         
         //std::cout << "no prang" << std::endl;
