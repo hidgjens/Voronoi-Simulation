@@ -24,7 +24,11 @@ away_team_control_sum(0)
     player_radius = mcf.player_radius;
     player_scatter_length = mcf.player_scatter_length;
     possession_flip_reciprocal_probability = mcf.possession_chance;
+    pass_reciprocal_probability = mcf.pass_chance;
     pitch_data = Pitch(mcf.pitchX, mcf.pitchY);
+    ball = Ball(pitch_data, true);
+    ball.changeTile(13);
+    // std::cout << "not even here\n"<< std::endl;
     matchID = mid;
 
     //std::string match_name = filename + "." + mcf.configFileName + ":" + ht.getConfigFileName() + ":" + at.getConfigFileName();
@@ -34,6 +38,7 @@ away_team_control_sum(0)
     // std::cout << "match " << pitch_data.getXlim() << "\t" << pitch_data.getYlim() << "\t" << pitch_data.getPitchLength() <<  "\t" << &pitch_data << std::endl;
 
     weight_model = PitchModel::createPitchModel(mcf.pitchMdl, mcf);
+    weight_model->setBallMask(mcf.ball_decay, mcf.ball_peak);
 
     home_team = Team(ht, true, weight_model, pitch_data);
     away_team = Team(at, false, weight_model, pitch_data);
@@ -64,8 +69,10 @@ home_team_control_sum(m.home_team_control_sum),
 away_team_control_sum(m.away_team_control_sum),
 home_possession(m.home_possession),
 possession_flip_reciprocal_probability(m.possession_flip_reciprocal_probability),
+pass_reciprocal_probability(m.pass_reciprocal_probability),
 player_radius(m.player_radius),
-player_scatter_length(m.player_scatter_length)
+player_scatter_length(m.player_scatter_length),
+ball(m.ball)
 {
     if (store_frames){
 
@@ -84,6 +91,7 @@ Match& Match::operator=(Match& m) {
     store_frames = m.store_frames;
     total_frames = m.total_frames;
     possession_flip_reciprocal_probability = m.possession_flip_reciprocal_probability;
+    pass_reciprocal_probability = m.pass_reciprocal_probability;
     x_samples = m.x_samples;
     y_samples = m.y_samples;
     pitch_data = m.pitch_data;
@@ -99,6 +107,7 @@ Match& Match::operator=(Match& m) {
     home_possession = m.home_possession;
     player_radius = m.player_radius;
     player_scatter_length = m.player_scatter_length;
+    ball = m.ball;
 
     if (store_frames){
         frame_history = std::make_unique<Frame[]>(total_frames);
@@ -114,6 +123,7 @@ Match& Match::operator=(Match&& m) {
     store_frames = m.store_frames;
     total_frames = m.total_frames;
     possession_flip_reciprocal_probability = m.possession_flip_reciprocal_probability;
+    pass_reciprocal_probability = m.pass_reciprocal_probability;
     x_samples = m.x_samples;
     y_samples = m.y_samples;
     pitch_data = m.pitch_data; 
@@ -129,6 +139,7 @@ Match& Match::operator=(Match&& m) {
     home_possession = m.home_possession;
     player_radius = m.player_radius;
     player_scatter_length = m.player_scatter_length;
+    ball = m.ball;
 
     if (store_frames) {
         frame_history = std::move(m.frame_history);
@@ -142,10 +153,14 @@ Pitch& Match::getPitchData() { return pitch_data; }
 void Match::buildMatch() {
     //std::cout << home_team.getPlayerCount();
     //std::cout << "Match::buildMatch()\n"<< std::flush;
-    //std::cout << "not even here\n"<< std::flush;
+    // std::cout << "not even here\n"<< std::endl;
     // determine initial possession
+
+
     home_possession = true;
     randomPossession();
+    //ball = Ball(pitch_data, home_possession);
+
 
     current_frame = createFrame();
     // just need to store the first frame
@@ -168,6 +183,7 @@ void Match::startSimulation() {
 
         if (current_frame_number % ((int) total_frames / 10) == 0 || current_frame_number == total_frames - 1) {
             current_frame.printFrame();
+            //std::cout << "Ball tile: " << ball.currentTileNumber() << std::endl;
         }
     }
     
@@ -243,6 +259,29 @@ void Match::saveFullMatch() {
     double dHmCtrl = hmCtrl - frame_history[last_frame].getHomeTeamControl();
     double dAwCtrl = awCtrl - frame_history[last_frame].getAwayTeamControl();
 
+    // ball
+    temp_pos = frame_history[frame_].getBallPosition();
+    last_pos = frame_history[last_frame].getBallPosition();
+
+    datafile
+        << index << "\t"
+        << frame_ << "\t"
+        << "Ball\t"
+        << 0 << "\t"
+        << temp_pos.xComp() << "\t"
+        << temp_pos.yComp() << "\t"
+        << temp_pos.xComp() - last_pos.xComp() << "\t"
+        << temp_pos.yComp() - last_pos.yComp() << "\t"
+        << 0.0 << "\t"
+        << 0.0 << "\t"
+        // << pitches[frame_].getHomePlyrCtrl2(i + 1) << "\t"
+        // << pitches[frame_].getHomePlyrCtrl2(i + 1) - pitches[last_frame].getHomePlyrCtrl2(i + 1) << "\t"
+        << 0.0 << "\t"
+        << 0.0 << "\t"
+        << frame_history[frame_].getHomePossStr() << "\n";
+
+    index++; // increment index
+
     for (int i{0}; i < home_team.getPlayerCount(); i++){
 
       temp_pos = frame_history[frame_].getHomePosition(i); // get player pos
@@ -289,8 +328,8 @@ void Match::saveFullMatch() {
         << frame_history[frame_].getAwayControl(i) - frame_history[last_frame].getAwayControl(i) << "\t"
         // << pitches[frame_].getHomePlyrCtrl2(i + 1) << "\t"
         // << pitches[frame_].getHomePlyrCtrl2(i + 1) - pitches[last_frame].getHomePlyrCtrl2(i + 1) << "\t"
-        << hmCtrl << "\t"
-        << dHmCtrl << "\t"
+        << awCtrl << "\t"
+        << dAwCtrl << "\t"
         << frame_history[frame_].getAwayPossStr() << "\n";
 
         index++; // increment index
@@ -328,6 +367,9 @@ void Match::calculate_control() {
     //   auto plyr = away_team.getPlayer(i);
     //   plyr.setZeroControl();
   }
+  Cart ball_pos = ball.getPosition();
+  double ball_dist;
+  double ball_multiplier;
 
   double temp_mindist; // current min dist
   double temp_dist;
@@ -338,6 +380,8 @@ void Match::calculate_control() {
     for (int i{0}; i < x_samples; i++){ // iterate through x
 
       Cart loc = convertIdx2Coords(i, j);
+      ball_dist = loc.dist(ball_pos);
+      ball_multiplier = weight_model->getBallMask(ball_dist);
       // calculate the distance from the first homeplayer, for now he controls it
       temp_pos = home_team.getPlayer(0).getPosition();
       temp_mindist = loc.dist2(temp_pos); // sponge
@@ -370,7 +414,7 @@ void Match::calculate_control() {
       
       if (temp_player > 0){
         // home player
-        dC = 1.0 * weight_model->pitchWeight(loc, current_frame);
+        dC = 1.0 * weight_model->pitchWeight(loc, current_frame) * ball_multiplier;
         if (log10(dC) < -300.0) {
             std::cout << "low dC! " << dC << std::endl;
         }
@@ -385,6 +429,8 @@ void Match::calculate_control() {
         // away player
         //dC = 1.0 ;//* weight_model->pitchWeight(loc, current_frame);
         //auto plyr = away_team.getPlayer(abs(temp_player) - 1);
+        dC = 1.0 * weight_model->pitchWeight(loc, current_frame) * ball_multiplier;
+
         away_team.addControl(abs(temp_player) - 1, dC);
         //plyr.addControl(dC);
 
@@ -403,7 +449,8 @@ void Match::tick() {
 
     // see if possession changes
     // std::cout<<"fliP,"<< std::flush;
-    tryPossessionFlip();
+    auto change = tryPossessionFlip();
+    auto passing = tryPass();
     // increase frame counter
 
     current_frame_number++;
@@ -411,7 +458,7 @@ void Match::tick() {
     // std::cout<<"update," << std::flush;
     // std::cout << "2Home " << home_team.xlim() << "," << home_team.ylim() << " Away " << away_team.pitchptr() << std::endl;
 
-
+    ball.frameUpdate(change, passing);
     home_team.update(current_frame);
     away_team.update(current_frame);
     // std::cout << "3Home " << home_team.xlim() << "," << home_team.ylim() << " Away " << away_team.pitchptr() << std::endl;
@@ -443,6 +490,8 @@ Frame Match::createFrame() {
     Frame thisframe(current_frame_number, home_team.getPlayerCount(), away_team.getPlayerCount());
     
     thisframe.setPossession(home_possession);
+    thisframe.setBallTile(ball.currentTileNumber());
+    thisframe.setBallPosition(ball.getPosition());
 
     // store home and away positions and controls
     for (int i{0}; i < home_team.getPlayerCount(); i++) {
@@ -472,12 +521,32 @@ void Match::togglePossession() {\
 }
 void Match::randomPossession() {
     int flip = (rand()%2)+ 1 ;
-    if (flip == 1) togglePossession();
+    if (flip == 1) {
+      togglePossession();
+      ball.swap_tiles_for_possession();
+    }
 }
-void Match::tryPossessionFlip() {
-    int flip = (rand()%((int) possession_flip_reciprocal_probability))+ 1 ;
+bool Match::tryPossessionFlip() {
+    double flip = ((double) rand() / RAND_MAX);
+    double prob = 1.0 / possession_flip_reciprocal_probability;
 
-    if (flip == 1) {togglePossession();}
+    if (flip < prob) {
+      togglePossession();
+      return true;
+    } else {
+      return false;
+    }
+}
+
+bool Match::tryPass() {
+    double flip = ((double) rand() / RAND_MAX);
+    double prob = 1.0 / pass_reciprocal_probability;
+
+    if (flip < prob) {
+      return true;
+    } else {
+      return false;
+    }
 }
 
 double Match::avgHomeControl(){

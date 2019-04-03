@@ -31,6 +31,9 @@ class Frame {
 
         bool home_possession;
 
+        int ball_tile;
+        Cart ball_position;
+
     public:
         // constructors
         Frame();
@@ -90,6 +93,11 @@ class Frame {
 
         std::string getHomePossStr();
         std::string getAwayPossStr();
+
+        int getBallTile();
+        void setBallTile(int);
+        Cart getBallPosition();
+        void setBallPosition(Cart);
 
 };
 

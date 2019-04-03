@@ -22,6 +22,9 @@ elif socket.gethostname() == 'lah-ubuntu':
 elif socket.gethostname() == 'brendleberry-desktop':
     print('brendleberry-desktop: bentleywurst\'s ubuntu partition, 12 cores for the bois\n')
     PROCESSES = 12
+elif socket.gethostname() == 'lah-ThinkPad-X220':
+    print('testing on laptop')
+    PROCESSES = 2
 else:
     print('Unknown territory: %s. Playing it safe with %i threads, edit DEFAULT_PROCESSES in %s to change this behaviour' % (socket.gethostname(), DEFAULT_PROCESSES, sys.argv[0]))
 

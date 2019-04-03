@@ -24,6 +24,9 @@ public:
     double player_radius;
     double player_scatter_length;
     double possession_chance;
+    double pass_chance;
+    double ball_peak;
+    double ball_decay;
 
     // match info
     int numberOfFrames;
