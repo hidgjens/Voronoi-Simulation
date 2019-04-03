@@ -1,18 +1,13 @@
-import numpy as np
-import matplotlib as mpl
-mpl.use('agg')
-import pandas as pd
-import matplotlib.cm as cm
-import matplotlib.pyplot as plt
-import sys
-from tqdm import tqdm
-from os.path import exists
-from os import makedirs
-from scipy.spatial import Voronoi, voronoi_plot_2d
+from Frame import Frame
+from Pitch import Pitch
 
-# placeholder values
-PitchX = 105
-PitchY = 68
+import matplotlib as mpl
+from matplotlib import pyplot as plt
+import matplotlib.cm as cm
+
+from scipy.spatial import Voronoi, voronoi_plot_2d
+import numpy as np
+import time
 
 def voronoi_finite_polygons_2d(vor, radius=1000):
     """
@@ -98,19 +93,30 @@ def voronoi_finite_polygons_2d(vor, radius=1000):
 
     return new_regions, np.asarray(new_vertices)
 
-# takes df and set of frames as input, plots Voronoi diagram of each frame 
-def PlotFrames(df, framelist, filename):
-    for fid in tqdm(framelist):
-        frame = df[(df['FID'] == fid) & (df['Team'] != 'Ball')].reset_index()
-        ball_df = df[(df['FID'] == fid) & (df['Team'] == 'Ball')].reset_index()
-        ball_pos = [ball_df['X'].values[0], ball_df['Y'].values[0]]
+class Animator:
+    fig = None
+    ax = None
+
+    pitch = None
+
+    def __init__(self, pitch=Pitch()):
+        self.pitch = pitch
+        plt.ion()
+
+        self.fig = plt.figure()
+        self.ax = self.fig.add_subplot(111)
+
+    def plot_frame(self, frame : Frame):
+        frame = frame[frame['Team'] != 'Ball'].reset_index()
         # get array of player positions and possession value
-        pos_array = frame[['X', 'Y', 'Ctrl']].values
-        poss = frame.at[1, 'Possession']
+        pos_array = frame.home_player_positions.extend(frame.away_player_positions)
+        poss = frame.possession
 
         # get number of players in frame
-        HomePlayers = len(frame.loc[frame['Team'] == 'Home'].index)
-        AwayPlayers = len(frame.loc[frame['Team'] == 'Away'].index)
+        HomePlayers = len(frame.home_player_positions)
+        AwayPlayers = len(frame.away_player_positions)
+        
+        
         AllPlayers = HomePlayers + AwayPlayers
 
         # compute Voronoi tessellation from player positions
@@ -124,7 +130,7 @@ def PlotFrames(df, framelist, filename):
 
         for idx, region in enumerate(regions):
             polygon = vertices[region]
-            plt.fill(*zip(*polygon), alpha=0.4, color = mapper.to_rgba(teamkey[idx]))
+            self.ax.fill(*zip(*polygon), alpha=0.4, color = mapper.to_rgba(teamkey[idx]))
 
         # plot
         for j in range(AllPlayers):
@@ -139,10 +145,10 @@ def PlotFrames(df, framelist, filename):
             #    if frame.at[j, 'Smart']:
             #        TeamColour = 'c'
                 
-            plt.plot(pos_array[j,0], pos_array[j,1], 'o', color = TeamColour)
+            self.ax.plot(pos_array[j,0], pos_array[j,1], 'o', color = TeamColour)
 
             # write spatial control (in %) of each player near them
-            plt.text(pos_array[j,0] + 0.8, pos_array[j,1] + 0.8,  '%.1f' % (100 * pos_array[j,2]), fontsize = 8)
+            self.ax.text(pos_array[j,0] + 0.8, pos_array[j,1] + 0.8,  '%.1f' % (100 * pos_array[j,2]), fontsize = 8)
 
             # write current possession state on plot
             if poss:
@@ -151,19 +157,8 @@ def PlotFrames(df, framelist, filename):
             else:
                 posstext = 'Possession: Away'
                 posscolour = 'b'
-            plt.text((-PitchX/2)+1, (PitchY/2)+1, posstext, fontsize = 12, color = posscolour)
-        plt.scatter(ball_pos[0], ball_pos[1], 'k')
-        plt.gca().set_aspect('equal')
-        plt.xlim(-0.5 * PitchX, 0.5 * PitchX)
-        plt.ylim(-0.5 * PitchY, 0.5 * PitchY)
+            self.ax.text((-self.pitch.pitch_x/2)+1, (self.pitch.pitch_y/2)+1, posstext, fontsize = 12, color = posscolour)
 
-        # check if output folder exists
-        try:    
-            if not exists('plots/vorplots/vorplots_%s' % filename):
-                makedirs('plots/vorplots/vorplots_%s' % filename)
-        except:
-            pass
-
-        # save plot
-        plt.savefig('plots/vorplots/vorplots_%s/voronoi-%04d.png' % (filename, fid))
-        plt.clf()
+        self.ax.set_aspect('equal')
+        self.ax.set_xlim(-0.5 * self.pitch.pitch_x, 0.5 * self.pitch.pitch_x)
+        self.ax.set_ylim(-0.5 * self.pitch.pitch_y, 0.5 * self.pitch.pitch_y)

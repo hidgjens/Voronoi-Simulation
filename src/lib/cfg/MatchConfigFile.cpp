@@ -106,6 +106,24 @@ void MatchConfigFile::parseConfigFile(const std::unordered_map<std::string, std:
     else
         possession_chance = 50;
 
+    // Pass_chance
+    if (check_key("PassChance"))
+        pass_chance = std::stod(umap.at("PassChance"));
+    else
+        pass_chance = 15;
+
+    // Ball peak
+    if (check_key("BallPeak"))
+        ball_peak = std::stod(umap.at("BallPeak"));
+    else
+        ball_peak = 2.0;
+    
+    // Ball decay
+    if (check_key("BallDecay"))
+        ball_decay = std::stod(umap.at("BallDecay"));
+    else
+        ball_decay = 10.0;
+
     // Player radius
     if (check_key("PlayerRadius"))
         player_radius = std::stod(umap.at("PlayerRadius"));

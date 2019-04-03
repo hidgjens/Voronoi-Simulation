@@ -9,6 +9,7 @@
 #include<iostream>
 #include<memory>
 #include "Team.h"
+#include "Ball.h"
 
 class Team;
 
@@ -31,8 +32,11 @@ class Match {
         MatchConfigFile mcf;
 
         double possession_flip_reciprocal_probability;
+        double pass_reciprocal_probability;
         double player_radius;
         double player_scatter_length;
+
+        Ball ball;
 
         // teams
         
@@ -76,7 +80,8 @@ class Match {
 
         void togglePossession();
         void randomPossession();
-        void tryPossessionFlip();
+        bool tryPossessionFlip();
+        bool tryPass();
 
         Frame createFrame();
 

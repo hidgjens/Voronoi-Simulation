@@ -44,7 +44,7 @@ void SimManager::start(std::string filename) {
     //std::cout << "BUILD!\n";
     //std::cout << "starting\n";
     match.startSimulation();
-    // std::cout << "end of for loop " << i << "/" << samples + start_num << std::endl;
+    std::cout << "end of for loop " << i + 1 << "/" << samples + start_num << std::endl;
   }
   // finish time
   auto t_fin = std::chrono::high_resolution_clock::now();

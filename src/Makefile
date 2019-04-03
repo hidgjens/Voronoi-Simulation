@@ -3,14 +3,17 @@ CC=g++
 CFLAGS=-std=c++14
 
 # Makefile
+confsim: Simulation.o Cart.o Frame.o Match.o Pitch.o PitchModel.o Ball.o Tile.o PitchGrid.o Player.o SimManager.o Team.o TeamStrategy.o MatchConfigFile.o TeamConfigFile.o Uniform.o Xlinear.o XlinYquad.o Exchange.o Metric.o Random.o Spreading.o TeamExchange.o Tether.o TetherElastic.o TetherSpreading.o TetherGrid.o TetherCounter.o Metric1.o MetricN.o Metric3.o TetherMetricN.o TetherElasticQuad.o TetherPep22.o
+	${CC} Simulation.o Cart.o Frame.o Match.o Pitch.o PitchModel.o Ball.o Tile.o PitchGrid.o Player.o SimManager.o Team.o TeamStrategy.o MatchConfigFile.o TeamConfigFile.o Uniform.o Xlinear.o XlinYquad.o Exchange.o Metric.o Random.o Spreading.o TeamExchange.o Tether.o TetherElastic.o TetherSpreading.o TetherGrid.o TetherCounter.o Metric1.o MetricN.o Metric3.o TetherMetricN.o TetherElasticQuad.o TetherPep22.o -o confsim ${CFLAGS}
 
-confsim: Simulation.o Cart.o Frame.o Match.o Pitch.o PitchModel.o PitchGrid.o Player.o SimManager.o Team.o TeamStrategy.o MatchConfigFile.o TeamConfigFile.o Uniform.o Xlinear.o XlinYquad.o Exchange.o Metric.o Random.o Spreading.o TeamExchange.o Tether.o TetherElastic.o TetherSpreading.o TetherGrid.o TetherCounter.o Metric1.o MetricN.o Metric3.o TetherMetricN.o TetherElasticQuad.o TetherPep22.o
-	${CC} Simulation.o Cart.o Frame.o Match.o Pitch.o PitchModel.o PitchGrid.o Player.o SimManager.o Team.o TeamStrategy.o MatchConfigFile.o TeamConfigFile.o Uniform.o Xlinear.o XlinYquad.o Exchange.o Metric.o Random.o Spreading.o TeamExchange.o Tether.o TetherElastic.o TetherSpreading.o TetherGrid.o TetherCounter.o Metric1.o MetricN.o Metric3.o TetherMetricN.o TetherElasticQuad.o TetherPep22.o -o confsim ${CFLAGS}
 
 Simulation.o: Simulation.cpp
 	${CC} -c Simulation.cpp ${CFLAGS}
 
 # lib
+
+Ball.o: lib/Ball.cpp lib/Ball.h
+	${CC} -c lib/Ball.cpp ${CFLAGS}
 
 Cart.o: lib/Cart.cpp lib/Cart.h
 	${CC} -c lib/Cart.cpp ${CFLAGS}
@@ -41,6 +44,11 @@ Team.o: lib/Team.cpp lib/Team.h
 
 TeamStrategy.o: lib/TeamStrategy.cpp lib/TeamStrategy.h
 	${CC} -c lib/TeamStrategy.cpp ${CFLAGS}
+
+Tile.o: lib/Tile.cpp lib/Tile.h
+	${CC} -c lib/Tile.cpp ${CFLAGS}
+
+
 
 # lib/cfg
 

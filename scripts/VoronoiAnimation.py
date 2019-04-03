@@ -104,6 +104,8 @@ def voronoi_finite_polygons_2d(vor, radius=1000):
 
 def UpdateFrame(df, matchnum, framenum, filename):
     frame = df[(df['FID'] == framenum) & (df['Team'] != 'Ball')].reset_index()
+    ball_df = df[(df['FID'] == framenum) & (df['Team'] == 'Ball')].reset_index()
+    ball_pos = [ball_df['X'].values[0], ball_df['Y'].values[0]]
     # get array of player positions and possession value
     pos_array = frame[['X', 'Y', 'Ctrl']].values
     poss = frame.at[1, 'Possession']
@@ -152,6 +154,9 @@ def UpdateFrame(df, matchnum, framenum, filename):
         info = '%s\nMatch: %i Frame: %i' % (filename, matchnum, framenum)
         plt.text((-PitchX/2)+1, (PitchY/2)+3, posstext, fontsize=11)
         plt.text(0, (PitchY/2)+3, info, fontsize=11)
+
+    plt.plot(ball_pos[0], ball_pos[1], 'o', color='k')
+    
 
 
 # load data from csv

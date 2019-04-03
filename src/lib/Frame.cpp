@@ -9,17 +9,19 @@ Frame::Frame() {
     awayControl = std::make_unique<double[]>(away_player_count);
 }
 Frame::Frame(int num, int h, int a) : frameNumber(num), home_player_count(h), away_player_count(a) {
-        homePositions = std::make_unique<Cart[]>(home_player_count);
-        awayPositions = std::make_unique<Cart[]>(away_player_count);
-        homeControl = std::make_unique<double[]>(home_player_count);
-        awayControl = std::make_unique<double[]>(away_player_count);
+    homePositions = std::make_unique<Cart[]>(home_player_count);
+    awayPositions = std::make_unique<Cart[]>(away_player_count);
+    homeControl = std::make_unique<double[]>(home_player_count);
+    awayControl = std::make_unique<double[]>(away_player_count);
 }
 
 Frame::Frame(Frame& frame) : 
     frameNumber(frame.frameNumber),
     home_player_count(frame.home_player_count),
     away_player_count(frame.away_player_count),
-    home_possession(frame.home_possession) {
+    home_possession(frame.home_possession),
+    ball_tile(frame.ball_tile),
+    ball_position(frame.ball_position) {
         homePositions = std::make_unique<Cart[]>(home_player_count);
         for (int i{0}; i < home_player_count; i++){
             homePositions[i] = frame.homePositions[i];
@@ -50,6 +52,8 @@ Frame& Frame::operator=(Frame& frame) {
     home_player_count = frame.home_player_count;
     away_player_count = frame.away_player_count;
     home_possession = frame.home_possession;
+    ball_tile = frame.ball_tile;
+    ball_position = frame.ball_position;
 
     homePositions = std::make_unique<Cart[]>(home_player_count);
     for (int i{0}; i < home_player_count; i++){
@@ -83,6 +87,8 @@ Frame& Frame::operator=(Frame&& frame) {
     home_player_count = frame.home_player_count;
     away_player_count = frame.away_player_count;
     home_possession = frame.home_possession;
+    ball_tile = frame.ball_tile;
+    ball_position = frame.ball_position;
 
     homePositions = std::move(frame.homePositions);
     homeControl = std::move(frame.homeControl);
@@ -116,8 +122,14 @@ void Frame::setAwayControl(int num, double ctrl) { awayControl[num] = ctrl; }
 double Frame::getAwayControl(int num) const { return awayControl[num]; }
 
 void Frame::printFrame() const {
+    std::string possession_str;
+    if (home_possession) {
+        possession_str = "HOME";
+    } else {
+        possession_str = "AWAY";
+    }
     std::cout << "\n-------------------------------------------------------------------------" << std::endl;
-    std::cout << "Frame " << frameNumber << ":" << std::endl;
+    std::cout << "Frame " << frameNumber << " | " << "Possession: " << possession_str << " | Ball Tile: " << ball_tile << " (" << ball_position.xComp() << "," << ball_position.yComp() << ")" << std::endl;
     std::cout << "\tHome Team:" << std::endl;
     for (int i{0}; i < home_player_count; i++){
         std::cout << "\t\tPlyr " << i << "\t(" << homePositions[i].xComp() << "," << homePositions[i].yComp() << ")\tCtrl: " << homeControl[i] << std::endl;
@@ -320,3 +332,8 @@ std::string Frame::getAwayPossStr() {
     else
         return "True";
 }
+
+int Frame::getBallTile() { return ball_tile; }
+void Frame::setBallTile(int i) { ball_tile = i; }
+Cart Frame::getBallPosition() { return ball_position; }
+void Frame::setBallPosition(Cart c) { ball_position = c; }
