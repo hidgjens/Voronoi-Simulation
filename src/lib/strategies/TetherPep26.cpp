@@ -1,42 +1,41 @@
-#include "TetherPep22.h"
+#include "TetherPep26.h"
 #include <vector>
 #include <algorithm>
 #include <iostream>
 
 
-TetherPep22::TetherPep22() {}
+TetherPep26::TetherPep26() {}
 
-TetherPep22::TetherPep22(TetherPep22& t) :
+TetherPep26::TetherPep26(TetherPep26& t) :
 player_count(t.player_count),
 decay_coefficient(t.decay_coefficient),
 attract_coefficient(t.attract_coefficient),
 repel_coefficient(t.repel_coefficient),
 num_nearest_neighbours(t.num_nearest_neighbours) {
+    
     pitch_data = t.pitch_data;
     pm = t.pm;
     min_team_distance = t.min_team_distance;
     description = t.description;
 
-
-    corners1 = std::make_unique<Cart[]>(player_count);
-    corners2 = std::make_unique<Cart[]>(player_count);
-    home_player_posts = std::make_unique<Cart[]>(player_count);
-    away_player_posts = std::make_unique<Cart[]>(player_count);
+    region_corners_top = std::make_unique<Cart[]>(26);
+    region_corners_bottom = std::make_unique<Cart[]>(26);
+    player_posts = std::make_unique<Cart[]>(player_count);
     post_distances = std::make_unique<double[]>(player_count);
-    spring_constants = std::make_unique<double[]>(player_count);
     
     for (int i{0}; i < player_count; i++) {
-        corners1[i] = t.corners1[i];
-        corners2[i] = t.corners2[i];
-        home_player_posts[i] = t.home_player_posts[i];
-        away_player_posts[i] = t.away_player_posts[i];
+        player_posts[i] = t.player_posts[i];
         post_distances[i] = t.post_distances[i];
-        spring_constants[i] = t.spring_constants[i];
+    }
+
+    for (int i{0}; i < 26; i++) {
+        region_corners_top[i] = t.region_corners_top[i];
+        region_corners_bottom[i] = t.region_corners_bottom[i];
     }
 }
 
 
-TetherPep22& TetherPep22::operator=(TetherPep22& t) {
+TetherPep26& TetherPep26::operator=(TetherPep26& t) {
     if (&t == this) {
         return *this;
     }
@@ -52,27 +51,26 @@ TetherPep22& TetherPep22::operator=(TetherPep22& t) {
     min_team_distance = t.min_team_distance;
     description = t.description;
 
-    corners1 = std::make_unique<Cart[]>(player_count);
-    corners2 = std::make_unique<Cart[]>(player_count);
-    home_player_posts = std::make_unique<Cart[]>(player_count);
-    away_player_posts = std::make_unique<Cart[]>(player_count);
+    region_corners_top = std::make_unique<Cart[]>(26);
+    region_corners_bottom = std::make_unique<Cart[]>(26);
+    player_posts = std::make_unique<Cart[]>(player_count);
     post_distances = std::make_unique<double[]>(player_count);
-    spring_constants = std::make_unique<double[]>(player_count);
 
     for (int i{0}; i < player_count; i++) {
-        corners1[i] = t.corners1[i];
-        corners2[i] = t.corners2[i];
-        home_player_posts[i] = t.home_player_posts[i];
-        away_player_posts[i] = t.away_player_posts[i];
+        player_posts[i] = t.player_posts[i];
         post_distances[i] = t.post_distances[i];
-        spring_constants[i] = t.spring_constants[i];
+    }
+
+    for (int i{0}; i < 26; i++) {
+        region_corners_top[i] = t.region_corners_top[i];
+        region_corners_bottom[i] = t.region_corners_bottom[i];
     }
 
     return *this;
 }
 
 
-TetherPep22& TetherPep22::operator=(TetherPep22&& t) {
+TetherPep26& TetherPep26::operator=(TetherPep26&& t) {
     if (&t == this) {
         return *this;
     }
@@ -88,12 +86,10 @@ TetherPep22& TetherPep22::operator=(TetherPep22&& t) {
     min_team_distance = t.min_team_distance;
     description = t.description;
 
-    corners1 = std::move(t.corners1);
-    corners2 = std::move(t.corners2);
-    home_player_posts = std::move(t.home_player_posts);
-    away_player_posts = std::move(t.away_player_posts);
+    region_corners_top = std::move(t.region_corners_top);
+    region_corners_bottom = std::move(t.region_corners_bottom);
+    player_posts = std::move(t.player_posts);
     post_distances = std::move(t.post_distances);
-    spring_constants = std::move(t.spring_constants);
     // to prevent looping through empty arrays in t
     t.player_count = 0;
 
@@ -101,7 +97,7 @@ TetherPep22& TetherPep22::operator=(TetherPep22&& t) {
 }
 
 
-TetherPep22::TetherPep22(TeamConfigFile tcf, PitchModel* p) :
+TetherPep26::TetherPep26(TeamConfigFile tcf, PitchModel* p) :
 player_count(tcf.player_count),
 decay_coefficient(tcf.decay_coefficient),
 attract_coefficient(tcf.attract_coefficient),
@@ -112,33 +108,38 @@ num_nearest_neighbours(tcf.players_to_consider) {
     double pitch_x = pitch_data.getXdim();
     double pitch_y = pitch_data.getYdim();
 
-    corners1 = std::make_unique<Cart[]>(player_count);
-    corners2 = std::make_unique<Cart[]>(player_count);
-    home_player_posts = std::make_unique<Cart[]>(player_count);
-    away_player_posts = std::make_unique<Cart[]>(player_count);
-    post_distances = std::make_unique<double[]>(player_count);
-    spring_constants = std::make_unique<double[]>(player_count); 
+    region_corners_top = std::make_unique<Cart[]>(26);
+    region_corners_bottom = std::make_unique<Cart[]>(26);
+    player_posts = std::make_unique<Cart[]>(player_count);
+    post_distances = std::make_unique<double[]>(player_count); 
 
-    // want to construct tether regions - get diagonal corners for each region
-    // penalty area
-    corners1[0] = Cart(0, -16.5); corners2[0] = Cart(16.5, 16.5);
-
-    // own corners
-    corners1[1] = Cart(0, 16.5); corners2[1] = Cart(16.5, pitch_y/2);
-    corners1[2] = Cart(0, -pitch_y/2); corners2[2] = Cart(16.5, -16.5);
-
-    // split remaining area into 8 equal regions for simplicity
-    for (int i{0}; i<8; i++) {  
-        if (i<4) {
-            corners1[i+3] = Cart(16.5, (-pitch_y/2) + (i * pitch_y/4));
-            corners2[i+3] = Cart((16.5/2) + (pitch_x/4), (-pitch_y/2) + ((i+1) * pitch_y/4));
+    // want to construct tether regions
+    // define points on pitch in terms of ticks
+    double yticks[8] = {0, pitch_y/5, (pitch_y/2)-16.5, 2*pitch_y/5, 3*pitch_y/5, (pitch_y/2)+16.5, 4*pitch_y/5, pitch_y};    
+    double xticks[7] = {0, 16.5, 8.25+(pitch_x/4), pitch_x/2, (3*pitch_x/4)-8.25, pitch_x-16.5, pitch_x};
+    for (auto y : yticks) {y -= pitch_y/2;}
+    for (auto x : xticks) {x -= pitch_x/2;}
+    // region 0 - bottom corner
+    region_corners_bottom[0] = Cart(xticks[0], yticks[0]); region_corners_top[0] = Cart(xticks[1], yticks[2]);
+    // region 1 - penalty area
+    region_corners_bottom[1] = Cart(xticks[0], yticks[2]); region_corners_top[1] = Cart(xticks[1], yticks[5]);
+    // region 2 - top corner
+    region_corners_bottom[2] = Cart(xticks[0], yticks[5]); region_corners_top[2] = Cart(xticks[1], yticks[7]);
+    // middle sections - lots of iterative nonsense here
+    int mapper[6] = {0,1,3,4,6,7};
+    for (int i{0}; i<4; i++) {
+        for (int j{0}; j<5; j++) {
+            int k = mapper[j], l = mapper[j+1];
+            region_corners_bottom[j+3+(5*i)] = Cart(xticks[i+1],yticks[k]);
+            region_corners_top[j+3+(5*i)] = Cart(xticks[i+2], yticks[l]);
         }
+    } 
+    // final 3 regions
+    region_corners_bottom[23] = Cart(xticks[5], yticks[0]); region_corners_top[0] = Cart(xticks[6], yticks[2]);
+    region_corners_bottom[24] = Cart(xticks[5], yticks[2]); region_corners_top[1] = Cart(xticks[6], yticks[5]);
+    region_corners_bottom[25] = Cart(xticks[5], yticks[5]); region_corners_top[2] = Cart(xticks[6], yticks[7]);
 
-        else {
-            corners1[i+3] = Cart((16.5/2) + (pitch_x/4), (-pitch_y/2) + ((i-4) * pitch_y/4));
-            corners2[i+3] = Cart(pitch_x/2, (-pitch_y/2) + ((i-3) * pitch_y/4));
-        }
-    }
+    //UNFINISHED FROM HERE - NEEDS COMPLETE REWORK
 
     // loop through players
     for (int i{0}; i < player_count; i++) {
@@ -190,7 +191,7 @@ bool compare_distances(PlayerInfo i, PlayerInfo j) {
 }
 
 
-void TetherPep22::updateTeam(Team& team, Frame frame) {
+void TetherPep26::updateTeam(Team& team, Frame frame) {
     // loop through players
     for (int i{0}; i < team.getPlayerCount(); i++) {
         //std::cout << "Home and away player posts\n" << std::endl;
