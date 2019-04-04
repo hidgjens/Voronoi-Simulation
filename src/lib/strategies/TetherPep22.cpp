@@ -158,7 +158,7 @@ num_nearest_neighbours(tcf.players_to_consider) {
         }
         // set each player's max post distance to half the diagonal length of the region
         // (ie circle intersecting the 4 corners of the region)
-        post_distances[i] = diff.mod() * 0.5;
+        post_distances[i] = diff.mod() * 0.25;
         
         //std::cout << "Post distance:" << std::endl;
         //std::cout << post_distances[i] << "\n" << std::endl;
@@ -226,7 +226,7 @@ void TetherPep22::updateTeam(Team& team, Frame frame) {
         
         //std::cout << "no prang" << std::endl;
         //std::cout << i << std::endl;
-        
+        //std::cout << post_distances[i] << std::endl;        
         if (dist2post > post_distances[i]) {
             //std::cout << "outisde tether region" << std::endl;
             // player is outside tether region, move back at full speed
@@ -273,19 +273,24 @@ void TetherPep22::updateTeam(Team& team, Frame frame) {
             Cart metric_contribution(0,0);
             for (int i{0}; i < num_nearest_neighbours; i++) {
                 //std::cout << "into loop" << std::endl;
-                PlayerInfo p = players[i]; 
-                int multiplier; double temp_ctrl;
+                PlayerInfo p = players[i];
+                //p.position.print();
+                //std::cout << "\n" << p.ally << "\n" << p.shirt_num << "\n" << p.distance << std::endl; 
+                double multiplier{1.0}; double temp_ctrl;
                 
                 if (p.ally == true) {
-                    multiplier = -1;
+                    multiplier *= -1.0 * repel_coefficient;
                     temp_ctrl = frame.getAlliedControl(allied, p.shirt_num);
                 }
                 else if (p.ally == false) {
-                    multiplier = 1;
+                    multiplier *= attract_coefficient;
                     temp_ctrl = frame.getOpponentControl(allied, p.shirt_num);
                 }
-                
-                double metric_amp = multiplier * temp_ctrl * exp(-1 * p.distance / (pitch_data.getPitchLength() * decay_coefficient)); 
+                //std::cout << pitch_data.getPitchLength() << std::endl;
+                //std::cout << multiplier << std::endl;
+                //std::cout << temp_ctrl << std::endl;
+                double metric_amp = multiplier * temp_ctrl * exp(-1.0 * p.distance / (pitch_data.getPitchLength() * decay_coefficient)); 
+                //std::cout << "Metric amplitude:" << metric_amp << std::endl;
                 metric_contribution += plyr_position.unitVect2(p.position) * metric_amp;           
                 //std::cout << "loop code fine" << std::endl;
             }
