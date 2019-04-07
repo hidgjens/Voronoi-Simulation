@@ -25,7 +25,7 @@ elif socket.gethostname() == 'brendleberry-desktop':
 elif socket.gethostname() == 'lah-ThinkPad-X220':
     print('testing on laptop')
     PROCESSES = 2
-elif socket.gethostname() == 'pc2014.hep.manchester.ac.uk'
+elif socket.gethostname() == 'pc2014.hep.manchester.ac.uk':
     print('PC2014')
     PROCESSES = 24
 else:
