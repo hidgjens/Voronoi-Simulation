@@ -106,7 +106,7 @@ def plot_heatmap(eigenvalue, weights, num):
     ax.set_ylim(0, 68.0)
 
     norm = mpl.colors.Normalize(vmin=0.0, vmax=1.0, clip=True)
-    mapper = cm.ScalarMappable(norm=norm, cmap=cm.coolwarm)
+    mapper = cm.ScalarMappable(norm=norm, cmap=cm.Reds)
     mapper_complex = cm.ScalarMappable(norm=norm, cmap=cm.Greens)
 
     for i, w in enumerate(weights):

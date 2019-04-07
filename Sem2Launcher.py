@@ -25,6 +25,9 @@ elif socket.gethostname() == 'brendleberry-desktop':
 elif socket.gethostname() == 'lah-ThinkPad-X220':
     print('testing on laptop')
     PROCESSES = 2
+elif socket.gethostname() == 'pc2014.hep.manchester.ac.uk'
+    print('PC2014')
+    PROCESSES = 24
 else:
     print('Unknown territory: %s. Playing it safe with %i threads, edit DEFAULT_PROCESSES in %s to change this behaviour' % (socket.gethostname(), DEFAULT_PROCESSES, sys.argv[0]))
 
