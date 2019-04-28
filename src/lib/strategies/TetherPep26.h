@@ -9,7 +9,8 @@ class TetherPep26: public TeamStrategy{
         int player_count;
         std::unique_ptr<Cart[]> region_corners_top;
         std::unique_ptr<Cart[]> region_corners_bottom;
-        std::unique_ptr<Cart[]> player_posts;
+        std::unique_ptr<Cart[]> home_player_posts;
+        std::unique_ptr<Cart[]> away_player_posts;
         std::unique_ptr<double[]> post_distances;
 
         double decay_coefficient;

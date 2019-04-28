@@ -20,11 +20,13 @@ num_nearest_neighbours(t.num_nearest_neighbours) {
 
     region_corners_top = std::make_unique<Cart[]>(26);
     region_corners_bottom = std::make_unique<Cart[]>(26);
-    player_posts = std::make_unique<Cart[]>(player_count);
+    home_player_posts = std::make_unique<Cart[]>(player_count);
+    away_player_posts = std::make_unique<Cart[]>(player_count);
     post_distances = std::make_unique<double[]>(player_count);
     
     for (int i{0}; i < player_count; i++) {
-        player_posts[i] = t.player_posts[i];
+        home_player_posts[i] = t.home_player_posts[i];
+        away_player_posts[i] = t.away_player_posts[i];
         post_distances[i] = t.post_distances[i];
     }
 
@@ -53,11 +55,13 @@ TetherPep26& TetherPep26::operator=(TetherPep26& t) {
 
     region_corners_top = std::make_unique<Cart[]>(26);
     region_corners_bottom = std::make_unique<Cart[]>(26);
-    player_posts = std::make_unique<Cart[]>(player_count);
+    home_player_posts = std::make_unique<Cart[]>(player_count);
+    away_player_posts = std::make_unique<Cart[]>(player_count);
     post_distances = std::make_unique<double[]>(player_count);
 
     for (int i{0}; i < player_count; i++) {
-        player_posts[i] = t.player_posts[i];
+        home_player_posts[i] = t.home_player_posts[i];
+        away_player_posts[i] = t.away_player_posts[i];
         post_distances[i] = t.post_distances[i];
     }
 
@@ -88,7 +92,8 @@ TetherPep26& TetherPep26::operator=(TetherPep26&& t) {
 
     region_corners_top = std::move(t.region_corners_top);
     region_corners_bottom = std::move(t.region_corners_bottom);
-    player_posts = std::move(t.player_posts);
+    home_player_posts = std::move(t.home_player_posts);
+    away_player_posts = std::move(t.away_player_posts);
     post_distances = std::move(t.post_distances);
     // to prevent looping through empty arrays in t
     t.player_count = 0;
@@ -110,13 +115,15 @@ num_nearest_neighbours(tcf.players_to_consider) {
 
     region_corners_top = std::make_unique<Cart[]>(26);
     region_corners_bottom = std::make_unique<Cart[]>(26);
-    player_posts = std::make_unique<Cart[]>(player_count);
+    home_player_posts = std::make_unique<Cart[]>(player_count);
+    away_player_posts = std::make_unique<Cart[]>(player_count);
     post_distances = std::make_unique<double[]>(player_count); 
 
     // want to construct tether regions
     // define points on pitch in terms of ticks
     double yticks[8] = {0, pitch_y/5, (pitch_y/2)-16.5, 2*pitch_y/5, 3*pitch_y/5, (pitch_y/2)+16.5, 4*pitch_y/5, pitch_y};    
     double xticks[7] = {0, 16.5, 8.25+(pitch_x/4), pitch_x/2, (3*pitch_x/4)-8.25, pitch_x-16.5, pitch_x};
+    // transform so origin is at centre of pitch
     for (auto y : yticks) {y -= pitch_y/2;}
     for (auto x : xticks) {x -= pitch_x/2;}
     // region 0 - bottom corner
@@ -139,35 +146,23 @@ num_nearest_neighbours(tcf.players_to_consider) {
     region_corners_bottom[24] = Cart(xticks[5], yticks[2]); region_corners_top[1] = Cart(xticks[6], yticks[5]);
     region_corners_bottom[25] = Cart(xticks[5], yticks[5]); region_corners_top[2] = Cart(xticks[6], yticks[7]);
 
-    //UNFINISHED FROM HERE - NEEDS COMPLETE REWORK
-
+    // we now have the 26 regions, need to give players their regions for home and away possession
     // loop through players
+    int home_region_mapper[11]={1,9,11,13,15,17,19,21,23,24,25};
+    int away_region_mapper[11]={1,4,6,8,10,12,14,16,18,20,22};
     for (int i{0}; i < player_count; i++) {
-        // transform x-coordinate so x=0 at centre, not home goal-line
-        corners1[i].setX(corners1[i].xComp() - (pitch_x/2));
-        corners2[i].setX(corners2[i].xComp() - (pitch_x/2));
-    
-        // player posts are midpoints of the line connecting the diagonal corners
-        Cart diff = (corners2[i] - corners1[i]);
-        home_player_posts[i] = corners1[i] + (diff * 0.5);
+        int j = home_region_mapper[i];
+        Cart diff = region_corners_top[j] - region_corners_bottom[j];
+        home_player_posts[i] = region_corners_bottom[j] + (diff*0.5);
 
-        // can now construct away player posts
-        // add pitchx/2 for all players except "keeper"
-        away_player_posts[i] = home_player_posts[i];
-        if (i != 0) { 
-            away_player_posts[i].setX(home_player_posts[i].xComp() + (pitch_x/2));
-        }
-        // set each player's max post distance to half the diagonal length of the region
-        // (ie circle intersecting the 4 corners of the region)
-        post_distances[i] = diff.mod() * 0.25;
-        
-        //std::cout << "Post distance:" << std::endl;
-        //std::cout << post_distances[i] << "\n" << std::endl;
-        // and calculate corresponding spring constant
-        spring_constants[i] = 2.5 / post_distances[i];
+        j = away_region_mapper[i];
+        diff = (region_corners_top[j] - region_corners_bottom[j]);
+        away_player_posts[i] = region_corners_bottom[j] + (diff*0.5);
+    
+        // for now set all post distances to a constant (can change this later)
+        post_distances[i] = tcf.max_post_distance; 
     }
 }
-
 
 struct PlayerInfo{
     bool ally;
@@ -186,7 +181,7 @@ struct PlayerInfo{
 };
 
 
-bool compare_distances(PlayerInfo i, PlayerInfo j) {
+bool compare_distances_pep26(PlayerInfo i, PlayerInfo j) {
     return i.distance < j.distance;
 }
 
@@ -195,8 +190,8 @@ void TetherPep26::updateTeam(Team& team, Frame frame) {
     // loop through players
     for (int i{0}; i < team.getPlayerCount(); i++) {
         //std::cout << "Home and away player posts\n" << std::endl;
-        //home_player_posts[i].print();
-        //away_player_posts[i].print();
+        //home_home_player_posts[i].print();
+        //away_home_player_posts[i].print();
 
         // get player info
         auto plyr = team.getPlayerPtr(i);
@@ -265,7 +260,7 @@ void TetherPep26::updateTeam(Team& team, Frame frame) {
             }
 
             // now sort and take nearest neighbours
-            std::sort(players.begin(), players.end(), compare_distances);
+            std::sort(players.begin(), players.end(), compare_distances_pep26);
             //players.resize(num_nearest_neighbours);
             //players.resize(3);
             //std::cout << "resize fine" << std::endl;

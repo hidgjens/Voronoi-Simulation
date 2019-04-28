@@ -3,8 +3,8 @@ CC=g++
 CFLAGS=-std=c++14
 
 # Makefile
-confsim: Simulation.o Cart.o Frame.o Match.o Pitch.o PitchModel.o Ball.o Tile.o PitchGrid.o Player.o SimManager.o Team.o TeamStrategy.o MatchConfigFile.o TeamConfigFile.o Uniform.o Xlinear.o XlinYquad.o Exchange.o Metric.o Random.o Spreading.o TeamExchange.o Tether.o TetherElastic.o TetherSpreading.o TetherGrid.o TetherCounter.o Metric1.o MetricN.o Metric3.o TetherMetricN.o TetherElasticQuad.o TetherPep22.o
-	${CC} Simulation.o Cart.o Frame.o Match.o Pitch.o PitchModel.o Ball.o Tile.o PitchGrid.o Player.o SimManager.o Team.o TeamStrategy.o MatchConfigFile.o TeamConfigFile.o Uniform.o Xlinear.o XlinYquad.o Exchange.o Metric.o Random.o Spreading.o TeamExchange.o Tether.o TetherElastic.o TetherSpreading.o TetherGrid.o TetherCounter.o Metric1.o MetricN.o Metric3.o TetherMetricN.o TetherElasticQuad.o TetherPep22.o -o confsim ${CFLAGS}
+confsim: Simulation.o Cart.o Frame.o Match.o Pitch.o PitchModel.o Ball.o Tile.o PitchGrid.o Player.o SimManager.o Team.o TeamStrategy.o MatchConfigFile.o TeamConfigFile.o Uniform.o Xlinear.o XlinYquad.o Exchange.o Metric.o Random.o Spreading.o TeamExchange.o Tether.o TetherElastic.o TetherSpreading.o TetherGrid.o TetherCounter.o Metric1.o MetricN.o Metric3.o TetherMetricN.o TetherElasticQuad.o TetherPep22.o TetherPep26.o
+	${CC} Simulation.o Cart.o Frame.o Match.o Pitch.o PitchModel.o Ball.o Tile.o PitchGrid.o Player.o SimManager.o Team.o TeamStrategy.o MatchConfigFile.o TeamConfigFile.o Uniform.o Xlinear.o XlinYquad.o Exchange.o Metric.o Random.o Spreading.o TeamExchange.o Tether.o TetherElastic.o TetherSpreading.o TetherGrid.o TetherCounter.o Metric1.o MetricN.o Metric3.o TetherMetricN.o TetherElasticQuad.o TetherPep22.o TetherPep26.o -o confsim ${CFLAGS}
 
 
 Simulation.o: Simulation.cpp
@@ -118,6 +118,9 @@ TetherElasticQuad.o: lib/strategies/TetherElasticQuad.cpp lib/strategies/TetherE
 
 TetherPep22.o: lib/strategies/TetherPep22.cpp lib/strategies/TetherPep22.h
 	${CC} -c lib/strategies/TetherPep22.cpp ${CFLAGS}
+
+TetherPep26.o: lib/strategies/TetherPep26.cpp lib/strategies/TetherPep26.h
+	${CC} -c lib/strategies/TetherPep26.cpp ${CFLAGS}
 
 clean:
 	-rm *.o 
