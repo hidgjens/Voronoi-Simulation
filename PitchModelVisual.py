@@ -4,7 +4,7 @@ PITCH_Y = 68.0
 X_W_MIN = 0.5 # minimum value of omega for x scale
 X_W_MAX = 1.5 # maximum " " " " " "
 
-Y_W_MIN = 0.5 # minimum " " " " y scale
+Y_W_MIN = 0.75 # minimum " " " " y scale
 Y_W_MAX = 1.5 # maximum " " " " " "
 
 # used in linear map
@@ -18,6 +18,11 @@ Ax = 4 * (X_W_MAX - X_W_MIN) / (PITCH_X ** 2)
 
 SCALE = 0.75
 
+BALL_COORD = [-25.0, 13.0]
+BALL_A = 3.0
+BALL_De = 10.0
+
+
 # imports
 import numpy as np
 import matplotlib as mpl 
@@ -26,6 +31,11 @@ import seaborn as sns
 
 import matplotlib.pyplot as plt
 
+def ball_multiplier(x, y):
+    dist = np.sqrt((BALL_COORD[0] - x) ** 2 + (BALL_COORD[1] - y) ** 2)
+    mult = 1.0 + (BALL_A - 1.0) * np.exp( - 1.0 * dist / BALL_De)
+    return(mult)
+
 
 def pitch_model_linear(x : float, y : float) -> float:
     # y component is just 1
@@ -33,28 +43,28 @@ def pitch_model_linear(x : float, y : float) -> float:
 
     x_cmpt : float = X_W_BAR + X_W_DELTA * (x / PITCH_X)
 
-    return(x_cmpt)
+    return(x_cmpt * ball_multiplier(x, y))
 
 def pitch_model_linquad(x : float, y : float) -> float:
     x_cmpt : float = X_W_BAR + X_W_DELTA * (x / PITCH_X)
     y_cmpt : float = - A * ( y - PITCH_Y / 2.0) * ( y + PITCH_Y / 2.0) + Y_W_MIN
 
-    return(x_cmpt * y_cmpt)
+    return(x_cmpt * y_cmpt * ball_multiplier(x, y))
 
 def pitch_model_quadquad(x : float, y : float) -> float:
     x_cmpt : float = x**2 * (X_W_DELTA) + X_W_MIN
     y_cmpt : float = - A * ( y - PITCH_Y / 2.0) * ( y + PITCH_Y / 2.0) + Y_W_MIN
 
-    return(x_cmpt * y_cmpt)
+    return(x_cmpt * y_cmpt * ball_multiplier(x, y))
 
 def pitch_model_uniform(x : float, y : float) -> float:
-    return(1.0)
+    return(1.0 * ball_multiplier(x, y))
 
 def pitch_model_delta(x : float, y: float) -> float:
     x_cmpt : float = X_W_BAR + X_W_DELTA * (x / PITCH_X)
     
     if y == 0.0:
-        return(x_cmpt)
+        return(x_cmpt * ball_multiplier(x, y))
     else:
         return(0.0)
 
@@ -166,10 +176,10 @@ def plot_heatmap(pitch_model_function, fn):
     y_plus = WAC[1] + SCALE * y_sigmas[0]
     y_minus = WAC[1] - SCALE * y_sigmas[1]
 
-    plt.plot([x_plus, x_plus], [0.5 * PITCH_Y, -0.5 * PITCH_Y], 'g-')
-    plt.plot([x_minus, x_minus], [0.5 * PITCH_Y, -0.5 * PITCH_Y], 'g-')
-    plt.plot([0.5 * PITCH_X, -0.5 * PITCH_X], [y_plus, y_plus], 'g-')
-    plt.plot([0.5 * PITCH_X, -0.5 * PITCH_X], [y_minus, y_minus], 'g-')
+    #plt.plot([x_plus, x_plus], [0.5 * PITCH_Y, -0.5 * PITCH_Y], 'g-')
+    #plt.plot([x_minus, x_minus], [0.5 * PITCH_Y, -0.5 * PITCH_Y], 'g-')
+    #plt.plot([0.5 * PITCH_X, -0.5 * PITCH_X], [y_plus, y_plus], 'g-')
+    #plt.plot([0.5 * PITCH_X, -0.5 * PITCH_X], [y_minus, y_minus], 'g-')
 
 
     # formatting
@@ -178,7 +188,7 @@ def plot_heatmap(pitch_model_function, fn):
     
     # colorbar formatting
     plt.colorbar(im, fraction = 0.03, pad = 0.04)#, ticks = [X_W_MIN, X_W_MIN + .25 * (X_W_DELTA), X_W_MIN + .5 * (X_W_DELTA), X_W_MIN + .75 * (X_W_DELTA), X_W_MAX])
-    ax.scatter(WAC[0], WAC[1], c='g')
+    #ax.scatter(WAC[0], WAC[1], c='g')
     ax.set_aspect("equal")
     
     plt.title(fn)
@@ -314,7 +324,7 @@ def main():
     plot_heatmap(pitch_model_linear, "lin")
     plot_heatmap(pitch_model_linquad, "linquad")
     plot_heatmap(pitch_model_quadquad, "quadquad")
-    plot_heatmap(pitch_model_delta, 'delta')
+    #plot_heatmap(pitch_model_delta, 'delta')
     plot_heatmap(pitch_model_uniform, "uni")
 
 if __name__ == '__main__':
