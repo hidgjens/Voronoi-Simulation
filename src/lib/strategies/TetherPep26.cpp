@@ -124,8 +124,13 @@ num_nearest_neighbours(tcf.players_to_consider) {
     double yticks[8] = {0, pitch_y/5, (pitch_y/2)-16.5, 2*pitch_y/5, 3*pitch_y/5, (pitch_y/2)+16.5, 4*pitch_y/5, pitch_y};    
     double xticks[7] = {0, 16.5, 8.25+(pitch_x/4), pitch_x/2, (3*pitch_x/4)-8.25, pitch_x-16.5, pitch_x};
     // transform so origin is at centre of pitch
-    for (auto y : yticks) {y -= pitch_y/2;}
-    for (auto x : xticks) {x -= pitch_x/2;}
+    for (auto &y : yticks) {
+        y -= pitch_y/2;
+    }
+    for (auto &x : xticks) {
+        x -= pitch_x/2;
+    }
+    
     // region 0 - bottom corner
     region_corners_bottom[0] = Cart(xticks[0], yticks[0]); region_corners_top[0] = Cart(xticks[1], yticks[2]);
     // region 1 - penalty area
@@ -142,9 +147,16 @@ num_nearest_neighbours(tcf.players_to_consider) {
         }
     } 
     // final 3 regions
-    region_corners_bottom[23] = Cart(xticks[5], yticks[0]); region_corners_top[0] = Cart(xticks[6], yticks[2]);
-    region_corners_bottom[24] = Cart(xticks[5], yticks[2]); region_corners_top[1] = Cart(xticks[6], yticks[5]);
-    region_corners_bottom[25] = Cart(xticks[5], yticks[5]); region_corners_top[2] = Cart(xticks[6], yticks[7]);
+    region_corners_bottom[23] = Cart(xticks[5], yticks[0]); region_corners_top[23] = Cart(xticks[6], yticks[2]);
+    region_corners_bottom[24] = Cart(xticks[5], yticks[2]); region_corners_top[24] = Cart(xticks[6], yticks[5]);
+    region_corners_bottom[25] = Cart(xticks[5], yticks[5]); region_corners_top[25] = Cart(xticks[6], yticks[7]);
+
+    /*for (int i{0}; i<26; i++) {
+        std::cout << "region corners: region" << i << std::endl;
+        region_corners_bottom[i].print();
+        region_corners_top[i].print();
+    }*/ 
+
 
     // we now have the 26 regions, need to give players their regions for home and away possession
     // loop through players
@@ -162,6 +174,15 @@ num_nearest_neighbours(tcf.players_to_consider) {
         // for now set all post distances to a constant (can change this later)
         post_distances[i] = tcf.max_post_distance; 
     }
+    /*for (int i{0}; i < player_count; i++) {
+        Cart hp = home_player_posts[i]; 
+        Cart ap = away_player_posts[i];
+        std::cout << "home and away posts:" << std::endl;
+        hp.print();
+        std::cout << "(region:" << home_region_mapper[i] << ")" << std::endl;
+        ap.print();
+        std::cout << "(region:" << away_region_mapper[i] << ")" << std::endl;
+    }*/
 }
 
 struct PlayerInfo{
