@@ -119,37 +119,29 @@ num_nearest_neighbours(tcf.players_to_consider) {
     away_player_posts = std::make_unique<Cart[]>(player_count);
     post_distances = std::make_unique<double[]>(player_count); 
 
+    // updated with actual Pep-26 regions
     // want to construct tether regions
     // define points on pitch in terms of ticks
-    double yticks[8] = {0, pitch_y/5, (pitch_y/2)-16.5, 2*pitch_y/5, 3*pitch_y/5, (pitch_y/2)+16.5, 4*pitch_y/5, pitch_y};    
-    double xticks[7] = {0, 16.5, 8.25+(pitch_x/4), pitch_x/2, (3*pitch_x/4)-8.25, pitch_x-16.5, pitch_x};
-    // transform so origin is at centre of pitch
-    for (auto &y : yticks) {
-        y -= pitch_y/2;
-    }
-    for (auto &x : xticks) {
-        x -= pitch_x/2;
-    }
+    double xticks[7] = { -52.5, -35.0, -17.5, 0.0, 17.5, 35.0, 52.5 };
+    double yticks[6] = { -34.0, -20.4, -6.8, 6.8, 20.4, 34.0 };
     
     // region 0 - bottom corner
-    region_corners_bottom[0] = Cart(xticks[0], yticks[0]); region_corners_top[0] = Cart(xticks[1], yticks[2]);
+    region_corners_bottom[0] = Cart(xticks[0], yticks[0]); region_corners_top[0] = Cart(xticks[1], yticks[1]);
     // region 1 - penalty area
-    region_corners_bottom[1] = Cart(xticks[0], yticks[2]); region_corners_top[1] = Cart(xticks[1], yticks[5]);
+    region_corners_bottom[1] = Cart(xticks[0], yticks[1]); region_corners_top[1] = Cart(xticks[1], yticks[4]);
     // region 2 - top corner
-    region_corners_bottom[2] = Cart(xticks[0], yticks[5]); region_corners_top[2] = Cart(xticks[1], yticks[7]);
+    region_corners_bottom[2] = Cart(xticks[0], yticks[4]); region_corners_top[2] = Cart(xticks[1], yticks[5]);
     // middle sections - lots of iterative nonsense here
-    int mapper[6] = {0,1,3,4,6,7};
     for (int i{0}; i<4; i++) {
         for (int j{0}; j<5; j++) {
-            int k = mapper[j], l = mapper[j+1];
-            region_corners_bottom[j+3+(5*i)] = Cart(xticks[i+1],yticks[k]);
-            region_corners_top[j+3+(5*i)] = Cart(xticks[i+2], yticks[l]);
+            region_corners_bottom[j+3+(5*i)] = Cart(xticks[i+1],yticks[j]);
+            region_corners_top[j+3+(5*i)] = Cart(xticks[i+2], yticks[j+1]);
         }
     } 
     // final 3 regions
-    region_corners_bottom[23] = Cart(xticks[5], yticks[0]); region_corners_top[23] = Cart(xticks[6], yticks[2]);
-    region_corners_bottom[24] = Cart(xticks[5], yticks[2]); region_corners_top[24] = Cart(xticks[6], yticks[5]);
-    region_corners_bottom[25] = Cart(xticks[5], yticks[5]); region_corners_top[25] = Cart(xticks[6], yticks[7]);
+    region_corners_bottom[23] = Cart(xticks[5], yticks[0]); region_corners_top[23] = Cart(xticks[6], yticks[1]);
+    region_corners_bottom[24] = Cart(xticks[5], yticks[1]); region_corners_top[24] = Cart(xticks[6], yticks[4]);
+    region_corners_bottom[25] = Cart(xticks[5], yticks[4]); region_corners_top[25] = Cart(xticks[6], yticks[5]);
 
     /*for (int i{0}; i<26; i++) {
         std::cout << "region corners: region" << i << std::endl;
