@@ -1,7 +1,7 @@
 # Voronoi-Simulation
 
 ## Simulation
-The purpose of the simulation is to test strategies on 2 teams of automita and measure their performance by the amount of control they hold throughout a game. Control is measured using approximated Voronoi cells (by sampling) with weightings applied to each sample via a heatmap. At each time-step the teams are told to update the positions of their players - the teams must decide where to move in order to gain the most control.
+The purpose of the simulation is to test strategies on 2 teams of automata and measure their performance by the amount of control they hold throughout a game. Control is measured using approximated Voronoi cells (by sampling) with weightings applied to each sample via a heatmap. At each time-step the teams are told to update the positions of their players - the teams must decide where to move in order to gain the most control.
 
 ### Structure
 Outlined here are some details of the main features of the simulation which may be useful before playing.
